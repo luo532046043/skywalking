@@ -18,10 +18,6 @@
 
 package org.skywalking.apm.agent.core.plugin;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import net.bytebuddy.description.NamedElement;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.matcher.ElementMatcher;
@@ -29,6 +25,11 @@ import org.skywalking.apm.agent.core.plugin.bytebuddy.AbstractJunction;
 import org.skywalking.apm.agent.core.plugin.match.ClassMatch;
 import org.skywalking.apm.agent.core.plugin.match.IndirectMatch;
 import org.skywalking.apm.agent.core.plugin.match.NameMatch;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import static net.bytebuddy.matcher.ElementMatchers.isInterface;
 import static net.bytebuddy.matcher.ElementMatchers.not;
@@ -87,6 +88,9 @@ public class PluginFinder {
         ElementMatcher.Junction judge = new AbstractJunction<NamedElement>() {
             @Override
             public boolean matches(NamedElement target) {
+                if (nameMatchDefine.containsKey(target.getActualName())) {
+                    System.out.println("匹配：" + target.getActualName());
+                }
                 return nameMatchDefine.containsKey(target.getActualName());
             }
         };

@@ -18,16 +18,13 @@
 
 package org.skywalking.apm.agent.core.context.trace;
 
-import java.util.LinkedList;
-import java.util.List;
 import org.skywalking.apm.agent.core.conf.RemoteDownstreamConfig;
-import org.skywalking.apm.agent.core.context.ids.DistributedTraceId;
-import org.skywalking.apm.agent.core.context.ids.DistributedTraceIds;
-import org.skywalking.apm.agent.core.context.ids.GlobalIdGenerator;
-import org.skywalking.apm.agent.core.context.ids.ID;
-import org.skywalking.apm.agent.core.context.ids.NewDistributedTraceId;
+import org.skywalking.apm.agent.core.context.ids.*;
 import org.skywalking.apm.network.proto.TraceSegmentObject;
 import org.skywalking.apm.network.proto.UpstreamSegment;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * {@link TraceSegment} is a segment or fragment of the distributed trace. {@see https://github.com/opentracing/specification/blob/master/specification.md#the-opentracing-data-model}

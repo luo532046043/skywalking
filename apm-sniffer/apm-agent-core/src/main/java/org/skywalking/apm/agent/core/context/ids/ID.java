@@ -21,13 +21,36 @@ package org.skywalking.apm.agent.core.context.ids;
 import org.skywalking.apm.network.proto.UniqueId;
 
 /**
+ * 使用 {@link GlobalIdGenerator#generate()} 生成全局唯一编号
+ *
  * @author wusheng
  */
 public class ID {
+    /**
+     * 应用实例编号
+     */
     private long part1;
+    /**
+     * 线程编号
+     */
     private long part2;
+    /**
+     * 时间戳串
+     * 格式 ：${时间戳} * 10000 + 线程自增序列([0, 9999])
+     * 例如 ：15127007074950012
+     * 方法 ：${@link GlobalIdGenerator.IDContext#nextSeq()}
+     */
     private long part3;
+    /**
+     * 编码后的字符串
+     * 格式 ： ${part1}.${part2}.${part3}
+     * 例如 ：12.35.15127007074950000
+     * 方法 ： ${@link #toString()}
+     */
     private String encoding;
+    /**
+     * 编号是否合法
+     */
     private boolean isValid;
 
     public ID(long part1, long part2, long part3) {

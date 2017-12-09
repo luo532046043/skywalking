@@ -60,7 +60,7 @@ public class ContextManager implements TracingContextListener, BootService, Igno
                     && RemoteDownstreamConfig.Agent.APPLICATION_INSTANCE_ID != DictionaryUtil.nullValue()
                     ) {
                     int suffixIdx = operationName.lastIndexOf(".");
-                    if (suffixIdx > -1 && Config.Agent.IGNORE_SUFFIX.contains(operationName.substring(suffixIdx))) {
+                    if (suffixIdx > -1 && Config.Agent.IGNORE_SUFFIX.contains(operationName.substring(suffixIdx))) { // 忽略的操作名，例如操作名为 .jpg,.jpeg,.js,.css,.png,.bmp,.gif,.ico,.mp3,.mp4,.html,.svg
                         context = new IgnoredTracerContext();
                     } else {
                         SamplingService samplingService = ServiceManager.INSTANCE.findService(SamplingService.class);
@@ -101,7 +101,7 @@ public class ContextManager implements TracingContextListener, BootService, Igno
     public static AbstractSpan createEntrySpan(String operationName, ContextCarrier carrier) {
         SamplingService samplingService = ServiceManager.INSTANCE.findService(SamplingService.class);
         AbstractTracerContext context;
-        if (carrier != null && carrier.isValid()) {
+        if (carrier != null && carrier.isValid()) { // TODO 芋艿，晚点研究下
             samplingService.forceSampled();
             context = getOrCreate(operationName, true);
             context.extract(carrier);

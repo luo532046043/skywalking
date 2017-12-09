@@ -47,6 +47,7 @@ import static org.skywalking.apm.plugin.spring.mvc.commons.Constants.REST_MAPPIN
  * @author zhangxin
  */
 public abstract class AbstractControllerInstrumentation extends AbstractSpring4Instrumentation {
+
     @Override
     protected ConstructorInterceptPoint[] getConstructorsInterceptPoints() {
         return new ConstructorInterceptPoint[] {

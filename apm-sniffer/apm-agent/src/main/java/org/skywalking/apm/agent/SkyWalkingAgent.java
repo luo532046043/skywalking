@@ -18,8 +18,6 @@
 
 package org.skywalking.apm.agent;
 
-import java.lang.instrument.Instrumentation;
-import java.util.List;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType;
@@ -28,13 +26,15 @@ import org.skywalking.apm.agent.core.boot.ServiceManager;
 import org.skywalking.apm.agent.core.conf.SnifferConfigInitializer;
 import org.skywalking.apm.agent.core.logging.api.ILog;
 import org.skywalking.apm.agent.core.logging.api.LogManager;
-import org.skywalking.apm.agent.core.plugin.AbstractClassEnhancePluginDefine;
-import org.skywalking.apm.agent.core.plugin.EnhanceContext;
-import org.skywalking.apm.agent.core.plugin.PluginBootstrap;
-import org.skywalking.apm.agent.core.plugin.PluginException;
-import org.skywalking.apm.agent.core.plugin.PluginFinder;
+import org.skywalking.apm.agent.core.plugin.*;
+
+import java.lang.instrument.Instrumentation;
+import java.util.List;
 
 /**
+ * SkyWalking Agent 启动入口
+ * 基于 JavaAgent 机制
+ *
  * The main entrance of sky-waking agent,
  * based on javaagent mechanism.
  *
@@ -54,22 +54,28 @@ public class SkyWalkingAgent {
     public static void premain(String agentArgs, Instrumentation instrumentation) throws PluginException {
         final PluginFinder pluginFinder;
         try {
+            // 初始化 配置
             SnifferConfigInitializer.initialize();
 
+            // 初始化 插件
             pluginFinder = new PluginFinder(new PluginBootstrap().loadPlugins());
 
+            // 初始化 服务管理
             ServiceManager.INSTANCE.boot();
         } catch (Exception e) {
             logger.error(e, "Skywalking agent initialized failure. Shutting down.");
             return;
         }
 
+        // 初始化 ShutdownHook
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override public void run() {
+                // 关闭 服务管理
                 ServiceManager.INSTANCE.shutdown();
             }
         }, "skywalking service shutdown thread"));
 
+        // 初始化 Instrumentation 的 ClassFileTransformer
         new AgentBuilder.Default().type(pluginFinder.buildMatch()).transform(new AgentBuilder.Transformer() {
             @Override
             public DynamicType.Builder<?> transform(DynamicType.Builder<?> builder, TypeDescription typeDescription,
