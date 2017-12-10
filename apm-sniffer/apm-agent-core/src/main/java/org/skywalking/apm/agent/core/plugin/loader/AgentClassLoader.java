@@ -54,7 +54,7 @@ public class AgentClassLoader extends ClassLoader {
      */
     private List<File> classpath;
     /**
-     * Jar 数组
+     * Jar 信息数组
      */
     private List<Jar> allJars;
     /**
@@ -130,7 +130,9 @@ public class AgentClassLoader extends ClassLoader {
 
     @Override
     protected URL findResource(String name) {
+        // 获得 Jar 信息数组
         List<Jar> allJars = getAllJars();
+        // 遍历 Jar 信息数组，获得资源( 例如，Class )的路径
         for (Jar jar : allJars) {
             JarEntry entry = jar.jarFile.getJarEntry(name);
             if (entry != null) {
@@ -147,7 +149,9 @@ public class AgentClassLoader extends ClassLoader {
     @Override
     protected Enumeration<URL> findResources(String name) throws IOException {
         List<URL> allResources = new LinkedList<URL>();
+        // 获得 Jar 信息数组
         List<Jar> allJars = getAllJars();
+        // 遍历 Jar 信息数组，获得资源( 例如，Class )的路径
         for (Jar jar : allJars) {
             JarEntry entry = jar.jarFile.getJarEntry(name);
             if (entry != null) {
@@ -155,6 +159,7 @@ public class AgentClassLoader extends ClassLoader {
             }
         }
 
+        // 返回迭代器
         final Iterator<URL> iterator = allResources.iterator();
         return new Enumeration<URL>() {
             @Override
@@ -169,20 +174,28 @@ public class AgentClassLoader extends ClassLoader {
         };
     }
 
+    /**
+     * 从 classpath 加载所有 Jar 信息
+     *
+     * @return Jar 信息数组
+     */
     private List<Jar> getAllJars() {
         if (allJars == null) {
-            jarScanLock.lock();
+            jarScanLock.lock(); // 保证并发下，不重复读取
             try {
                 if (allJars == null) {
                     allJars = new LinkedList<Jar>();
+                    // 遍历 classpath
                     for (File path : classpath) {
                         if (path.exists() && path.isDirectory()) {
+                            // 获得所有 Jar 的文件名
                             String[] jarFileNames = path.list(new FilenameFilter() {
                                 @Override
                                 public boolean accept(File dir, String name) {
                                     return name.endsWith(".jar");
                                 }
                             });
+                            // 获得所有 Jar
                             for (String fileName : jarFileNames) {
                                 try {
                                     File file = new File(path, fileName);
@@ -204,8 +217,17 @@ public class AgentClassLoader extends ClassLoader {
         return allJars;
     }
 
+    /**
+     * Jar 信息
+     */
     private class Jar {
+        /**
+         * Jar 文件，用于查找 Jar 里的类
+         */
         private JarFile jarFile;
+        /**
+         * Jar 文件
+         */
         private File sourceFile;
 
         private Jar(JarFile jarFile, File sourceFile) {
