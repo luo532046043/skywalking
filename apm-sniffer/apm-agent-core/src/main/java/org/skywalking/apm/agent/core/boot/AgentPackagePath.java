@@ -26,6 +26,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
+ * Agent 文件所在目录
+ *
  * @author wusheng
  */
 public class AgentPackagePath {

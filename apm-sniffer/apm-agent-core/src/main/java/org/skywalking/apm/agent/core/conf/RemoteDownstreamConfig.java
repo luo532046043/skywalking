@@ -18,11 +18,15 @@
 
 package org.skywalking.apm.agent.core.conf;
 
-import java.util.LinkedList;
-import java.util.List;
 import org.skywalking.apm.agent.core.dictionary.DictionaryUtil;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
+ * Agent 远程配置类
+ * 需要从 Collector 进行读取
+ *
  * The <code>RemoteDownstreamConfig</code> includes configurations from collector side.
  * All of them initialized null, Null-Value or empty collection.
  *

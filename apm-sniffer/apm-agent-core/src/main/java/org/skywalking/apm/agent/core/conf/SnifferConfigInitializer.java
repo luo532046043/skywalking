@@ -56,6 +56,7 @@ public class SnifferConfigInitializer {
     public static void initialize() throws ConfigNotFoundException, AgentPackageNotFoundException {
         InputStream configFileStream;
 
+        // 从配置文件加载配置
         try {
             configFileStream = loadConfigFromAgentFolder();
             Properties properties = new Properties();
@@ -65,12 +66,14 @@ public class SnifferConfigInitializer {
             logger.error(e, "Failed to read the config file, skywalking is going to run in default config.");
         }
 
+        // 从环境变量覆盖配置
         try {
             overrideConfigBySystemEnv();
         } catch (Exception e) {
             logger.error(e, "Failed to read the system env.");
         }
 
+        // 校验配置是否正确
         if (StringUtil.isEmpty(Config.Agent.APPLICATION_CODE)) {
             throw new ExceptionInInitializerError("`agent.application_code` is missing.");
         }
@@ -90,6 +93,8 @@ public class SnifferConfigInitializer {
      */
     private static void overrideConfigBySystemEnv() throws IllegalAccessException {
         Properties properties = new Properties();
+
+        // JVM 进程的环境变量
         Properties systemProperties = System.getProperties();
         Iterator<Map.Entry<Object, Object>> entryIterator = systemProperties.entrySet().iterator();
         while (entryIterator.hasNext()) {
@@ -100,6 +105,7 @@ public class SnifferConfigInitializer {
             }
         }
 
+        // 系统的环境变量
         Map<String, String> envs = System.getenv();
         for (String envKey : envs.keySet()) {
             if (envKey.startsWith(ENV_KEY_PREFIX)) {
@@ -108,6 +114,7 @@ public class SnifferConfigInitializer {
             }
         }
 
+        // 覆盖到 Config 对象
         if (!properties.isEmpty()) {
             ConfigInitializer.initialize(properties, Config.class);
         }

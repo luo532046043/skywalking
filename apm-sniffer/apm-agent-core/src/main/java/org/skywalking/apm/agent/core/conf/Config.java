@@ -23,6 +23,8 @@ import org.skywalking.apm.agent.core.logging.core.LogLevel;
 import org.skywalking.apm.agent.core.logging.core.WriterFactory;
 
 /**
+ * Agent 本地配置类
+ *
  * This is the core config in sniffer agent.
  *
  * @author wusheng
