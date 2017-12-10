@@ -18,14 +18,15 @@
 
 package org.skywalking.apm.agent.core.plugin;
 
+import org.skywalking.apm.agent.core.logging.api.ILog;
+import org.skywalking.apm.agent.core.logging.api.LogManager;
+import org.skywalking.apm.agent.core.plugin.loader.AgentClassLoader;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-import org.skywalking.apm.agent.core.plugin.loader.AgentClassLoader;
-import org.skywalking.apm.agent.core.logging.api.ILog;
-import org.skywalking.apm.agent.core.logging.api.LogManager;
 
 /**
  * Use the current classloader to read all plugin define file.
@@ -36,10 +37,16 @@ import org.skywalking.apm.agent.core.logging.api.LogManager;
 public class PluginResourcesResolver {
     private static final ILog logger = LogManager.getLogger(PluginResourcesResolver.class);
 
+    /**
+     * 获得插件定义路径数组
+     *
+     * @return 路径数组
+     */
     public List<URL> getResources() {
         List<URL> cfgUrlPaths = new ArrayList<URL>();
         Enumeration<URL> urls;
         try {
+            // 使用 AgentClassLoader 获得所有 skywalking-plugin.def 的路径
             urls = AgentClassLoader.getDefault().getResources("skywalking-plugin.def");
 
             while (urls.hasMoreElements()) {

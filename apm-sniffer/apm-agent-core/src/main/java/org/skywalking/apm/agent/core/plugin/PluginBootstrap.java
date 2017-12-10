@@ -46,7 +46,7 @@ public class PluginBootstrap {
         // 初始化 AgentClassLoader
         AgentClassLoader.initDefaultLoader();
 
-        // 获得 插件路径数组
+        // 获得 插件定义路径数组
         PluginResourcesResolver resolver = new PluginResourcesResolver();
         List<URL> resources = resolver.getResources();
 
