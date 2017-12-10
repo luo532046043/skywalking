@@ -21,13 +21,21 @@ package org.skywalking.apm.agent.core.plugin;
 import org.skywalking.apm.agent.core.plugin.exception.IllegalPluginDefineException;
 import org.skywalking.apm.util.StringUtil;
 
+/**
+ * 插件定义
+ */
 public class PluginDefine {
+
     /**
+     * 插件名
+     *
      * Plugin name.
      */
     private String name;
 
     /**
+     * 插件
+     *
      * The class name of plugin defined.
      */
     private String defineClass;
@@ -37,6 +45,13 @@ public class PluginDefine {
         this.defineClass = defineClass;
     }
 
+    /**
+     * 解析字符串，创建插件定义
+     *
+     * @param define 插件定义字符串，格式为 "${name}=${defineClass}"
+     * @return 插件定义
+     * @throws IllegalPluginDefineException 格式不正确
+     */
     public static PluginDefine build(String define) throws IllegalPluginDefineException {
         if (StringUtil.isEmpty(define)) {
             throw new IllegalPluginDefineException(define);

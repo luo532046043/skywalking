@@ -29,22 +29,39 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 插件定义配置
+ */
 public enum PluginCfg {
+
+    /**
+     * 单例
+     */
     INSTANCE;
 
     private static final ILog logger = LogManager.getLogger(PluginCfg.class);
 
+    /**
+     * 插件定义数组
+     */
     private List<PluginDefine> pluginClassList = new ArrayList<PluginDefine>();
 
+    /**
+     * 读取 skywalking-plugin.def 文件，添加到 pluginClassList
+     *
+     * @param input 输入流
+     * @throws IOException 当读取异常
+     */
     void load(InputStream input) throws IOException {
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(input));
             String pluginDefine = null;
-            while ((pluginDefine = reader.readLine()) != null) {
+            while ((pluginDefine = reader.readLine()) != null) { // 换行
                 try {
                     if (pluginDefine == null || pluginDefine.trim().length() == 0) {
                         continue;
                     }
+                    // 解析字符串，创建插件定义
                     PluginDefine plugin = PluginDefine.build(pluginDefine);
                     pluginClassList.add(plugin);
                 } catch (IllegalPluginDefineException e) {
