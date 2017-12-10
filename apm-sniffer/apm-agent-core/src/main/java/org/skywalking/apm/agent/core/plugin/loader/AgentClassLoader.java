@@ -49,8 +49,17 @@ public class AgentClassLoader extends ClassLoader {
      */
     private static AgentClassLoader DEFAULT_LOADER;
 
+    /**
+     * classpath
+     */
     private List<File> classpath;
+    /**
+     * Jar 数组
+     */
     private List<Jar> allJars;
+    /**
+     * Jar 读取时的锁
+     */
     private ReentrantLock jarScanLock = new ReentrantLock();
 
     public static AgentClassLoader getDefault() {
