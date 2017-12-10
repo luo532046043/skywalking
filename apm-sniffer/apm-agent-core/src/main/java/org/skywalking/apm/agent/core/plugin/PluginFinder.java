@@ -41,7 +41,16 @@ import static net.bytebuddy.matcher.ElementMatchers.not;
  * @author wusheng
  */
 public class PluginFinder {
+
+    /**
+     * NameMatch 与 AbstractClassEnhancePluginDefine 对象的映射
+     * key ：方法名
+     * value ：AbstractClassEnhancePluginDefine 对象数组
+     */
     private final Map<String, LinkedList<AbstractClassEnhancePluginDefine>> nameMatchDefine = new HashMap<String, LinkedList<AbstractClassEnhancePluginDefine>>();
+    /**
+     * 非 NameMatch 的 AbstractClassEnhancePluginDefine 对象数组
+     */
     private final List<AbstractClassEnhancePluginDefine> signatureMatchDefine = new LinkedList<AbstractClassEnhancePluginDefine>();
 
     public PluginFinder(List<AbstractClassEnhancePluginDefine> plugins) {
@@ -52,6 +61,7 @@ public class PluginFinder {
                 continue;
             }
 
+            // 处理 NameMatch 为匹配的 AbstractClassEnhancePluginDefine 对象，添加到 nameMatchDefine 属性
             if (match instanceof NameMatch) {
                 NameMatch nameMatch = (NameMatch)match;
                 LinkedList<AbstractClassEnhancePluginDefine> pluginDefines = nameMatchDefine.get(nameMatch.getClassName());
@@ -60,20 +70,23 @@ public class PluginFinder {
                     nameMatchDefine.put(nameMatch.getClassName(), pluginDefines);
                 }
                 pluginDefines.add(plugin);
+            // 处理非 NameMatch 为匹配的 AbstractClassEnhancePluginDefine 对象，添加到 signatureMatchDefine 属性
             } else {
                 signatureMatchDefine.add(plugin);
             }
         }
     }
 
-    public List<AbstractClassEnhancePluginDefine> find(TypeDescription typeDescription,
-        ClassLoader classLoader) {
+    public List<AbstractClassEnhancePluginDefine> find(TypeDescription typeDescription, ClassLoader classLoader) {
         List<AbstractClassEnhancePluginDefine> matchedPlugins = new LinkedList<AbstractClassEnhancePluginDefine>();
+
+        // 以 nameMatchDefine 属性来匹配 AbstractClassEnhancePluginDefine 对象
         String typeName = typeDescription.getTypeName();
         if (nameMatchDefine.containsKey(typeName)) {
             matchedPlugins.addAll(nameMatchDefine.get(typeName));
         }
 
+        // 以 signatureMatchDefine 属性来匹配 AbstractClassEnhancePluginDefine 对象
         for (AbstractClassEnhancePluginDefine pluginDefine : signatureMatchDefine) {
             IndirectMatch match = (IndirectMatch)pluginDefine.enhanceClass();
             if (match.isMatch(typeDescription)) {
