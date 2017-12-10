@@ -42,6 +42,7 @@ import java.util.jar.JarFile;
  * @author wusheng
  */
 public class AgentClassLoader extends ClassLoader {
+
     private static final ILog logger = LogManager.getLogger(AgentClassLoader.class);
     /**
      * The default class loader for the agent.

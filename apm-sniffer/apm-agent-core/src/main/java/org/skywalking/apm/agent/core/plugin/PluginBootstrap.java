@@ -18,13 +18,14 @@
 
 package org.skywalking.apm.agent.core.plugin;
 
+import org.skywalking.apm.agent.core.boot.AgentPackageNotFoundException;
+import org.skywalking.apm.agent.core.logging.api.ILog;
+import org.skywalking.apm.agent.core.logging.api.LogManager;
+import org.skywalking.apm.agent.core.plugin.loader.AgentClassLoader;
+
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import org.skywalking.apm.agent.core.boot.AgentPackageNotFoundException;
-import org.skywalking.apm.agent.core.plugin.loader.AgentClassLoader;
-import org.skywalking.apm.agent.core.logging.api.ILog;
-import org.skywalking.apm.agent.core.logging.api.LogManager;
 
 /**
  * Plugins finder.
@@ -42,8 +43,10 @@ public class PluginBootstrap {
      * @return plugin definition list.
      */
     public List<AbstractClassEnhancePluginDefine> loadPlugins() throws AgentPackageNotFoundException {
+        // 初始化 AgentClassLoader
         AgentClassLoader.initDefaultLoader();
 
+        // 获得 插件路径数组
         PluginResourcesResolver resolver = new PluginResourcesResolver();
         List<URL> resources = resolver.getResources();
 
@@ -52,6 +55,7 @@ public class PluginBootstrap {
             return new ArrayList<AbstractClassEnhancePluginDefine>();
         }
 
+        // 获得 插件定义( PluginDefine )数组
         for (URL pluginUrl : resources) {
             try {
                 PluginCfg.INSTANCE.load(pluginUrl.openStream());
@@ -59,9 +63,9 @@ public class PluginBootstrap {
                 logger.error(t, "plugin file [{}] init failure.", pluginUrl);
             }
         }
-
         List<PluginDefine> pluginClassList = PluginCfg.INSTANCE.getPluginClassList();
 
+        // 创建 插件对象数组
         List<AbstractClassEnhancePluginDefine> plugins = new ArrayList<AbstractClassEnhancePluginDefine>();
         for (PluginDefine pluginDefine : pluginClassList) {
             try {
