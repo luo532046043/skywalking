@@ -65,7 +65,7 @@ public class PluginBootstrap {
         }
         List<PluginDefine> pluginClassList = PluginCfg.INSTANCE.getPluginClassList();
 
-        // 创建 插件对象数组
+        // 创建 类增强插件定义( AbstractClassEnhancePluginDefine )对象数组
         List<AbstractClassEnhancePluginDefine> plugins = new ArrayList<AbstractClassEnhancePluginDefine>();
         for (PluginDefine pluginDefine : pluginClassList) {
             try {
