@@ -18,12 +18,13 @@
 
 package org.skywalking.apm.agent.core.boot;
 
+import org.skywalking.apm.agent.core.logging.api.ILog;
+import org.skywalking.apm.agent.core.logging.api.LogManager;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.ServiceLoader;
-import org.skywalking.apm.agent.core.logging.api.ILog;
-import org.skywalking.apm.agent.core.logging.api.LogManager;
 
 /**
  * The <code>ServiceManager</code> bases on {@link ServiceLoader},
@@ -35,13 +36,21 @@ public enum ServiceManager {
     INSTANCE;
 
     private static final ILog logger = LogManager.getLogger(ServiceManager.class);
+
+    /**
+     * BootService 实例映射
+     */
     private Map<Class, BootService> bootedServices = new HashMap<Class, BootService>();
 
     public void boot() {
+        // 加载所有 BootService 实现类的实例数组
         bootedServices = loadAllServices();
 
+        // 启动之前
         beforeBoot();
+        // 启动
         startup();
+        // 启动之后
         afterBoot();
     }
 
@@ -55,6 +64,11 @@ public enum ServiceManager {
         }
     }
 
+    /**
+     * 加载所有 BootService 实现类的实例数组
+     *
+     * @return BootService 实现类的实例数组
+     */
     private Map<Class, BootService> loadAllServices() {
         HashMap<Class, BootService> bootedServices = new HashMap<Class, BootService>();
         Iterator<BootService> serviceIterator = load().iterator();
@@ -106,6 +120,11 @@ public enum ServiceManager {
         return (T)bootedServices.get(serviceClass);
     }
 
+    /**
+     * 基于 SPI 机制，加载 BootService 实现类的实例的 ServiceLoader
+     *
+     * @return ServiceLoader
+     */
     ServiceLoader<BootService> load() {
         return ServiceLoader.load(BootService.class);
     }
