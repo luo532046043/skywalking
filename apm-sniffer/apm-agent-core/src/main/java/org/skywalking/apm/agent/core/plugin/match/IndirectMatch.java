@@ -20,14 +20,33 @@ package org.skywalking.apm.agent.core.plugin.match;
 
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.matcher.ElementMatcher;
+import org.skywalking.apm.agent.core.plugin.PluginFinder;
 
 /**
  * All implementations can't direct match the class like {@link NameMatch} did.
  *
+ * 间接匹配接口。相比 NameMatch 来说，确实比较 "委婉" 🙂 。
+ *
  * @author wusheng
  */
 public interface IndirectMatch extends ClassMatch {
+
+    /**
+     * 创建 Junction
+     *
+     * 被 {@link PluginFinder#buildMatch()} 调用
+     *
+     * @return Junction
+     */
     ElementMatcher.Junction buildJunction();
 
+    /**
+     * 判断是否匹配
+     *
+     * 被 {@link PluginFinder#find(TypeDescription, ClassLoader)} 调用
+     *
+     * @param typeDescription 类型描述
+     * @return 是否匹配
+     */
     boolean isMatch(TypeDescription typeDescription);
 }

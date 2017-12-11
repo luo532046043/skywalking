@@ -19,6 +19,8 @@
 package org.skywalking.apm.agent.core.plugin.match;
 
 /**
+ * 类匹配接口
+ *
  * @author wusheng
  */
 public interface ClassMatch {

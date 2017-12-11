@@ -34,7 +34,8 @@ public class PluginDefine {
     private String name;
 
     /**
-     * 插件
+     * 插件定义类
+     * {@link AbstractClassEnhancePluginDefine}
      *
      * The class name of plugin defined.
      */

@@ -77,6 +77,15 @@ public class PluginFinder {
         }
     }
 
+    /**
+     * 获得 AbstractClassEnhancePluginDefine 对象
+     *
+     * 被 SkyWalkingAgent 在 {@link net.bytebuddy.agent.builder.AgentBuilder.Default#transformation} 方法里调用
+     *
+     * @param typeDescription 类型描述
+     * @param classLoader 类加载器。暂时无用。
+     * @return AbstractClassEnhancePluginDefine 对象
+     */
     public List<AbstractClassEnhancePluginDefine> find(TypeDescription typeDescription, ClassLoader classLoader) {
         List<AbstractClassEnhancePluginDefine> matchedPlugins = new LinkedList<AbstractClassEnhancePluginDefine>();
 
@@ -97,17 +106,24 @@ public class PluginFinder {
         return matchedPlugins;
     }
 
+    /**
+     * 获得全部插件的类匹配
+     *
+     * 多个插件的类匹配条件以 or 分隔
+     *
+     * @return 类匹配
+     */
     public ElementMatcher<? super TypeDescription> buildMatch() {
+        // 以 nameMatchDefine 属性来匹配
         ElementMatcher.Junction judge = new AbstractJunction<NamedElement>() {
             @Override
             public boolean matches(NamedElement target) {
-                if (nameMatchDefine.containsKey(target.getActualName())) {
-                    System.out.println("匹配：" + target.getActualName());
-                }
                 return nameMatchDefine.containsKey(target.getActualName());
             }
         };
+        // 非接口
         judge = judge.and(not(isInterface()));
+        // 以 signatureMatchDefine 属性来匹配
         for (AbstractClassEnhancePluginDefine define : signatureMatchDefine) {
             ClassMatch match = define.enhanceClass();
             if (match instanceof IndirectMatch) {

@@ -21,6 +21,10 @@ package org.skywalking.apm.agent.core.plugin.bytebuddy;
 import net.bytebuddy.matcher.ElementMatcher;
 
 /**
+ * byte-buddy Junction 抽象实现类
+ *
+ * 主要提供 {@link #and(ElementMatcher)} 和 {@link #or(ElementMatcher)} 方法，方便拼接多个匹配条件
+ *
  * Created by wusheng on 16/7/31.
  */
 public abstract class AbstractJunction<V> implements ElementMatcher.Junction<V> {

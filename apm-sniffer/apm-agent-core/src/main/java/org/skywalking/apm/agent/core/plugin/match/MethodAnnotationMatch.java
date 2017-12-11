@@ -18,28 +18,31 @@
 
 package org.skywalking.apm.agent.core.plugin.match;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.description.annotation.AnnotationList;
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.matcher.ElementMatcher;
 
-import static net.bytebuddy.matcher.ElementMatchers.declaresMethod;
-import static net.bytebuddy.matcher.ElementMatchers.isAnnotatedWith;
-import static net.bytebuddy.matcher.ElementMatchers.isInterface;
-import static net.bytebuddy.matcher.ElementMatchers.named;
-import static net.bytebuddy.matcher.ElementMatchers.not;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static net.bytebuddy.matcher.ElementMatchers.*;
 
 /**
  * Match the class, which has methods with the certain annotations.
  * This is a very complex match.
  *
+ * 基于方法注解进行匹配，可设置同时匹配多个
+ *
  * @author wusheng
  */
 public class MethodAnnotationMatch implements IndirectMatch {
+
+    /**
+     * 注解数组
+     */
     private String[] annotations;
 
     private MethodAnnotationMatch(String[] annotations) {
@@ -59,15 +62,18 @@ public class MethodAnnotationMatch implements IndirectMatch {
                 junction = junction.and(buildEachAnnotation(annotation));
             }
         }
-        junction = declaresMethod(junction).and(not(isInterface()));
+        junction = declaresMethod(junction) // 使用 byte-buddy 提供的匹配 API ：所有方法
+                .and(not(isInterface())); // 非接口
         return junction;
     }
 
     @Override
     public boolean isMatch(TypeDescription typeDescription) {
+        // 循环所有方法
         for (MethodDescription.InDefinedShape methodDescription : typeDescription.getDeclaredMethods()) {
             List<String> annotationList = new ArrayList<String>(Arrays.asList(annotations));
 
+            // 同时匹配多个注解（通过移除的方式）
             AnnotationList declaredAnnotations = methodDescription.getDeclaredAnnotations();
             for (AnnotationDescription annotation : declaredAnnotations) {
                 annotationList.remove(annotation.getAnnotationType().getActualName());

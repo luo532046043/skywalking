@@ -21,9 +21,15 @@ package org.skywalking.apm.agent.core.plugin.match;
 /**
  * Match the class with an explicit class name.
  *
+ * 基于完整的类名进行匹配
+ *
  * @author wusheng
  */
 public class NameMatch implements ClassMatch {
+
+    /**
+     * 匹配的类名
+     */
     private String className;
 
     private NameMatch(String className) {
@@ -37,4 +43,5 @@ public class NameMatch implements ClassMatch {
     public static NameMatch byName(String className) {
         return new NameMatch(className);
     }
+
 }

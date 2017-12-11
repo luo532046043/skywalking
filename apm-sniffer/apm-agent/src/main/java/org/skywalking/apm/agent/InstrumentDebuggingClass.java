@@ -18,8 +18,6 @@
 
 package org.skywalking.apm.agent;
 
-import java.io.File;
-import java.io.IOException;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType;
 import org.skywalking.apm.agent.core.boot.AgentPackageNotFoundException;
@@ -28,7 +26,12 @@ import org.skywalking.apm.agent.core.conf.Config;
 import org.skywalking.apm.agent.core.logging.api.ILog;
 import org.skywalking.apm.agent.core.logging.api.LogManager;
 
+import java.io.File;
+import java.io.IOException;
+
 /**
+ * Instrument 调试类，用于将被 JavaAgent 修改的所有类存储到 ${JAVA_AGENT_PACKAGE}/debugger 目录下。
+ *
  * @author wu-sheng
  */
 public enum InstrumentDebuggingClass {
@@ -58,6 +61,7 @@ public enum InstrumentDebuggingClass {
                     }
                 }
 
+                // 保存
                 try {
                     dynamicType.saveIn(debuggingClassesRootPath);
                 } catch (IOException e) {

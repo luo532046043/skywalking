@@ -18,25 +18,29 @@
 
 package org.skywalking.apm.agent.core.plugin.match;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.description.annotation.AnnotationList;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.matcher.ElementMatcher;
 
-import static net.bytebuddy.matcher.ElementMatchers.isAnnotatedWith;
-import static net.bytebuddy.matcher.ElementMatchers.isInterface;
-import static net.bytebuddy.matcher.ElementMatchers.named;
-import static net.bytebuddy.matcher.ElementMatchers.not;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static net.bytebuddy.matcher.ElementMatchers.*;
 
 /**
  * Match the class by the given annotations in class.
  *
+ * 基于类注解进行匹配，可设置同时匹配多个注解。
+ *
  * @author wusheng
  */
 public class ClassAnnotationMatch implements IndirectMatch {
+
+    /**
+     * 注解数组
+     */
     private String[] annotations;
 
     private ClassAnnotationMatch(String[] annotations) {
@@ -48,6 +52,7 @@ public class ClassAnnotationMatch implements IndirectMatch {
 
     @Override
     public ElementMatcher.Junction buildJunction() {
+        // 同时匹配多个注解
         ElementMatcher.Junction junction = null;
         for (String annotation : annotations) {
             if (junction == null) {
@@ -56,6 +61,7 @@ public class ClassAnnotationMatch implements IndirectMatch {
                 junction = junction.and(buildEachAnnotation(annotation));
             }
         }
+        // 非接口
         junction = junction.and(not(isInterface()));
         return junction;
     }
@@ -63,6 +69,7 @@ public class ClassAnnotationMatch implements IndirectMatch {
     @Override
     public boolean isMatch(TypeDescription typeDescription) {
         List<String> annotationList = new ArrayList<String>(Arrays.asList(annotations));
+        // 同时匹配多个注解（通过移除的方式）
         AnnotationList declaredAnnotations = typeDescription.getDeclaredAnnotations();
         for (AnnotationDescription annotation : declaredAnnotations) {
             annotationList.remove(annotation.getAnnotationType().getActualName());

@@ -18,20 +18,20 @@
 
 package org.skywalking.apm.agent.core.plugin.match;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.description.type.TypeList;
 import net.bytebuddy.matcher.ElementMatcher;
 
-import static net.bytebuddy.matcher.ElementMatchers.hasSuperType;
-import static net.bytebuddy.matcher.ElementMatchers.isInterface;
-import static net.bytebuddy.matcher.ElementMatchers.named;
-import static net.bytebuddy.matcher.ElementMatchers.not;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static net.bytebuddy.matcher.ElementMatchers.*;
 
 /**
  * Match the class by the given super class or interfaces.
+ *
+ * 基于父类 / 接口进行匹配
  *
  * @author wusheng
  */

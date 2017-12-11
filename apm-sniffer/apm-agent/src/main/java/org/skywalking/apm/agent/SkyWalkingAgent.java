@@ -80,13 +80,15 @@ public class SkyWalkingAgent {
             @Override
             public DynamicType.Builder<?> transform(DynamicType.Builder<?> builder, TypeDescription typeDescription,
                 ClassLoader classLoader, JavaModule module) {
+                // 获得 匹配的 AbstractClassEnhancePluginDefine 数组
                 List<AbstractClassEnhancePluginDefine> pluginDefines = pluginFinder.find(typeDescription, classLoader);
                 if (pluginDefines.size() > 0) {
                     DynamicType.Builder<?> newBuilder = builder;
                     EnhanceContext context = new EnhanceContext();
                     for (AbstractClassEnhancePluginDefine define : pluginDefines) {
+                        // 创建 DynamicType.Builder
                         DynamicType.Builder<?> possibleNewBuilder = define.define(typeDescription.getTypeName(), newBuilder, classLoader, context);
-                        if (possibleNewBuilder != null) {
+                        if (possibleNewBuilder != null) { // Builder 为空，例如，Spring 有多个版本的情况。
                             newBuilder = possibleNewBuilder;
                         }
                     }
