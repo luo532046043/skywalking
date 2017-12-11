@@ -18,9 +18,10 @@
 
 package org.skywalking.apm.agent.core.plugin;
 
+import net.bytebuddy.pool.TypePool;
+
 import java.util.HashMap;
 import java.util.Map;
-import net.bytebuddy.pool.TypePool;
 
 /**
  * The <code>WitnessClassFinder</code> represents a pool of {@link TypePool}s,
@@ -30,16 +31,28 @@ import net.bytebuddy.pool.TypePool;
  * @author wusheng
  */
 public enum WitnessClassFinder {
+
+    /**
+     * 单例
+     */
     INSTANCE;
 
+    /**
+     * ClassLoader 与 TypePool 映射
+     */
     private Map<ClassLoader, TypePool> poolMap = new HashMap<ClassLoader, TypePool>();
 
     /**
-     * @param witnessClass
+     * 判断类加载器中，是否存在指定的见证类
+     *
+     * 基于 byte-buddy 的 TypePool 实现
+     *
+     * @param witnessClass 指定的鉴证类
      * @param classLoader for finding the witnessClass
      * @return true, if the given witnessClass exists, through the given classLoader.
      */
     public boolean exist(String witnessClass, ClassLoader classLoader) {
+        // 获得 classLoader 对应的 TypePool
         ClassLoader mappingKey = classLoader == null ? NullClassLoader.INSTANCE : classLoader;
         if (!poolMap.containsKey(mappingKey)) {
             synchronized (poolMap) {
@@ -49,12 +62,20 @@ public enum WitnessClassFinder {
                 }
             }
         }
+        // 判断是否存在
         TypePool typePool = poolMap.get(mappingKey);
         TypePool.Resolution witnessClassResolution = typePool.describe(witnessClass);
         return witnessClassResolution.isResolved();
     }
 }
 
+/**
+ * 空的类加载器
+ */
 final class NullClassLoader extends ClassLoader {
+
+    /**
+     * 单例
+     */
     static NullClassLoader INSTANCE = new NullClassLoader();
 }

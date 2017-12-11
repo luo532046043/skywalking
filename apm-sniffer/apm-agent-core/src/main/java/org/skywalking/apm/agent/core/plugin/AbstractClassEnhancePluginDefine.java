@@ -54,6 +54,7 @@ public abstract class AbstractClassEnhancePluginDefine {
 
         logger.debug("prepare to enhance class {} by {}.", transformClassName, interceptorDefineClassName);
 
+        // 判断见证类列表是否都存在。若不存在，则插件不生效
         /**
          * find witness classes for enhance class
          */
@@ -68,11 +69,13 @@ public abstract class AbstractClassEnhancePluginDefine {
             }
         }
 
+        // 使用拦截器增强目标类
         /**
          * find origin class source code for interceptor
          */
         DynamicType.Builder<?> newClassBuilder = this.enhance(transformClassName, builder, classLoader, context);
 
+        // 标记完成增强
         context.initializationStageCompleted();
         logger.debug("enhance class {} by {} completely.", transformClassName, interceptorDefineClassName);
 

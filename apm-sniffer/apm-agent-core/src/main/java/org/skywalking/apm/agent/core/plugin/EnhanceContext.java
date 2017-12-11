@@ -27,6 +27,10 @@ package org.skywalking.apm.agent.core.plugin;
  * @author wusheng
  */
 public class EnhanceContext {
+
+    /**
+     * 是否完成增强
+     */
     private boolean isEnhanced = false;
     /**
      * The object has already been enhanced or extended.
