@@ -67,8 +67,11 @@ public abstract class ClassEnhancePluginDefine extends AbstractClassEnhancePlugi
     protected DynamicType.Builder<?> enhance(String enhanceOriginClassName,
         DynamicType.Builder<?> newClassBuilder, ClassLoader classLoader,
         EnhanceContext context) throws PluginException {
+
+        // 增强静态方法
         newClassBuilder = this.enhanceClass(enhanceOriginClassName, newClassBuilder, classLoader);
 
+        // 增强构造方法和实例方法
         newClassBuilder = this.enhanceInstance(enhanceOriginClassName, newClassBuilder, classLoader, context);
 
         return newClassBuilder;
@@ -76,6 +79,8 @@ public abstract class ClassEnhancePluginDefine extends AbstractClassEnhancePlugi
 
     /**
      * Enhance a class to intercept constructors and class instance methods.
+     *
+     * 增强构造方法、实例方法。
      *
      * @param enhanceOriginClassName target class name
      * @param newClassBuilder byte-buddy's builder to manipulate class bytecode.
@@ -184,27 +189,33 @@ public abstract class ClassEnhancePluginDefine extends AbstractClassEnhancePlugi
     /**
      * Enhance a class to intercept class static methods.
      *
+     * 增强静态方法
+     *
      * @param enhanceOriginClassName target class name
      * @param newClassBuilder byte-buddy's builder to manipulate class bytecode.
      * @return new byte-buddy's builder for further manipulation.
      */
     private DynamicType.Builder<?> enhanceClass(String enhanceOriginClassName,
         DynamicType.Builder<?> newClassBuilder, ClassLoader classLoader) throws PluginException {
-        StaticMethodsInterceptPoint[] staticMethodsInterceptPoints = getStaticMethodsInterceptPoints();
 
+        // 获 得静态方法的拦截切面数组。若未空，不进行增强。
+        StaticMethodsInterceptPoint[] staticMethodsInterceptPoints = getStaticMethodsInterceptPoints();
         if (staticMethodsInterceptPoints == null || staticMethodsInterceptPoints.length == 0) {
             return newClassBuilder;
         }
 
+        // 遍历 静态方法的拦截切面数组，逐个增强静态方法
         for (StaticMethodsInterceptPoint staticMethodsInterceptPoint : staticMethodsInterceptPoints) {
+            // 获得 拦截器
             String interceptor = staticMethodsInterceptPoint.getMethodsInterceptor();
             if (StringUtil.isEmpty(interceptor)) {
                 throw new EnhanceException("no StaticMethodsAroundInterceptor define to enhance class " + enhanceOriginClassName);
             }
 
+            // 使用拦截器增强静态方法
             if (staticMethodsInterceptPoint.isOverrideArgs()) {
-                newClassBuilder = newClassBuilder.method(isStatic().and(staticMethodsInterceptPoint.getMethodsMatcher()))
-                    .intercept(
+                newClassBuilder = newClassBuilder.method(isStatic().and(staticMethodsInterceptPoint.getMethodsMatcher())) // 匹配
+                    .intercept( // 拦截
                         MethodDelegation.withDefaultConfiguration()
                             .withBinders(
                                 Morph.Binder.install(OverrideCallable.class)
@@ -212,8 +223,8 @@ public abstract class ClassEnhancePluginDefine extends AbstractClassEnhancePlugi
                             .to(new StaticMethodsInter(interceptor))
                     );
             } else {
-                newClassBuilder = newClassBuilder.method(isStatic().and(staticMethodsInterceptPoint.getMethodsMatcher()))
-                    .intercept(
+                newClassBuilder = newClassBuilder.method(isStatic().and(staticMethodsInterceptPoint.getMethodsMatcher())) // 匹配
+                    .intercept( // 拦截
                         MethodDelegation.withDefaultConfiguration()
                             .to(new StaticMethodsInter(interceptor))
                     );
