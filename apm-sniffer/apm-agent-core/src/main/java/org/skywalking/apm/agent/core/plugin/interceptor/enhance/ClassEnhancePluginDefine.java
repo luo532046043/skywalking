@@ -89,6 +89,7 @@ public abstract class ClassEnhancePluginDefine extends AbstractClassEnhancePlugi
     private DynamicType.Builder<?> enhanceInstance(String enhanceOriginClassName,
         DynamicType.Builder<?> newClassBuilder, ClassLoader classLoader,
         EnhanceContext context) throws PluginException {
+        //
         ConstructorInterceptPoint[] constructorInterceptPoints = getConstructorsInterceptPoints();
         InstanceMethodsInterceptPoint[] instanceMethodsInterceptPoints = getInstanceMethodsInterceptPoints();
 
@@ -198,7 +199,7 @@ public abstract class ClassEnhancePluginDefine extends AbstractClassEnhancePlugi
     private DynamicType.Builder<?> enhanceClass(String enhanceOriginClassName,
         DynamicType.Builder<?> newClassBuilder, ClassLoader classLoader) throws PluginException {
 
-        // 获 得静态方法的拦截切面数组。若未空，不进行增强。
+        // 获得 静态方法的拦截切面数组。若未空，不进行增强。
         StaticMethodsInterceptPoint[] staticMethodsInterceptPoints = getStaticMethodsInterceptPoints();
         if (staticMethodsInterceptPoints == null || staticMethodsInterceptPoints.length == 0) {
             return newClassBuilder;
