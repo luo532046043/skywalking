@@ -33,6 +33,10 @@ public class EnhanceContext {
      */
     private boolean isEnhanced = false;
     /**
+     * 是否已经实现 {@link org.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedInstance} 接口
+     *
+     * 通过 `byte-buddy` 改写实现
+     *
      * The object has already been enhanced or extended.
      * e.g. added the new field, or implemented the new interface
      */

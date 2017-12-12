@@ -18,18 +18,17 @@
 
 package org.skywalking.apm.agent.core.plugin.interceptor.enhance;
 
-import java.lang.reflect.Method;
-import net.bytebuddy.implementation.bind.annotation.AllArguments;
-import net.bytebuddy.implementation.bind.annotation.Morph;
-import net.bytebuddy.implementation.bind.annotation.Origin;
-import net.bytebuddy.implementation.bind.annotation.RuntimeType;
-import net.bytebuddy.implementation.bind.annotation.This;
-import org.skywalking.apm.agent.core.plugin.PluginException;
-import org.skywalking.apm.agent.core.plugin.loader.InterceptorInstanceLoader;
+import net.bytebuddy.implementation.bind.annotation.*;
 import org.skywalking.apm.agent.core.logging.api.ILog;
 import org.skywalking.apm.agent.core.logging.api.LogManager;
+import org.skywalking.apm.agent.core.plugin.PluginException;
+import org.skywalking.apm.agent.core.plugin.loader.InterceptorInstanceLoader;
+
+import java.lang.reflect.Method;
 
 /**
+ * 覆写参数的实例方法 Inter
+ *
  * The actual byte-buddy's interceptor to intercept class instance methods.
  * In this class, it provide a bridge between byte-buddy and sky-walking plugin.
  *
@@ -39,6 +38,8 @@ public class InstMethodsInterWithOverrideArgs {
     private static final ILog logger = LogManager.getLogger(InstMethodsInterWithOverrideArgs.class);
 
     /**
+     *  实例方法拦截器
+     *
      * An {@link InstanceMethodsAroundInterceptor}
      * This name should only stay in {@link String}, the real {@link Class} type will trigger classloader failure.
      * If you want to know more, please check on books about Classloader or Classloader appointment mechanism.
@@ -50,6 +51,7 @@ public class InstMethodsInterWithOverrideArgs {
      */
     public InstMethodsInterWithOverrideArgs(String instanceMethodsAroundInterceptorClassName, ClassLoader classLoader) {
         try {
+            // 加载拦截器
             interceptor = InterceptorInstanceLoader.load(instanceMethodsAroundInterceptorClassName, classLoader);
         } catch (Throwable t) {
             throw new PluginException("Can't create InstanceMethodsAroundInterceptor.", t);
@@ -71,10 +73,11 @@ public class InstMethodsInterWithOverrideArgs {
     public Object intercept(@This Object obj,
         @AllArguments Object[] allArguments,
         @Origin Method method,
-        @Morph OverrideCallable zuper
+        @Morph OverrideCallable zuper // OverrideCallable
     ) throws Throwable {
         EnhancedInstance targetObject = (EnhancedInstance)obj;
 
+        // 前置方法
         MethodInterceptResult result = new MethodInterceptResult();
         try {
             interceptor.beforeMethod(targetObject, method, allArguments, method.getParameterTypes(),
@@ -85,12 +88,15 @@ public class InstMethodsInterWithOverrideArgs {
 
         Object ret = null;
         try {
+            // 已经有返回结果，不再继续
             if (!result.isContinue()) {
                 ret = result._ret();
             } else {
+            // 调用原有方法
                 ret = zuper.call(allArguments);
             }
         } catch (Throwable t) {
+            // 处理异常方法
             try {
                 interceptor.handleMethodException(targetObject, method, allArguments, method.getParameterTypes(),
                     t);
@@ -99,6 +105,7 @@ public class InstMethodsInterWithOverrideArgs {
             }
             throw t;
         } finally {
+            // 后置方法
             try {
                 ret = interceptor.afterMethod(targetObject, method, allArguments, method.getParameterTypes(),
                     ret);

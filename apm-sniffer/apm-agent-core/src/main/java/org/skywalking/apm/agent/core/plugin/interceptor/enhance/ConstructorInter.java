@@ -27,6 +27,8 @@ import org.skywalking.apm.agent.core.logging.api.ILog;
 import org.skywalking.apm.agent.core.logging.api.LogManager;
 
 /**
+ * 构造方法 Inter
+ *
  * The actual byte-buddy's interceptor to intercept constructor methods.
  * In this class, it provide a bridge between byte-buddy and sky-walking plugin.
  *
@@ -36,6 +38,8 @@ public class ConstructorInter {
     private static final ILog logger = LogManager.getLogger(ConstructorInter.class);
 
     /**
+     * 构造方法拦截器
+     *
      * An {@link InstanceConstructorInterceptor}
      * This name should only stay in {@link String}, the real {@link Class} type will trigger classloader failure.
      * If you want to know more, please check on books about Classloader or Classloader appointment mechanism.
@@ -47,6 +51,7 @@ public class ConstructorInter {
      */
     public ConstructorInter(String constructorInterceptorClassName, ClassLoader classLoader) throws PluginException {
         try {
+            // 加载拦截器
             interceptor = InterceptorInstanceLoader.load(constructorInterceptorClassName, classLoader);
         } catch (Throwable t) {
             throw new PluginException("Can't create InstanceConstructorInterceptor.", t);

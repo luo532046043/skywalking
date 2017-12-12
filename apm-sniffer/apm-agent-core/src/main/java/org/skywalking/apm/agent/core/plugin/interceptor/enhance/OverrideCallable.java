@@ -19,8 +19,20 @@
 package org.skywalking.apm.agent.core.plugin.interceptor.enhance;
 
 /**
+ * 覆写参数 Callable
+ *
+ * @see InstMethodsInterWithOverrideArgs
+ * @see StaticMethodsInterWithOverrideArgs
+ *
  * @author wusheng
  */
 public interface OverrideCallable {
+
+    /**
+     * 执行
+     *
+     * @param args 方法参数
+     * @return 返回
+     */
     Object call(Object[] args);
 }

@@ -18,19 +18,18 @@
 
 package org.skywalking.apm.agent.core.plugin.interceptor.enhance;
 
-import java.lang.reflect.Method;
-import java.util.concurrent.Callable;
-import net.bytebuddy.implementation.bind.annotation.AllArguments;
-import net.bytebuddy.implementation.bind.annotation.Origin;
-import net.bytebuddy.implementation.bind.annotation.RuntimeType;
-import net.bytebuddy.implementation.bind.annotation.SuperCall;
-import net.bytebuddy.implementation.bind.annotation.This;
-import org.skywalking.apm.agent.core.plugin.PluginException;
-import org.skywalking.apm.agent.core.plugin.loader.InterceptorInstanceLoader;
+import net.bytebuddy.implementation.bind.annotation.*;
 import org.skywalking.apm.agent.core.logging.api.ILog;
 import org.skywalking.apm.agent.core.logging.api.LogManager;
+import org.skywalking.apm.agent.core.plugin.PluginException;
+import org.skywalking.apm.agent.core.plugin.loader.InterceptorInstanceLoader;
+
+import java.lang.reflect.Method;
+import java.util.concurrent.Callable;
 
 /**
+ * 实例方法 Inter
+ *
  * The actual byte-buddy's interceptor to intercept class instance methods.
  * In this class, it provide a bridge between byte-buddy and sky-walking plugin.
  *
@@ -51,6 +50,7 @@ public class InstMethodsInter {
      */
     public InstMethodsInter(String instanceMethodsAroundInterceptorClassName, ClassLoader classLoader) {
         try {
+            // 加载拦截器
             interceptor = InterceptorInstanceLoader.load(instanceMethodsAroundInterceptorClassName, classLoader);
         } catch (Throwable t) {
             throw new PluginException("Can't create InstanceMethodsAroundInterceptor.", t);
@@ -76,6 +76,7 @@ public class InstMethodsInter {
     ) throws Throwable {
         EnhancedInstance targetObject = (EnhancedInstance)obj;
 
+        // 前置方法
         MethodInterceptResult result = new MethodInterceptResult();
         try {
             interceptor.beforeMethod(targetObject, method, allArguments, method.getParameterTypes(),
@@ -86,12 +87,15 @@ public class InstMethodsInter {
 
         Object ret = null;
         try {
+            // 已经有返回结果，不再继续
             if (!result.isContinue()) {
                 ret = result._ret();
             } else {
+            // 调用原有方法
                 ret = zuper.call();
             }
         } catch (Throwable t) {
+            // 处理异常方法
             try {
                 interceptor.handleMethodException(targetObject, method, allArguments, method.getParameterTypes(),
                     t);
@@ -100,6 +104,7 @@ public class InstMethodsInter {
             }
             throw t;
         } finally {
+            // 后置方法
             try {
                 ret = interceptor.afterMethod(targetObject, method, allArguments, method.getParameterTypes(),
                     ret);

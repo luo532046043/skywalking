@@ -19,6 +19,8 @@
 package org.skywalking.apm.agent.core.plugin.interceptor.enhance;
 
 /**
+ * 方法拦截结果
+ *
  * This is a method return value manipulator. When a interceptor's method, such as {@link
  * InstanceMethodsAroundInterceptor#beforeMethod(org.skywalking.apm.agent.core.plugin.interceptor.EnhancedClassInstanceContext,
  * InstanceMethodInvokeContext, MethodInterceptResult)}, has this as a method argument, the interceptor can manipulate
@@ -28,11 +30,20 @@ package org.skywalking.apm.agent.core.plugin.interceptor.enhance;
  * @author wusheng
  */
 public class MethodInterceptResult {
+
+    /**
+     * 是否继续执行
+     */
     private boolean isContinue = true;
 
+    /**
+     * 执行结果
+     */
     private Object ret = null;
 
     /**
+     * 设置执行结果，并标记不再继续执行
+     *
      * define the new return value.
      *
      * @param ret new return value.
