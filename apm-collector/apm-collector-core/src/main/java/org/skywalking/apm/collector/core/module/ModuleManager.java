@@ -80,8 +80,9 @@ public class ModuleManager {
         }
 
         BootstrapFlow bootstrapFlow = new BootstrapFlow(loadedModules, applicationConfiguration);
-
+        // 执行 组件启动逻辑
         bootstrapFlow.start(this, applicationConfiguration);
+        // 通知 组件服务提供者 组件已经启动完成
         bootstrapFlow.notifyAfterCompleted();
     }
 

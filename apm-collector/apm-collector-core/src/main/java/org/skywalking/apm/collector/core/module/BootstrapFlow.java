@@ -18,15 +18,18 @@
 
 package org.skywalking.apm.collector.core.module;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import org.skywalking.apm.collector.core.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 /**
+ * 组件启动流程
+ *
  * @author wu-sheng
  */
 public class BootstrapFlow {
