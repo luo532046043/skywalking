@@ -78,6 +78,11 @@ public class BootstrapFlow {
         }
     }
 
+    /**
+     * 生成 ModuleProvider 初始化顺序数组。并判断是否存在循环依赖。
+     *
+     * @throws CycleDependencyException 循环依赖异常
+     */
     private void makeSequence() throws CycleDependencyException {
         // 获得 ModuleProvider 数组
         List<ModuleProvider> allProviders = new ArrayList<>();
@@ -87,7 +92,9 @@ public class BootstrapFlow {
             });
         });
 
+        // 不断循环，直到全部移除
         while (true) {
+            // 记录当前循环时，剩余 ModuleProvider 数组数量
             int numOfToBeSequenced = allProviders.size();
             for (int i = 0; i < allProviders.size(); i++) {
                 ModuleProvider provider = allProviders.get(i);
@@ -109,18 +116,19 @@ public class BootstrapFlow {
                         }
                     }
 
-                    if (isAllRequiredModuleStarted) {
+                    if (isAllRequiredModuleStarted) { // 依赖存在，移除
                         startupSequence.add(provider);
                         allProviders.remove(i);
                         i--;
                     }
-                } else {
+                } else { // 无依赖，移除
                     startupSequence.add(provider);
                     allProviders.remove(i);
                     i--;
                 }
             }
 
+            // 当前循环无移除，说明存在循环依赖
             if (numOfToBeSequenced == allProviders.size()) {
                 StringBuilder unsequencedProviders = new StringBuilder();
                 allProviders.forEach(provider -> {
@@ -128,6 +136,8 @@ public class BootstrapFlow {
                 });
                 throw new CycleDependencyException("Exist cycle module dependencies in \n" + unsequencedProviders.substring(0, unsequencedProviders.length() - 1));
             }
+
+            // 剩余 ModuleProvider 数组已经全部移除，结束循环
             if (allProviders.size() == 0) {
                 break;
             }
