@@ -25,26 +25,38 @@ import java.util.Map;
 import java.util.ServiceLoader;
 
 /**
+ * 组件管理器
+ *
  * The <code>ModuleManager</code> takes charge of all {@link Module}s in collector.
  *
  * @author wu-sheng, peng-yongsheng
  */
 public class ModuleManager {
+
+    /**
+     * 加载的组件实例的映射
+     * key ：组件名
+     */
     private Map<String, Module> loadedModules = new HashMap<>();
 
     /**
+     * 初始化组件们
+     *
      * Init the given modules
      *
-     * @param applicationConfiguration
+     * @param applicationConfiguration Collector 配置对象
      */
     public void init(
         ApplicationConfiguration applicationConfiguration) throws ModuleNotFoundException, ProviderNotFoundException, ServiceNotProvidedException, CycleDependencyException {
+        // 加载 所有 Module 实现类的实例数组
         String[] moduleNames = applicationConfiguration.moduleList();
         ServiceLoader<Module> moduleServiceLoader = ServiceLoader.load(Module.class);
-        LinkedList<String> moduleList = new LinkedList(Arrays.asList(moduleNames));
+        // 循环 所有 Module 实现类的实例数组，添加到 loadedModules
+        LinkedList<String> moduleList = new LinkedList<>(Arrays.asList(moduleNames));
         for (Module module : moduleServiceLoader) {
             for (String moduleName : moduleNames) {
                 if (moduleName.equals(module.name())) {
+                    // 创建 组件
                     Module newInstance;
                     try {
                         newInstance = module.getClass().newInstance();
@@ -53,13 +65,16 @@ public class ModuleManager {
                     } catch (IllegalAccessException e) {
                         throw new ModuleNotFoundException(e);
                     }
+                    // 执行 组件准备阶段的逻辑
                     newInstance.prepare(this, applicationConfiguration.getModuleConfiguration(moduleName));
+                    // 添加到 loadedModules
                     loadedModules.put(moduleName, newInstance);
                     moduleList.remove(moduleName);
                 }
             }
         }
 
+        // 校验所有组件们都初始化，否则抛出异常
         if (moduleList.size() > 0) {
             throw new ModuleNotFoundException(moduleList.toString() + " missing.");
         }

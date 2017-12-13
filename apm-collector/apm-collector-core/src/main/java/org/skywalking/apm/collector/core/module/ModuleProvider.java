@@ -23,6 +23,8 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
+ * 组件服务提供者抽象类
+ *
  * The <code>ModuleProvider</code> is an implementation of a {@link Module}.
  *
  * And each module can have one or more implementation, which depends on `application.yml`
@@ -30,8 +32,15 @@ import java.util.Properties;
  * @author wu-sheng, peng-yongsheng
  */
 public abstract class ModuleProvider {
+
     private ModuleManager manager;
+    /**
+     * 组件
+     */
     private Module module;
+    /**
+     * 服务数组
+     */
     private Map<Class<? extends Service>, Service> services = new HashMap<>();
 
     public ModuleProvider() {

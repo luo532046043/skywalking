@@ -18,13 +18,16 @@
 
 package org.skywalking.apm.collector.core.module;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ServiceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ServiceLoader;
+
 /**
+ * 组件抽象类
+ *
  * A module definition.
  *
  * @author wu-sheng, peng-yongsheng
@@ -33,6 +36,12 @@ public abstract class Module {
 
     private final Logger logger = LoggerFactory.getLogger(Module.class);
 
+    /**
+     * 加载的组件服务提供者的数组
+     * key ：组件服务提供者的名字
+     *
+     * 目前一个组件只能有一个服务提供者 {@link #provider()}
+     */
     private LinkedList<ModuleProvider> loadedProviders = new LinkedList<>();
 
     /**
@@ -46,6 +55,8 @@ public abstract class Module {
     public abstract Class[] services();
 
     /**
+     * 执行组件准备阶段的逻辑，初始化它的组件服务提供者，并执行组件服务提供者的准备阶段的逻辑
+     *
      * Run the prepare stage for the module, including finding all potential providers, and asking them to prepare.
      *
      * @param moduleManager of this module
@@ -54,13 +65,16 @@ public abstract class Module {
      */
     void prepare(ModuleManager moduleManager,
         ApplicationConfiguration.ModuleConfiguration configuration) throws ProviderNotFoundException, ServiceNotProvidedException {
+        // 加载 所有 ModuleProvider 实现类的实例数组
         ServiceLoader<ModuleProvider> moduleProviderLoader = ServiceLoader.load(ModuleProvider.class);
         boolean providerExist = false;
+        // 循环 所有 ModuleProvider 实现类的实例数组，添加到 loadedProviders
         for (ModuleProvider provider : moduleProviderLoader) {
+            // 跳过不属于自己的 ModuleProvider
             if (!configuration.has(provider.name())) {
                 continue;
             }
-
+            // 创建 组件服务提供者
             providerExist = true;
             if (provider.module().equals(getClass())) {
                 ModuleProvider newProvider;
@@ -73,14 +87,17 @@ public abstract class Module {
                 }
                 newProvider.setManager(moduleManager);
                 newProvider.setModule(this);
+                // 添加到 loadedProviders
                 loadedProviders.add(newProvider);
             }
         }
 
+        // 校验有组件服务提供者初始化，否则抛出异常
         if (!providerExist) {
             throw new ProviderNotFoundException(this.name() + " module no provider exists.");
         }
 
+        // 执行组件服务提供者准备阶段的逻辑
         for (ModuleProvider moduleProvider : loadedProviders) {
             logger.info("Prepare the {} provider in {} module.", moduleProvider.name(), this.name());
             moduleProvider.prepare(configuration.getProviderConfiguration(moduleProvider.name()));
