@@ -51,6 +51,7 @@ public class BootstrapFlow {
     void start(ModuleManager moduleManager,
         ApplicationConfiguration configuration) throws ProviderNotFoundException, ModuleNotFoundException, ServiceNotProvidedException {
         for (ModuleProvider provider : startupSequence) {
+            // 校验 依赖Module 已经都存在
             String[] requiredModules = provider.requiredModules();
             if (requiredModules != null) {
                 for (String module : requiredModules) {
@@ -60,20 +61,25 @@ public class BootstrapFlow {
                     }
                 }
             }
+
+            // 校验 ModuleProvider 包含的 Service 们都创建成功。
             logger.info("start the provider {} in {} module.", provider.name(), provider.getModuleName());
             provider.requiredCheck(provider.getModule().services());
 
+            // 执行 ModuleProvider 启动阶段逻辑
             provider.start(configuration.getModuleConfiguration(provider.getModuleName()).getProviderConfiguration(provider.name()));
         }
     }
 
     void notifyAfterCompleted() throws ProviderNotFoundException, ModuleNotFoundException, ServiceNotProvidedException {
         for (ModuleProvider provider : startupSequence) {
+            // 执行 ModuleProvider 启动完成阶段的逻辑
             provider.notifyAfterCompleted();
         }
     }
 
     private void makeSequence() throws CycleDependencyException {
+        // 获得 ModuleProvider 数组
         List<ModuleProvider> allProviders = new ArrayList<>();
         loadedModules.forEach((moduleName, module) -> {
             module.providers().forEach(provider -> {

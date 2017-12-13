@@ -71,12 +71,12 @@ public abstract class Module {
         // 循环 所有 ModuleProvider 实现类的实例数组，添加到 loadedProviders
         for (ModuleProvider provider : moduleProviderLoader) {
             // 跳过不属于自己的 ModuleProvider
-            if (!configuration.has(provider.name())) {
+            if (!configuration.has(provider.name())) { // 在配置中
                 continue;
             }
             // 创建 组件服务提供者
             providerExist = true;
-            if (provider.module().equals(getClass())) {
+            if (provider.module().equals(getClass())) { // 类型匹配
                 ModuleProvider newProvider;
                 try {
                     newProvider = provider.getClass().newInstance();
