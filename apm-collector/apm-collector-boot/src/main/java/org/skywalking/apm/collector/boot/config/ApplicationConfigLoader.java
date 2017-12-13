@@ -18,17 +18,20 @@
 
 package org.skywalking.apm.collector.boot.config;
 
-import java.io.FileNotFoundException;
-import java.io.Reader;
-import java.util.Map;
-import java.util.Properties;
 import org.skywalking.apm.collector.core.module.ApplicationConfiguration;
 import org.skywalking.apm.collector.core.util.ResourceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
+import java.io.FileNotFoundException;
+import java.io.Reader;
+import java.util.Map;
+import java.util.Properties;
+
 /**
+ * {@link ApplicationConfiguration} 加载器
+ *
  * @author peng-yongsheng
  */
 public class ApplicationConfigLoader implements ConfigLoader<ApplicationConfiguration> {
@@ -38,20 +41,27 @@ public class ApplicationConfigLoader implements ConfigLoader<ApplicationConfigur
     private final Yaml yaml = new Yaml();
 
     @Override public ApplicationConfiguration load() throws ConfigFileNotFoundException {
+        // 创建 Collector配置对象
         ApplicationConfiguration configuration = new ApplicationConfiguration();
+        // 加载 自定义配置
         this.loadConfig(configuration);
+        // 加载 默认配置
         this.loadDefaultConfig(configuration);
         return configuration;
     }
 
     private void loadConfig(ApplicationConfiguration configuration) throws ConfigFileNotFoundException {
         try {
+            // 从 YAML 配置，读取模块配置映射
             Reader applicationReader = ResourceUtils.read("application.yml");
             Map<String, Map<String, Map<String, ?>>> moduleConfig = yaml.loadAs(applicationReader, Map.class);
+            // 循环 模块配置映射 ，添加 模块配置对象 到 Collector配置对象
             moduleConfig.forEach((moduleName, providerConfig) -> {
                 if (providerConfig.size() > 0) {
                     logger.info("Get a module define from application.yml, module name: {}", moduleName);
+                    // 创建 模块配置对象
                     ApplicationConfiguration.ModuleConfiguration moduleConfiguration = configuration.addModule(moduleName);
+                    // 循环 模块服务提供者配置映射
                     providerConfig.forEach((name, propertiesConfig) -> {
                         logger.info("Get a provider define belong to {} module, provider name: {}", moduleName, name);
                         Properties properties = new Properties();
@@ -61,6 +71,7 @@ public class ApplicationConfigLoader implements ConfigLoader<ApplicationConfigur
                                 logger.info("The property with key: {}, value: {}, in {} provider", key, value, name);
                             });
                         }
+                        // 添加 模块服务提供者配置对象
                         moduleConfiguration.addProviderConfiguration(name, properties);
                     });
                 } else {
@@ -74,17 +85,21 @@ public class ApplicationConfigLoader implements ConfigLoader<ApplicationConfigur
 
     private void loadDefaultConfig(ApplicationConfiguration configuration) throws ConfigFileNotFoundException {
         try {
+            // 从 YAML 配置，读取模块配置映射
             Reader applicationReader = ResourceUtils.read("application-default.yml");
             Map<String, Map<String, Map<String, ?>>> moduleConfig = yaml.loadAs(applicationReader, Map.class);
+            // 循环 模块配置映射 ，添加 模块配置对象 到 Collector配置对象
             moduleConfig.forEach((moduleName, providerConfig) -> {
-                if (!configuration.has(moduleName)) {
+                if (!configuration.has(moduleName)) { // 😈 模块配置不存在，使用默认配置
                     logger.warn("The {} module did't define in application.yml, use default", moduleName);
+                    // 创建 模块配置对象
                     ApplicationConfiguration.ModuleConfiguration moduleConfiguration = configuration.addModule(moduleName);
                     providerConfig.forEach((name, propertiesConfig) -> {
                         Properties properties = new Properties();
                         if (propertiesConfig != null) {
                             propertiesConfig.forEach(properties::put);
                         }
+                        // 添加 模块服务提供者配置对象
                         moduleConfiguration.addProviderConfiguration(name, properties);
                     });
                 }

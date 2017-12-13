@@ -22,11 +22,18 @@ import java.util.HashMap;
 import java.util.Properties;
 
 /**
+ * Collector 配置类
+ *
  * Modulization configurations. The {@link ModuleManager} is going to start, lookup, start modules based on this.
  *
  * @author wu-sheng, peng-yongsheng
  */
 public class ApplicationConfiguration {
+
+    /**
+     * 组件配置的映射
+     * key ：组件名
+     */
     private HashMap<String, ModuleConfiguration> modules = new HashMap<>();
 
     public String[] moduleList() {
@@ -48,9 +55,16 @@ public class ApplicationConfiguration {
     }
 
     /**
+     * 组件配置类
+     *
      * The configurations about a certain module.
      */
     public class ModuleConfiguration {
+
+        /**
+         * 组件服务提供者配置的映射
+         * key ：组件服务提供者名
+         */
         private HashMap<String, ProviderConfiguration> providers = new HashMap<>();
 
         private ModuleConfiguration() {
@@ -72,9 +86,15 @@ public class ApplicationConfiguration {
     }
 
     /**
+     * 组件服务提供者配置类
+     *
      * The configuration about a certain provider of a module.
      */
     public class ProviderConfiguration {
+
+        /**
+         * 属性集合
+         */
         private Properties properties;
 
         ProviderConfiguration(Properties properties) {

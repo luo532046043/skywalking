@@ -29,6 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Collector 启动入口
+ *
  * @author peng-yongsheng
  */
 public class CollectorBootStartUp {
@@ -39,7 +41,9 @@ public class CollectorBootStartUp {
         ApplicationConfigLoader configLoader = new ApplicationConfigLoader();
         ModuleManager manager = new ModuleManager();
         try {
+            // 加载 配置
             ApplicationConfiguration applicationConfiguration = configLoader.load();
+            // 初始化 组件
             manager.init(applicationConfiguration);
         } catch (ConfigFileNotFoundException e) {
             logger.error(e.getMessage(), e);
@@ -51,6 +55,7 @@ public class CollectorBootStartUp {
             logger.error(e.getMessage(), e);
         }
 
+        // sleep ，等待 Jetty Server 启动完成
         try {
             Thread.sleep(60000);
         } catch (InterruptedException e) {
