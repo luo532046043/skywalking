@@ -54,7 +54,7 @@ public class ModuleManager {
         // 循环 所有 Module 实现类的实例数组，添加到 loadedModules
         LinkedList<String> moduleList = new LinkedList<>(Arrays.asList(moduleNames));
         for (Module module : moduleServiceLoader) {
-            for (String moduleName : moduleNames) {
+            for (String moduleName : moduleNames) { // 只创建配置中的组件
                 if (moduleName.equals(module.name())) {
                     // 创建 组件
                     Module newInstance;
