@@ -22,8 +22,18 @@ import org.skywalking.apm.collector.core.module.Service;
 import org.skywalking.apm.collector.server.Server;
 
 /**
+ * gRPC Server 管理器服务接口
+ *
  * @author peng-yongsheng
  */
 public interface GRPCManagerService extends Service {
+
+    /**
+     * 创建 gRPC Server ，若不存在
+     *
+     * @param host host
+     * @param port 端口
+     * @return gRPC Server
+     */
     Server createIfAbsent(String host, int port);
 }
