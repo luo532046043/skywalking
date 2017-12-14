@@ -22,8 +22,17 @@ import org.skywalking.apm.collector.cluster.ClusterModuleListener;
 import org.skywalking.apm.collector.core.module.Service;
 
 /**
+ * 组件监听器服务
+ *
  * @author peng-yongsheng
  */
 public interface ModuleListenerService extends Service {
+
+    /**
+     * 添加监听器
+     *
+     * @param listener 监听器
+     */
     void addListener(ClusterModuleListener listener);
+
 }

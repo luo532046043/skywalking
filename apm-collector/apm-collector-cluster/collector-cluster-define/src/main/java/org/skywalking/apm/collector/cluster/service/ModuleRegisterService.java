@@ -22,8 +22,19 @@ import org.skywalking.apm.collector.cluster.ModuleRegistration;
 import org.skywalking.apm.collector.core.module.Service;
 
 /**
+ * 模块注册服务
+ *
  * @author peng-yongsheng
  */
 public interface ModuleRegisterService extends Service {
+
+    /**
+     * 注册模块注册信息
+     *
+     * @param moduleName 模块名字
+     * @param providerName 服务提供者名字
+     * @param registration 模块注册信息
+     */
     void register(String moduleName, String providerName, ModuleRegistration registration);
+
 }

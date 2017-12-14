@@ -22,16 +22,24 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * 集群组件监听器
+ *
  * @author peng-yongsheng
  */
 public abstract class ClusterModuleListener {
 
+    /**
+     * 地址数组
+     */
     private Set<String> addresses;
 
     public ClusterModuleListener() {
         addresses = new HashSet<>();
     }
 
+    /**
+     * @return 监听的路径
+     */
     public abstract String path();
 
     public final void addAddress(String address) {
@@ -46,7 +54,18 @@ public abstract class ClusterModuleListener {
         return addresses;
     }
 
+    /**
+     * 通知服务加入
+     *
+     * @param serverAddress 地址
+     */
     public abstract void serverJoinNotify(String serverAddress);
 
+    /**
+     * 通知服务下线
+     *
+     * @param serverAddress 地址
+     */
     public abstract void serverQuitNotify(String serverAddress);
+
 }

@@ -19,6 +19,8 @@
 package org.skywalking.apm.collector.cluster;
 
 /**
+ * 模块注册信息
+ *
  * @author peng-yongsheng
  */
 public abstract class ModuleRegistration {

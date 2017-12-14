@@ -23,6 +23,8 @@ import org.skywalking.apm.collector.cluster.service.ModuleRegisterService;
 import org.skywalking.apm.collector.cluster.zookeeper.ClusterZKDataMonitor;
 
 /**
+ * 基于 Zookeeper 的模块注册服务实现类
+ *
  * @author peng-yongsheng
  */
 public class ZookeeperModuleRegisterService implements ModuleRegisterService {

@@ -18,7 +18,6 @@
 
 package org.skywalking.apm.collector.cluster.zookeeper;
 
-import java.util.Properties;
 import org.skywalking.apm.collector.client.zookeeper.ZookeeperClient;
 import org.skywalking.apm.collector.client.zookeeper.ZookeeperClientException;
 import org.skywalking.apm.collector.cluster.ClusterModule;
@@ -34,7 +33,11 @@ import org.skywalking.apm.collector.core.module.ServiceNotProvidedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Properties;
+
 /**
+ * 基于 Zookeeper 的集群管理服务提供者
+ *
  * @author peng-yongsheng
  */
 public class ClusterModuleZookeeperProvider extends ModuleProvider {
@@ -56,19 +59,23 @@ public class ClusterModuleZookeeperProvider extends ModuleProvider {
     }
 
     @Override public void prepare(Properties config) throws ServiceNotProvidedException {
+        // 创建 ClusterZKDataMonitor
         dataMonitor = new ClusterZKDataMonitor();
 
+        // 创建 ZookeeperClient
         final String hostPort = config.getProperty(HOST_PORT);
         final int sessionTimeout = (Integer)config.get(SESSION_TIMEOUT);
         zookeeperClient = new ZookeeperClient(hostPort, sessionTimeout, dataMonitor);
         dataMonitor.setClient(zookeeperClient);
 
+        // 创建并注册 ZookeeperModuleListenerService / ZookeeperModuleRegisterService 对象
         this.registerServiceImplementation(ModuleListenerService.class, new ZookeeperModuleListenerService(dataMonitor));
         this.registerServiceImplementation(ModuleRegisterService.class, new ZookeeperModuleRegisterService(dataMonitor));
     }
 
     @Override public void start(Properties config) throws ServiceNotProvidedException {
         try {
+            // 初始化 ZookeeperClient
             zookeeperClient.initialize();
         } catch (ZookeeperClientException e) {
             logger.error(e.getMessage(), e);
@@ -77,6 +84,7 @@ public class ClusterModuleZookeeperProvider extends ModuleProvider {
 
     @Override public void notifyAfterCompleted() throws ServiceNotProvidedException {
         try {
+            // 启动 ClusterZKDataMonitor
             dataMonitor.start();
         } catch (CollectorException e) {
             throw new UnexpectedException(e.getMessage());

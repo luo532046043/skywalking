@@ -22,9 +22,15 @@ import org.skywalking.apm.collector.client.Client;
 import org.skywalking.apm.collector.client.ClientException;
 
 /**
+ * 数据监视器接口
+ *
  * @author peng-yongsheng
  */
 public interface DataMonitor {
+
+    /**
+     * 基础目录
+     */
     String BASE_CATALOG = "/skywalking";
 
     void setClient(Client client);

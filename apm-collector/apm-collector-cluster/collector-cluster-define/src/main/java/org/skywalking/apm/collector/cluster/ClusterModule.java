@@ -24,6 +24,8 @@ import org.skywalking.apm.collector.core.module.Module;
 import org.skywalking.apm.collector.core.module.Service;
 
 /**
+ * 集群管理 Module
+ *
  * @author peng-yongsheng
  */
 public class ClusterModule extends Module {
