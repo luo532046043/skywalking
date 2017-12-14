@@ -21,6 +21,8 @@ package org.skywalking.apm.collector.server.grpc;
 import org.skywalking.apm.collector.server.ServerHandler;
 
 /**
+ * GRPC 处理器
+ *
  * @author peng-yongsheng
  */
 public interface GRPCHandler extends ServerHandler {

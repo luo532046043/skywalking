@@ -18,8 +18,6 @@
 
 package org.skywalking.apm.collector.client.zookeeper;
 
-import java.io.IOException;
-import java.util.List;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.Watcher;
@@ -30,7 +28,12 @@ import org.skywalking.apm.collector.client.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.util.List;
+
 /**
+ * Zookeeper 客户端
+ *
  * @author peng-yongsheng
  */
 public class ZookeeperClient implements Client {

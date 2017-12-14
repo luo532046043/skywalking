@@ -19,17 +19,40 @@
 package org.skywalking.apm.collector.server;
 
 /**
+ * Server 接口
+ *
  * @author peng-yongsheng
  */
 public interface Server {
 
+    /**
+     * @return 地址
+     */
     String hostPort();
 
+    /**
+     * @return 服务器分类
+     */
     String serverClassify();
 
+    /**
+     * 初始化服务器
+     *
+     * @throws ServerException 服务器异常
+     */
     void initialize() throws ServerException;
 
+    /**
+     * 启动服务器
+     *
+     * @throws ServerException 服务器异常
+     */
     void start() throws ServerException;
 
+    /**
+     * 添加请求处理器
+     *
+     * @param handler 处理器
+     */
     void addHandler(ServerHandler handler);
 }

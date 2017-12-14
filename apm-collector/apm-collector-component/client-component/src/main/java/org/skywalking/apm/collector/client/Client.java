@@ -19,10 +19,22 @@
 package org.skywalking.apm.collector.client;
 
 /**
+ * 客户端接口
+ *
  * @author peng-yongsheng
  */
 public interface Client {
+
+    /**
+     * 初始化
+     *
+     * @throws ClientException 客户端异常时
+     */
     void initialize() throws ClientException;
 
+    /**
+     * 关闭
+     */
     void shutdown();
+
 }

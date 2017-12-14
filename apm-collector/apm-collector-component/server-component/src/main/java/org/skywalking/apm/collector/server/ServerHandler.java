@@ -19,6 +19,8 @@
 package org.skywalking.apm.collector.server;
 
 /**
+ * Server 请求处理器
+ *
  * @author peng-yongsheng
  */
 public interface ServerHandler {

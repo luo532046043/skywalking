@@ -19,25 +19,27 @@
 package org.skywalking.apm.collector.server.jetty;
 
 import com.google.gson.JsonElement;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Enumeration;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.skywalking.apm.collector.core.util.ObjectUtils;
 import org.skywalking.apm.collector.server.ServerHandler;
 
+import javax.servlet.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Enumeration;
+
 /**
+ * Jetty 请求处理器
+ *
  * @author peng-yongsheng
  */
 public abstract class JettyHandler extends HttpServlet implements ServerHandler {
 
+    /**
+     * @return 路径定义
+     */
     public abstract String pathSpec();
 
     @Override
@@ -49,6 +51,13 @@ public abstract class JettyHandler extends HttpServlet implements ServerHandler 
         }
     }
 
+    /**
+     * 处理 Get 请求，返回 JSON
+     *
+     * @param req 请求
+     * @return JSON
+     * @throws ArgumentsParseException 当参数解析异常
+     */
     protected abstract JsonElement doGet(HttpServletRequest req) throws ArgumentsParseException;
 
     @Override
@@ -60,6 +69,13 @@ public abstract class JettyHandler extends HttpServlet implements ServerHandler 
         }
     }
 
+    /**
+     * 处理 Post 请求，返回 JSON
+     *
+     * @param req 请求
+     * @return JSON
+     * @throws ArgumentsParseException 当参数解析异常
+     */
     protected abstract JsonElement doPost(HttpServletRequest req) throws ArgumentsParseException;
 
     @Override
@@ -148,6 +164,13 @@ public abstract class JettyHandler extends HttpServlet implements ServerHandler 
         return super.getServletName();
     }
 
+    /**
+     * 响应成功
+     *
+     * @param response 响应
+     * @param resJson JSON
+     * @throws IOException 当 IO 发生异常
+     */
     private void reply(HttpServletResponse response, JsonElement resJson) throws IOException {
         response.setContentType("text/json");
         response.setCharacterEncoding("utf-8");
@@ -161,6 +184,14 @@ public abstract class JettyHandler extends HttpServlet implements ServerHandler 
         out.close();
     }
 
+    /**
+     * 响应错误
+     *
+     * @param response 响应
+     * @param errorMessage 消息
+     * @param status 状态码
+     * @throws IOException 当 IO 发生异常
+     */
     private void replyError(HttpServletResponse response, String errorMessage, int status) throws IOException {
         response.setContentType("text/plain");
         response.setCharacterEncoding("utf-8");
