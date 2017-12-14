@@ -29,6 +29,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 /**
+ * Jetty 管理器服务实现类
+ *
  * @author peng-yongsheng
  */
 public class JettyManagerServiceImpl implements JettyManagerService {
