@@ -18,20 +18,27 @@
 
 package org.skywalking.apm.collector.grpc.manager.service;
 
-import java.util.Map;
 import org.skywalking.apm.collector.server.Server;
 import org.skywalking.apm.collector.server.ServerException;
 import org.skywalking.apm.collector.server.grpc.GRPCServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
+
 /**
+ * gRPC Server 管理器服务实现类
+ *
  * @author peng-yongsheng
  */
 public class GRPCManagerServiceImpl implements GRPCManagerService {
 
     private final Logger logger = LoggerFactory.getLogger(GRPCManagerServiceImpl.class);
 
+    /**
+     * gRPC 服务器的映射
+     * key ：host + port
+     */
     private final Map<String, GRPCServer> servers;
 
     public GRPCManagerServiceImpl(Map<String, GRPCServer> servers) {
