@@ -40,7 +40,7 @@ public interface JettyManagerService extends Service {
     Server createIfAbsent(String host, int port, String contextPath);
 
     /**
-     * 添加
+     * 添加 Jetty Server 请求处理器
      *
      * @param host host
      * @param port 端口
