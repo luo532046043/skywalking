@@ -22,6 +22,8 @@ import org.skywalking.apm.collector.core.module.Module;
 import org.skywalking.apm.collector.grpc.manager.service.GRPCManagerService;
 
 /**
+ * gRPC Server 管理器组件
+ *
  * @author peng-yongsheng
  */
 public class GRPCManagerModule extends Module {
