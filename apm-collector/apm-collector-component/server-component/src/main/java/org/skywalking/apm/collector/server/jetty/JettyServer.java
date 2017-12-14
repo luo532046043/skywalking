@@ -18,8 +18,6 @@
 
 package org.skywalking.apm.collector.server.jetty;
 
-import java.net.InetSocketAddress;
-import javax.servlet.http.HttpServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.servlet.ServletMapping;
@@ -28,6 +26,9 @@ import org.skywalking.apm.collector.server.ServerException;
 import org.skywalking.apm.collector.server.ServerHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServlet;
+import java.net.InetSocketAddress;
 
 /**
  * @author peng-yongsheng
@@ -57,8 +58,10 @@ public class JettyServer implements Server {
     }
 
     @Override public void initialize() throws ServerException {
+        // 创建 Jetty Server
         server = new org.eclipse.jetty.server.Server(new InetSocketAddress(host, port));
 
+        // 创建 Jetty ServletContextHandler
         servletContextHandler = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
         servletContextHandler.setContextPath(contextPath);
         logger.info("http server root context path: {}", contextPath);
@@ -67,8 +70,10 @@ public class JettyServer implements Server {
     }
 
     @Override public void addHandler(ServerHandler handler) {
+        // 创建 ServletHolder
         ServletHolder servletHolder = new ServletHolder();
         servletHolder.setServlet((HttpServlet)handler);
+        // 添加到 Jetty ServletContextHandler
         servletContextHandler.addServlet(servletHolder, ((JettyHandler)handler).pathSpec());
     }
 
