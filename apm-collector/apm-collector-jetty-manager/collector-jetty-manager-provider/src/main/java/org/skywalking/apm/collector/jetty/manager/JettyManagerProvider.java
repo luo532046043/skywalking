@@ -18,9 +18,6 @@
 
 package org.skywalking.apm.collector.jetty.manager;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 import org.skywalking.apm.collector.core.module.Module;
 import org.skywalking.apm.collector.core.module.ModuleProvider;
 import org.skywalking.apm.collector.core.module.ServiceNotProvidedException;
@@ -31,7 +28,13 @@ import org.skywalking.apm.collector.server.jetty.JettyServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
 /**
+ * Jetty 管理器组件服务提供者
+ *
  * @author peng-yongsheng
  */
 public class JettyManagerProvider extends ModuleProvider {
@@ -53,10 +56,10 @@ public class JettyManagerProvider extends ModuleProvider {
     }
 
     @Override public void start(Properties config) throws ServiceNotProvidedException {
-
     }
 
     @Override public void notifyAfterCompleted() throws ServiceNotProvidedException {
+        // 逐个启动服务器
         servers.values().forEach(server -> {
             try {
                 server.start();

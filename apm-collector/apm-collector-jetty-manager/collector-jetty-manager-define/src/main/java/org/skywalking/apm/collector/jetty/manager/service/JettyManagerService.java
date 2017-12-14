@@ -23,10 +23,28 @@ import org.skywalking.apm.collector.server.Server;
 import org.skywalking.apm.collector.server.ServerHandler;
 
 /**
+ * Jetty 管理器服务接口
+ *
  * @author peng-yongsheng
  */
 public interface JettyManagerService extends Service {
+
+    /**
+     * 创建 Jetty Server ，若不存在
+     *
+     * @param host host
+     * @param port 端口
+     * @param contextPath contextPath
+     * @return Jetty Server
+     */
     Server createIfAbsent(String host, int port, String contextPath);
 
+    /**
+     * 添加
+     *
+     * @param host host
+     * @param port 端口
+     * @param serverHandler Jetty Server 请求处理器
+     */
     void addHandler(String host, int port, ServerHandler serverHandler);
 }
