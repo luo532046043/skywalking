@@ -18,9 +18,6 @@
 
 package org.skywalking.apm.collector.grpc.manager;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 import org.skywalking.apm.collector.core.module.Module;
 import org.skywalking.apm.collector.core.module.ModuleProvider;
 import org.skywalking.apm.collector.core.module.ServiceNotProvidedException;
@@ -31,7 +28,13 @@ import org.skywalking.apm.collector.server.grpc.GRPCServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
 /**
+ * gRPC Server 管理器组件服务提供者
+ *
  * @author peng-yongsheng
  */
 public class GRPCManagerProvider extends ModuleProvider {
