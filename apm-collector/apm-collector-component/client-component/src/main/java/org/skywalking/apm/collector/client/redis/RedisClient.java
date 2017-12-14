@@ -23,6 +23,8 @@ import org.skywalking.apm.collector.client.ClientException;
 import redis.clients.jedis.Jedis;
 
 /**
+ * Redis 客户端
+ *
  * @author peng-yongsheng
  */
 public class RedisClient implements Client {
