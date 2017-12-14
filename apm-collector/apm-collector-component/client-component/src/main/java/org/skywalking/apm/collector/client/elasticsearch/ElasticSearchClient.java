@@ -18,11 +18,6 @@
 
 package org.skywalking.apm.collector.client.elasticsearch;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
@@ -45,13 +40,24 @@ import org.skywalking.apm.collector.client.ClientException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
 /**
+ * Elastic Search 客户端
+ *
  * @author peng-yongsheng
  */
 public class ElasticSearchClient implements Client {
 
     private final Logger logger = LoggerFactory.getLogger(ElasticSearchClient.class);
 
+    /**
+     * 真正的 Elastic Search Client
+     */
     private org.elasticsearch.client.Client client;
 
     private final String clusterName;
@@ -72,8 +78,10 @@ public class ElasticSearchClient implements Client {
             .put("client.transport.sniff", clusterTransportSniffer)
             .build();
 
+        // 创建真正的 Elastic Search Client
         client = new PreBuiltTransportClient(settings);
 
+        // 设置通信地址
         List<AddressPairs> pairsList = parseClusterNodes(clusterNodes);
         for (AddressPairs pairs : pairsList) {
             try {
@@ -88,6 +96,12 @@ public class ElasticSearchClient implements Client {
 
     }
 
+    /**
+     * 解析地址字符串
+     *
+     * @param nodes 地址字符串
+     * @return 地址数组
+     */
     private List<AddressPairs> parseClusterNodes(String nodes) {
         List<AddressPairs> pairsList = new LinkedList<>();
         logger.info("elasticsearch cluster nodes: {}", nodes);
@@ -102,6 +116,9 @@ public class ElasticSearchClient implements Client {
         return pairsList;
     }
 
+    /**
+     * 地址
+     */
     class AddressPairs {
         private String host;
         private Integer port;
