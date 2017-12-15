@@ -48,7 +48,14 @@ import static org.skywalking.apm.agent.core.conf.RemoteDownstreamConfig.Collecto
  */
 public class DiscoveryRestServiceClient implements Runnable {
     private static final ILog logger = LogManager.getLogger(DiscoveryRestServiceClient.class);
+
+    /**
+     * Collector Naming Server 列表
+     */
     private String[] serverList;
+    /**
+     * 选择的 {@link #serverList} 的编号
+     */
     private volatile int selectedServer = -1;
 
     public DiscoveryRestServiceClient() {
@@ -57,12 +64,12 @@ public class DiscoveryRestServiceClient implements Runnable {
             return;
         }
 
+        // 随机选择一个 Collector Naming Server
         serverList = Config.Collector.SERVERS.split(",");
         Random r = new Random();
         if (serverList.length > 0) {
             selectedServer = r.nextInt(serverList.length);
         }
-
     }
 
     @Override
@@ -81,10 +88,11 @@ public class DiscoveryRestServiceClient implements Runnable {
             if (httpGet != null) {
                 CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
                 int statusCode = httpResponse.getStatusLine().getStatusCode();
-                if (200 != statusCode) {
+                if (200 != statusCode) { // 切换下一个 Collector Naming Server
                     findBackupServer();
                     throw new RESTResponseStatusError(statusCode);
                 } else {
+                    // 处理返回结果
                     JsonArray serverList = new Gson().fromJson(EntityUtils.toString(httpResponse.getEntity()), JsonArray.class);
                     if (serverList != null && serverList.size() > 0) {
                         LinkedList<String> newServerList = new LinkedList<String>();
@@ -92,6 +100,7 @@ public class DiscoveryRestServiceClient implements Runnable {
                             newServerList.add(element.getAsString());
                         }
 
+                        // 若有变化，进行更新
                         if (!isListEquals(newServerList, GRPC_SERVERS)) {
                             GRPC_SERVERS = newServerList;
                             logger.debug("Refresh GRPC server list: {}", GRPC_SERVERS);
@@ -103,6 +112,7 @@ public class DiscoveryRestServiceClient implements Runnable {
                 }
             }
         } catch (IOException e) {
+            // 切换下一个 Collector Naming Server
             findBackupServer();
             throw e;
         } finally {
