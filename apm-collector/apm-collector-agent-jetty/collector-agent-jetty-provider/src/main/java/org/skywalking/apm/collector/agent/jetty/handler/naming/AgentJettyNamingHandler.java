@@ -20,12 +20,15 @@ package org.skywalking.apm.collector.agent.jetty.handler.naming;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import java.util.Set;
-import javax.servlet.http.HttpServletRequest;
 import org.skywalking.apm.collector.server.jetty.ArgumentsParseException;
 import org.skywalking.apm.collector.server.jetty.JettyHandler;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Set;
+
 /**
+ * 基于 Jetty 的命名处理器
+ *
  * @author peng-yongsheng
  */
 public class AgentJettyNamingHandler extends JettyHandler {

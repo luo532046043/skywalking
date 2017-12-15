@@ -22,7 +22,7 @@ import org.skywalking.apm.collector.core.module.Service;
 import org.skywalking.apm.collector.server.ServerHandler;
 
 /**
- * 命名处理器注册服务
+ * 命名处理器注册服务接口
  *
  * @author peng-yongsheng
  */
