@@ -22,8 +22,16 @@ import org.skywalking.apm.collector.core.module.Service;
 import org.skywalking.apm.collector.server.ServerHandler;
 
 /**
+ * 命名处理器注册服务
+ *
  * @author peng-yongsheng
  */
 public interface NamingHandlerRegisterService extends Service {
+
+    /**
+     * 注册 Server 请求处理器
+     *
+     * @param namingHandler Server 请求处理器
+     */
     void register(ServerHandler namingHandler);
 }

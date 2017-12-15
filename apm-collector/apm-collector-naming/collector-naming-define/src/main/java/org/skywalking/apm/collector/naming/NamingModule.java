@@ -23,6 +23,8 @@ import org.skywalking.apm.collector.core.module.Service;
 import org.skywalking.apm.collector.naming.service.NamingHandlerRegisterService;
 
 /**
+ * 命名 Module
+ *
  * @author peng-yongsheng
  */
 public class NamingModule extends Module {

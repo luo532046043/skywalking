@@ -18,7 +18,6 @@
 
 package org.skywalking.apm.collector.naming.jetty;
 
-import java.util.Properties;
 import org.skywalking.apm.collector.cluster.ClusterModule;
 import org.skywalking.apm.collector.core.module.Module;
 import org.skywalking.apm.collector.core.module.ModuleProvider;
@@ -29,7 +28,11 @@ import org.skywalking.apm.collector.naming.NamingModule;
 import org.skywalking.apm.collector.naming.jetty.service.NamingJettyHandlerRegisterService;
 import org.skywalking.apm.collector.naming.service.NamingHandlerRegisterService;
 
+import java.util.Properties;
+
 /**
+ * 基于 Jetty 的命名组件服务提供者实现类
+ *
  * @author peng-yongsheng
  */
 public class NamingModuleJettyProvider extends ModuleProvider {
@@ -57,6 +60,7 @@ public class NamingModuleJettyProvider extends ModuleProvider {
         Integer port = (Integer)config.get(PORT);
         String contextPath = config.getProperty(CONTEXT_PATH);
 
+        // 创建 Jetty Server
         JettyManagerService managerService = getManager().find(JettyManagerModule.NAME).getService(JettyManagerService.class);
         managerService.createIfAbsent(host, port, contextPath);
     }

@@ -27,6 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * 基于 Jetty 的命名处理器注册服务实现类
+ *
  * @author peng-yongsheng
  */
 public class NamingJettyHandlerRegisterService implements NamingHandlerRegisterService {
@@ -47,4 +49,5 @@ public class NamingJettyHandlerRegisterService implements NamingHandlerRegisterS
         JettyManagerService managerService = moduleManager.find(JettyManagerModule.NAME).getService(JettyManagerService.class);
         managerService.addHandler(this.host, this.port, namingHandler);
     }
+
 }

@@ -18,14 +18,17 @@
 
 package org.skywalking.apm.agent.core.remote;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 import org.skywalking.apm.agent.core.boot.BootService;
 import org.skywalking.apm.agent.core.boot.DefaultNamedThreadFactory;
 import org.skywalking.apm.agent.core.conf.Config;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
 /**
+ * Collector 发现服务
+ *
  * The <code>CollectorDiscoveryService</code> is responsible for start {@link DiscoveryRestServiceClient}.
  *
  * @author wusheng
@@ -54,4 +57,5 @@ public class CollectorDiscoveryService implements BootService {
     public void shutdown() throws Throwable {
         future.cancel(true);
     }
+
 }

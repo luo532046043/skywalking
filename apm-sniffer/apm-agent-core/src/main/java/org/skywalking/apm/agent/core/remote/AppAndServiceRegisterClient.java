@@ -19,10 +19,6 @@
 package org.skywalking.apm.agent.core.remote;
 
 import io.grpc.ManagedChannel;
-import java.util.UUID;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 import org.skywalking.apm.agent.core.boot.BootService;
 import org.skywalking.apm.agent.core.boot.DefaultNamedThreadFactory;
 import org.skywalking.apm.agent.core.boot.ServiceManager;
@@ -34,22 +30,21 @@ import org.skywalking.apm.agent.core.context.trace.TraceSegment;
 import org.skywalking.apm.agent.core.dictionary.ApplicationDictionary;
 import org.skywalking.apm.agent.core.dictionary.DictionaryUtil;
 import org.skywalking.apm.agent.core.dictionary.OperationNameDictionary;
-import org.skywalking.apm.agent.core.os.OSUtil;
 import org.skywalking.apm.agent.core.logging.api.ILog;
 import org.skywalking.apm.agent.core.logging.api.LogManager;
-import org.skywalking.apm.network.proto.Application;
-import org.skywalking.apm.network.proto.ApplicationInstance;
-import org.skywalking.apm.network.proto.ApplicationInstanceHeartbeat;
-import org.skywalking.apm.network.proto.ApplicationInstanceMapping;
-import org.skywalking.apm.network.proto.ApplicationInstanceRecover;
-import org.skywalking.apm.network.proto.ApplicationMapping;
-import org.skywalking.apm.network.proto.ApplicationRegisterServiceGrpc;
-import org.skywalking.apm.network.proto.InstanceDiscoveryServiceGrpc;
-import org.skywalking.apm.network.proto.ServiceNameDiscoveryServiceGrpc;
+import org.skywalking.apm.agent.core.os.OSUtil;
+import org.skywalking.apm.network.proto.*;
+
+import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import static org.skywalking.apm.agent.core.remote.GRPCChannelStatus.CONNECTED;
 
 /**
+ *
+ *
  * @author wusheng
  */
 public class AppAndServiceRegisterClient implements BootService, GRPCChannelListener, Runnable, TracingContextListener {
