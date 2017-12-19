@@ -27,6 +27,6 @@ public class DirectWay<INPUT, OUTPUT> extends WayToNode<INPUT, OUTPUT> {
     }
 
     @Override protected void in(INPUT o) {
-        out(o);
+        super.out(o);
     }
 }

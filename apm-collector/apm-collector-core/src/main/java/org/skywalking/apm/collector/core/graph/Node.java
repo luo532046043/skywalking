@@ -19,12 +19,21 @@
 package org.skywalking.apm.collector.core.graph;
 
 /**
+ * 节点
+ *
  * The <code>Node</code> in the graph with explicit INPUT and OUTPUT types.
  *
  * @author peng-yongsheng, wu-sheng
  */
 public final class Node<INPUT, OUTPUT> {
+
+    /**
+     * 节点处理器
+     */
     private final NodeProcessor nodeProcessor;
+    /**
+     * 包含 WayToNode 数组，即 Node 提交数据给 Next 的 Node 数组的方式。
+     */
     private final Next<OUTPUT> next;
     private final Graph graph;
 
@@ -41,8 +50,11 @@ public final class Node<INPUT, OUTPUT> {
 
     public final <NEXTOUTPUT> Node<OUTPUT, NEXTOUTPUT> addNext(WayToNode<OUTPUT, NEXTOUTPUT> way) {
         synchronized (graph) {
+            // 创建 Node
             way.buildDestination(graph);
+            // 添加到 next
             next.addWay(way);
+            // 返回 Node
             return way.getDestination();
         }
     }

@@ -19,6 +19,8 @@
 package org.skywalking.apm.collector.core.graph;
 
 /**
+ * Node 处理器，处理数据。
+ *
  * @author peng-yongsheng, wu-sheng
  */
 public interface NodeProcessor<input, output> {

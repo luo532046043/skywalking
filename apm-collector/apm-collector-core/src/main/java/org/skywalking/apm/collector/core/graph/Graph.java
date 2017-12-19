@@ -21,11 +21,24 @@ package org.skywalking.apm.collector.core.graph;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * 定义了一个数据在各个 Node 的处理拓扑图
+ *
  * @author peng-yongsheng, wu-sheng
  */
 public final class Graph<INPUT> {
+
+    /**
+     * Graph 编号
+     */
     private int id;
+    /**
+     * 【首个】提交数据给 Node 的方式
+     */
     private WayToNode entryWay;
+    /**
+     * 处理器编号与 Node 的映射
+     * {@link NodeProcessor#id()}
+     */
     private ConcurrentHashMap<Integer, Node> nodeIndex = new ConcurrentHashMap<>();
 
     Graph(int id) {
@@ -42,12 +55,19 @@ public final class Graph<INPUT> {
 
     public <OUTPUT> Node<INPUT, OUTPUT> addNode(WayToNode<INPUT, OUTPUT> entryWay) {
         synchronized (this) {
+            // 赋值
             this.entryWay = entryWay;
+            // 创建 Node ，并返回该 Node 对象
             this.entryWay.buildDestination(this);
             return entryWay.getDestination();
         }
     }
 
+    /**
+     * 校验 Node 的 NodeProcessor 在 Graph 里，编号唯一
+     *
+     * @param node Node
+     */
     void checkForNewNode(Node node) {
         int nodeId = node.getHandler().id();
         if (nodeIndex.containsKey(nodeId)) {

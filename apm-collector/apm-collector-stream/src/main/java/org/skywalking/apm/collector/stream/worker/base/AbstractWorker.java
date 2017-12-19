@@ -52,8 +52,10 @@ public abstract class AbstractWorker<INPUT, OUTPUT> implements NodeProcessor<INP
     protected abstract void onWork(INPUT message) throws WorkerException;
 
     @Override public final void process(INPUT input, Next<OUTPUT> next) {
+        // 赋值
         this.next = next;
         try {
+            // 处理数据
             onWork(input);
         } catch (WorkerException e) {
             logger.error(e.getMessage(), e);

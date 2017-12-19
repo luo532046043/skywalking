@@ -45,7 +45,7 @@ public class ApplicationRegisterRemoteWorker extends AbstractRemoteWorker<Applic
 
     @Override protected void onWork(Application message) throws WorkerException {
         logger.debug("application code: {}", message.getApplicationCode());
-        onNext(message);
+        super.onNext(message);
     }
 
     @Override public Selector selector() {

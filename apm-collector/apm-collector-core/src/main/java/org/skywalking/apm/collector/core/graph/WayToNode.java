@@ -19,10 +19,19 @@
 package org.skywalking.apm.collector.core.graph;
 
 /**
+ * 提交数据给 Node 的方式
+ *
  * @author wusheng
  */
 public abstract class WayToNode<INPUT, OUTPUT> {
+
+    /**
+     * 目标 Node
+     */
     private Node destination;
+    /**
+     * 目标 Node 的处理器
+     */
     private NodeProcessor<INPUT, OUTPUT> destinationHandler;
 
     public WayToNode(NodeProcessor<INPUT, OUTPUT> destinationHandler) {

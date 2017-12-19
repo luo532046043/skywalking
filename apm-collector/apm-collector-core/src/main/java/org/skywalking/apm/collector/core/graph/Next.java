@@ -18,11 +18,14 @@
 
 package org.skywalking.apm.collector.core.graph;
 
-import java.util.LinkedList;
-import java.util.List;
 import org.skywalking.apm.collector.core.framework.Executor;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
+ * 包含 WayToNode 数组，即 Node 提交数据给 Next 的 Node 数组的方式。
+ *
  * The <code>Next</code> is a delegate object for the following {@link Node}.
  *
  * @author peng-yongsheng, wu-sheng

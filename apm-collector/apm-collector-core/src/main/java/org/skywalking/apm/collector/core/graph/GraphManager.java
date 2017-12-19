@@ -22,14 +22,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Graph 管理器
+ *
  * @author wusheng
  */
 public enum GraphManager {
+
+    /**
+     * 单例
+     */
     INSTANCE;
 
+    /**
+     * Graph 映射
+     * key ：Graph 编号
+     */
     private Map<Integer, Graph> allGraphs = new HashMap<>();
 
     /**
+     * 创建 Graph
+     *
      * Create a stream process graph.
      *
      * @param graphId represents a graph, which is used for finding it.
