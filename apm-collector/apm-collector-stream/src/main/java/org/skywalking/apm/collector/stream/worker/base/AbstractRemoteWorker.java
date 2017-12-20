@@ -23,6 +23,8 @@ import org.skywalking.apm.collector.core.module.ModuleManager;
 import org.skywalking.apm.collector.remote.service.Selector;
 
 /**
+ * 远程 Worker 抽象类
+ *
  * The <code>AbstractRemoteWorker</code> implementations represent workers,
  * which receive remote messages.
  * <p>
@@ -37,5 +39,9 @@ public abstract class AbstractRemoteWorker<INPUT extends Data, OUTPUT extends Da
         super(moduleManager);
     }
 
+    /**
+     * @return 选择器
+     */
     public abstract Selector selector();
+
 }

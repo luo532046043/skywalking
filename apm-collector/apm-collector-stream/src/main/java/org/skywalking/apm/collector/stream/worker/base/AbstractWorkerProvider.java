@@ -21,6 +21,8 @@ package org.skywalking.apm.collector.stream.worker.base;
 import org.skywalking.apm.collector.core.module.ModuleManager;
 
 /**
+ * Worker 供应者抽象类
+ *
  * @author peng-yongsheng
  */
 public abstract class AbstractWorkerProvider<INPUT, OUTPUT, WORKER_TYPE extends AbstractWorker<INPUT, OUTPUT>> implements Provider {
@@ -35,5 +37,11 @@ public abstract class AbstractWorkerProvider<INPUT, OUTPUT, WORKER_TYPE extends 
         return moduleManager;
     }
 
+    /**
+     * 创建 Worker
+     *
+     * @param moduleManager 组件管理器
+     * @return Worker 对象
+     */
     public abstract WORKER_TYPE workerInstance(ModuleManager moduleManager);
 }

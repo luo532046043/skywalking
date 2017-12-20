@@ -23,6 +23,8 @@ import org.skywalking.apm.collector.core.module.ModuleManager;
 import org.skywalking.apm.collector.remote.service.RemoteSenderService;
 
 /**
+ * AbstractRemoteWorker 供应者抽象类
+ *
  * The <code>AbstractRemoteWorkerProvider</code> implementations represent providers,
  * which create instance of cluster workers whose implemented {@link AbstractRemoteWorker}.
  * <p>
@@ -32,6 +34,9 @@ import org.skywalking.apm.collector.remote.service.RemoteSenderService;
  */
 public abstract class AbstractRemoteWorkerProvider<INPUT extends Data, OUTPUT extends Data, WORKER_TYPE extends AbstractRemoteWorker<INPUT, OUTPUT>> extends AbstractWorkerProvider<INPUT, OUTPUT, WORKER_TYPE> {
 
+    /**
+     * 远程发送服务
+     */
     private final RemoteSenderService remoteSenderService;
     private final int graphId;
 
@@ -49,8 +54,14 @@ public abstract class AbstractRemoteWorkerProvider<INPUT extends Data, OUTPUT ex
      * find then Throw this Exception.
      */
     @Override final public RemoteWorkerRef create(WorkerCreateListener workerCreateListener) {
+        // 创建 AbstractRemoteWorker 对象
         WORKER_TYPE remoteWorker = workerInstance(getModuleManager());
+
+        // 添加 AbstractRemoteWorker 到 作业创建监听器
         workerCreateListener.addWorker(remoteWorker);
+
+        // 创建 RemoteWorkerRef
         return new RemoteWorkerRef<>(remoteWorker, remoteSenderService, graphId);
     }
+
 }

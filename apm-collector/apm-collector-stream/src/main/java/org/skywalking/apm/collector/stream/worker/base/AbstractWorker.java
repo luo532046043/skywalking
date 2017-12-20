@@ -25,12 +25,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Worker 抽象类
+ *
  * @author peng-yongsheng
  */
 public abstract class AbstractWorker<INPUT, OUTPUT> implements NodeProcessor<INPUT, OUTPUT> {
 
     private final Logger logger = LoggerFactory.getLogger(AbstractWorker.class);
 
+    /**
+     * 组件管理器
+     */
     private final ModuleManager moduleManager;
 
     public AbstractWorker(ModuleManager moduleManager) {
@@ -41,6 +46,9 @@ public abstract class AbstractWorker<INPUT, OUTPUT> implements NodeProcessor<INP
         return moduleManager;
     }
 
+    /**
+     * 下面的 Worker 集合
+     */
     private Next<OUTPUT> next;
 
     /**
@@ -65,4 +73,5 @@ public abstract class AbstractWorker<INPUT, OUTPUT> implements NodeProcessor<INP
     protected final void onNext(OUTPUT message) {
         next.execute(message);
     }
+
 }

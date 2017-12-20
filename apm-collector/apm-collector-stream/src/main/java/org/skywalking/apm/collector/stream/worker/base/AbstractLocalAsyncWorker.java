@@ -21,6 +21,8 @@ package org.skywalking.apm.collector.stream.worker.base;
 import org.skywalking.apm.collector.core.module.ModuleManager;
 
 /**
+ * 异步 Worker 抽象类
+ *
  * The <code>AbstractLocalAsyncWorker</code> implementations represent workers,
  * which receive local asynchronous message.
  *
@@ -32,4 +34,5 @@ public abstract class AbstractLocalAsyncWorker<INPUT, OUTPUT> extends AbstractWo
     public AbstractLocalAsyncWorker(ModuleManager moduleManager) {
         super(moduleManager);
     }
+
 }

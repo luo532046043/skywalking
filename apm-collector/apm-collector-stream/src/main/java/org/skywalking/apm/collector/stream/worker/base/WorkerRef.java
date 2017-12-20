@@ -22,10 +22,14 @@ import org.skywalking.apm.collector.core.graph.NodeProcessor;
 import org.skywalking.apm.collector.core.graph.WayToNode;
 
 /**
+ * Worker 引用
+ *
  * @author peng-yongsheng
  */
 public abstract class WorkerRef<INPUT, OUTPUT> extends WayToNode<INPUT, OUTPUT> {
-    WorkerRef(NodeProcessor<INPUT, OUTPUT> destinationHandler) {
+
+    public WorkerRef(NodeProcessor<INPUT, OUTPUT> destinationHandler) {
         super(destinationHandler);
     }
+
 }

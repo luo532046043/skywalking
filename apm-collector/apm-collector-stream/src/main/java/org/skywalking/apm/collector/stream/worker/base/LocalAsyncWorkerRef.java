@@ -24,10 +24,15 @@ import org.skywalking.apm.collector.queue.base.QueueEventHandler;
 import org.skywalking.apm.collector.queue.base.QueueExecutor;
 
 /**
+ * 异步 Worker 引用
+ *
  * @author peng-yongsheng
  */
 public class LocalAsyncWorkerRef<INPUT, OUTPUT> extends WorkerRef<INPUT, OUTPUT> implements QueueExecutor<INPUT> {
 
+    /**
+     * 队列事件处理器
+     */
     private QueueEventHandler<INPUT> queueEventHandler;
 
     LocalAsyncWorkerRef(NodeProcessor<INPUT, OUTPUT> destinationHandler) {

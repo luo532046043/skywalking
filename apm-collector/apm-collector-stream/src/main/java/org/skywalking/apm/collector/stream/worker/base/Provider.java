@@ -19,9 +19,19 @@
 package org.skywalking.apm.collector.stream.worker.base;
 
 /**
+ * Worker 供应者
+ *
  * @author peng-yongsheng
  */
 public interface Provider {
 
+    /**
+     * 创建 WorkerRef
+     *
+     * @param workerCreateListener Worker 创建监听器
+     * @return WorkerRef 对象
+     * @throws ProviderNotFoundException 暂时逻辑里不存在抛出该异常
+     */
     WorkerRef create(WorkerCreateListener workerCreateListener) throws ProviderNotFoundException;
+
 }

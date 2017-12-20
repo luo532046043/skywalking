@@ -23,12 +23,20 @@ import org.skywalking.apm.collector.queue.base.QueueEventHandler;
 import org.skywalking.apm.collector.queue.service.QueueCreatorService;
 
 /**
+ * LocalAsyncWorker 供应者抽象类
+ *
  * @author peng-yongsheng
  */
 public abstract class AbstractLocalAsyncWorkerProvider<INPUT, OUTPUT, WORKER_TYPE extends AbstractLocalAsyncWorker<INPUT, OUTPUT>> extends AbstractWorkerProvider<INPUT, OUTPUT, WORKER_TYPE> {
 
+    /**
+     * @return 队列大小
+     */
     public abstract int queueSize();
 
+    /**
+     * 队列创建服务
+     */
     private final QueueCreatorService<INPUT> queueCreatorService;
 
     public AbstractLocalAsyncWorkerProvider(ModuleManager moduleManager,
@@ -39,11 +47,19 @@ public abstract class AbstractLocalAsyncWorkerProvider<INPUT, OUTPUT, WORKER_TYP
 
     @Override
     public final WorkerRef create(WorkerCreateListener workerCreateListener) {
+        // 创建 AbstractLocalAsyncWorker 对象
         WORKER_TYPE localAsyncWorker = workerInstance(getModuleManager());
+
+        // 添加 AbstractLocalAsyncWorker 到 作业创建监听器
         workerCreateListener.addWorker(localAsyncWorker);
 
+        // 创建 LocalAsyncWorkerRef
         LocalAsyncWorkerRef<INPUT, OUTPUT> localAsyncWorkerRef = new LocalAsyncWorkerRef<>(localAsyncWorker);
+
+        // 创建 QueueEventHandler ，并设置 LocalAsyncWorkerRef 为其执行器
         QueueEventHandler<INPUT> queueEventHandler = queueCreatorService.create(queueSize(), localAsyncWorkerRef);
+
+        // 设置 LocalAsyncWorkerRef 的 QueueEventHandler
         localAsyncWorkerRef.setQueueEventHandler(queueEventHandler);
         return localAsyncWorkerRef;
     }

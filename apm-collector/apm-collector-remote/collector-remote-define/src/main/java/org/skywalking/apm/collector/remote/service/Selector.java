@@ -19,8 +19,21 @@
 package org.skywalking.apm.collector.remote.service;
 
 /**
+ * 选择器
+ *
  * @author peng-yongsheng
  */
 public enum Selector {
-    HashCode, Rolling, ForeverFirst
+    /**
+     * hash
+     */
+    HashCode,
+    /**
+     * 顺序
+     */
+    Rolling,
+    /**
+     * 第一个
+     */
+    ForeverFirst
 }

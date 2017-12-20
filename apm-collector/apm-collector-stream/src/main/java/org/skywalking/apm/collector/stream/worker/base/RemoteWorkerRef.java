@@ -24,13 +24,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * 远程 Worker 引用
+ *
  * @author peng-yongsheng
  */
 public class RemoteWorkerRef<INPUT extends Data, OUTPUT extends Data> extends WorkerRef<INPUT, OUTPUT> {
 
     private final Logger logger = LoggerFactory.getLogger(RemoteWorkerRef.class);
 
+    /**
+     * 远程 Worker
+     */
     private final AbstractRemoteWorker<INPUT, OUTPUT> remoteWorker;
+    /**
+     * 远程发送服务
+     */
     private final RemoteSenderService remoteSenderService;
     private final int graphId;
 
@@ -44,7 +52,9 @@ public class RemoteWorkerRef<INPUT extends Data, OUTPUT extends Data> extends Wo
 
     @Override protected void in(INPUT message) {
         try {
+            // 发送数据给远程 Worker
             RemoteSenderService.Mode mode = remoteSenderService.send(this.graphId, this.remoteWorker.id(), message, this.remoteWorker.selector());
+            // 如果发射结果是本地，交给本地的 Worker
             if (mode.equals(RemoteSenderService.Mode.Local)) {
                 out(message);
             }
@@ -56,4 +66,5 @@ public class RemoteWorkerRef<INPUT extends Data, OUTPUT extends Data> extends Wo
     @Override protected void out(INPUT input) {
         super.out(input);
     }
+
 }

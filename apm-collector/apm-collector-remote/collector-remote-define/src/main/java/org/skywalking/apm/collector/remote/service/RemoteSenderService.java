@@ -22,12 +22,25 @@ import org.skywalking.apm.collector.core.data.Data;
 import org.skywalking.apm.collector.core.module.Service;
 
 /**
+ * 远程发送服务接口
+ *
  * @author peng-yongsheng
  */
 public interface RemoteSenderService extends Service {
+
     Mode send(int graphId, int nodeId, Data data, Selector selector);
 
+    /**
+     * 模式
+     */
     enum Mode {
-        Remote, Local
+        /**
+         * 远程
+         */
+        Remote,
+        /**
+         * 本地
+         */
+        Local
     }
 }
