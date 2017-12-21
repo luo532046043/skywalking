@@ -21,15 +21,22 @@ package org.skywalking.apm.collector.queue.base;
 import java.util.concurrent.ThreadFactory;
 
 /**
+ * 守护进程线程工程
+ *
  * @author peng-yongsheng
  */
 public enum DaemonThreadFactory implements ThreadFactory {
+
+    /**
+     * 单例
+     */
     INSTANCE;
 
     @Override
     public Thread newThread(Runnable r) {
         Thread t = new Thread(r);
-        t.setDaemon(true);
+        t.setDaemon(true); // 设置为守护线程
         return t;
     }
+
 }

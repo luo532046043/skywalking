@@ -29,6 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * 基于 Disruptor 的队列处理器实现类
+ *
  * @author peng-yongsheng
  */
 public class DisruptorEventHandler<MESSAGE extends EndOfBatchQueueMessage> implements EventHandler<MessageHolder<MESSAGE>>, QueueEventHandler<MESSAGE> {
@@ -36,6 +38,9 @@ public class DisruptorEventHandler<MESSAGE extends EndOfBatchQueueMessage> imple
     private final Logger logger = LoggerFactory.getLogger(DisruptorEventHandler.class);
 
     private RingBuffer<MessageHolder<MESSAGE>> ringBuffer;
+    /**
+     * 执行器
+     */
     private QueueExecutor<MESSAGE> executor;
 
     DisruptorEventHandler(RingBuffer<MessageHolder<MESSAGE>> ringBuffer, QueueExecutor<MESSAGE> executor) {
@@ -56,6 +61,8 @@ public class DisruptorEventHandler<MESSAGE extends EndOfBatchQueueMessage> imple
         event.reset();
 
         message.setEndOfBatch(endOfBatch);
+
+        // 执行处理消息
         executor.execute(message);
     }
 

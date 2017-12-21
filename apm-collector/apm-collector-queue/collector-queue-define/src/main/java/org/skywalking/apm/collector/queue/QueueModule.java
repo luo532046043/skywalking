@@ -22,6 +22,8 @@ import org.skywalking.apm.collector.core.module.Module;
 import org.skywalking.apm.collector.queue.service.QueueCreatorService;
 
 /**
+ * 队列组件
+ *
  * @author peng-yongsheng
  */
 public class QueueModule extends Module {

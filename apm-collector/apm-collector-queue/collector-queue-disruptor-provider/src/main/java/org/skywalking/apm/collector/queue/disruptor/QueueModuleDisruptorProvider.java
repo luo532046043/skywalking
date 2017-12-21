@@ -18,13 +18,14 @@
 
 package org.skywalking.apm.collector.queue.disruptor;
 
-import java.util.Properties;
 import org.skywalking.apm.collector.core.module.Module;
 import org.skywalking.apm.collector.core.module.ModuleProvider;
 import org.skywalking.apm.collector.core.module.ServiceNotProvidedException;
 import org.skywalking.apm.collector.queue.QueueModule;
 import org.skywalking.apm.collector.queue.disruptor.service.DisruptorQueueCreatorService;
 import org.skywalking.apm.collector.queue.service.QueueCreatorService;
+
+import java.util.Properties;
 
 /**
  * @author peng-yongsheng
@@ -54,4 +55,5 @@ public class QueueModuleDisruptorProvider extends ModuleProvider {
     @Override public String[] requiredModules() {
         return new String[0];
     }
+
 }

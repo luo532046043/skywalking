@@ -19,8 +19,19 @@
 package org.skywalking.apm.collector.queue.base;
 
 /**
+ * 队列创建器接口
+ *
  * @author peng-yongsheng
  */
 public interface QueueCreator {
+
+    /**
+     * 创建队列处理器
+     *
+     * @param queueSize 队列大小
+     * @param executor 执行器
+     * @return QueueEventHandler 对象
+     */
     QueueEventHandler create(int queueSize, QueueExecutor executor);
+
 }

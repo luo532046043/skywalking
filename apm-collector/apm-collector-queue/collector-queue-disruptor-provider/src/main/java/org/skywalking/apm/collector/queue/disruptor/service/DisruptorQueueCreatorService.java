@@ -24,10 +24,15 @@ import org.skywalking.apm.collector.queue.disruptor.base.DisruptorQueueCreator;
 import org.skywalking.apm.collector.queue.service.QueueCreatorService;
 
 /**
+ * 基于 Disruptor 的队列创建服务实现类
+ *
  * @author peng-yongsheng
  */
 public class DisruptorQueueCreatorService implements QueueCreatorService {
 
+    /**
+     * 队列创建器
+     */
     private final DisruptorQueueCreator creator;
 
     public DisruptorQueueCreatorService() {
@@ -37,4 +42,5 @@ public class DisruptorQueueCreatorService implements QueueCreatorService {
     @Override public QueueEventHandler create(int queueSize, QueueExecutor executor) {
         return creator.create(queueSize, executor);
     }
+
 }

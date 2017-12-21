@@ -23,8 +23,19 @@ import org.skywalking.apm.collector.queue.base.QueueEventHandler;
 import org.skywalking.apm.collector.queue.base.QueueExecutor;
 
 /**
+ * 队列创建服务接口
+ *
  * @author peng-yongsheng
  */
 public interface QueueCreatorService<MESSAGE> extends Service {
+
+    /**
+     * 创建队列处理器
+     *
+     * @param queueSize 队列大小
+     * @param executor 执行器
+     * @return QueueEventHandler 对象
+     */
     QueueEventHandler<MESSAGE> create(int queueSize, QueueExecutor<MESSAGE> executor);
+
 }

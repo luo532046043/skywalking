@@ -21,9 +21,15 @@ package org.skywalking.apm.collector.queue.base;
 import org.skywalking.apm.collector.core.data.EndOfBatchQueueMessage;
 
 /**
+ * 消息持有者
+ *
  * @author peng-yongsheng
  */
 public class MessageHolder<MESSAGE extends EndOfBatchQueueMessage> {
+
+    /**
+     * 消息
+     */
     private MESSAGE message;
 
     public MESSAGE getMessage() {
@@ -34,7 +40,11 @@ public class MessageHolder<MESSAGE extends EndOfBatchQueueMessage> {
         this.message = message;
     }
 
+    /**
+     * 清空消息
+     */
     public void reset() {
         message = null;
     }
+
 }

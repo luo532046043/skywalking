@@ -22,13 +22,24 @@ import com.lmax.disruptor.EventFactory;
 import org.skywalking.apm.collector.queue.base.MessageHolder;
 
 /**
+ * 消息持有者工厂
+ *
  * @author peng-yongsheng
  */
 public class MessageHolderFactory implements EventFactory<MessageHolder> {
 
+    /**
+     * 单例
+     */
     public static MessageHolderFactory INSTANCE = new MessageHolderFactory();
 
+    /**
+     * 创建消息持有者
+     *
+     * @return MessageHolder 对象
+     */
     public MessageHolder newInstance() {
         return new MessageHolder();
     }
+
 }

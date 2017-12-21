@@ -30,6 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * 基于 Disruptor 队列创建器实现类
+ *
  * @author peng-yongsheng
  */
 public class DisruptorQueueCreator implements QueueCreator {
@@ -42,8 +44,11 @@ public class DisruptorQueueCreator implements QueueCreator {
             throw new IllegalArgumentException("queue size must be power of 2");
         }
 
+        // 创建 Disruptor 对象
         // Construct the Disruptor
         Disruptor<MessageHolder> disruptor = new Disruptor<>(MessageHolderFactory.INSTANCE, queueSize, DaemonThreadFactory.INSTANCE);
+
+        // 设置默认异常处理器
         disruptor.setDefaultExceptionHandler(new ExceptionHandler<MessageHolder>() {
             @Override public void handleEventException(Throwable ex, long sequence, MessageHolder event) {
                 logger.error("Handle disruptor error event! message: {}.", event.getMessage(), ex);
@@ -58,14 +63,16 @@ public class DisruptorQueueCreator implements QueueCreator {
             }
         });
 
+        // 创建 DisruptorEventHandler 对象，并设置到 Disruptor 对象
         RingBuffer<MessageHolder> ringBuffer = disruptor.getRingBuffer();
         DisruptorEventHandler eventHandler = new DisruptorEventHandler(ringBuffer, executor);
-
         // Connect the handler
         disruptor.handleEventsWith(eventHandler);
 
+        // 启动 Disruptor 对象
         // Start the Disruptor, starts all threads running
         disruptor.start();
         return eventHandler;
     }
+
 }

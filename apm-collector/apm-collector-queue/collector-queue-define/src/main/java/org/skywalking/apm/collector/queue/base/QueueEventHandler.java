@@ -19,8 +19,17 @@
 package org.skywalking.apm.collector.queue.base;
 
 /**
+ * 队列处理器接口
+ *
  * @author peng-yongsheng
  */
 public interface QueueEventHandler<MESSAGE> {
+
+    /**
+     * 输入消息给队列处理器
+     *
+     * @param message 消息
+     */
     void tell(MESSAGE message);
+
 }
