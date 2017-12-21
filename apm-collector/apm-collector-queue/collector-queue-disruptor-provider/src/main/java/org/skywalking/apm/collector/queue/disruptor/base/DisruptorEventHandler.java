@@ -37,6 +37,9 @@ public class DisruptorEventHandler<MESSAGE extends EndOfBatchQueueMessage> imple
 
     private final Logger logger = LoggerFactory.getLogger(DisruptorEventHandler.class);
 
+    /**
+     * RingBuffer 对象
+     */
     private RingBuffer<MessageHolder<MESSAGE>> ringBuffer;
     /**
      * 执行器
