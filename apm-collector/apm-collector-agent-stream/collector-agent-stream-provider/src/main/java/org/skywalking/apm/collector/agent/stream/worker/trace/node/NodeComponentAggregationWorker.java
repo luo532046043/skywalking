@@ -52,4 +52,5 @@ public class NodeComponentAggregationWorker extends AggregationWorker<NodeCompon
             return 1024;
         }
     }
+
 }

@@ -18,15 +18,17 @@
 
 package org.skywalking.apm.collector.stream.worker.impl.data;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import org.skywalking.apm.collector.core.cache.Collection;
 import org.skywalking.apm.collector.core.data.Data;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author peng-yongsheng
  */
 public class DataCollection implements Collection<Map<String, Data>> {
+
     private Map<String, Data> data;
     private volatile boolean writing;
     private volatile boolean reading;
@@ -84,4 +86,5 @@ public class DataCollection implements Collection<Map<String, Data>> {
     public Map<String, Data> collection() {
         return data;
     }
+
 }

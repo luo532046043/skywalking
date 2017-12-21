@@ -40,4 +40,5 @@ public interface Collection<Data> {
     void finishWriting();
 
     Data collection();
+
 }

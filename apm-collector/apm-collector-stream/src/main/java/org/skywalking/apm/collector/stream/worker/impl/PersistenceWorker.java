@@ -18,9 +18,6 @@
 
 package org.skywalking.apm.collector.stream.worker.impl;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import org.skywalking.apm.collector.core.data.Data;
 import org.skywalking.apm.collector.core.module.ModuleManager;
 import org.skywalking.apm.collector.core.util.ObjectUtils;
@@ -32,6 +29,10 @@ import org.skywalking.apm.collector.stream.worker.base.WorkerException;
 import org.skywalking.apm.collector.stream.worker.impl.data.DataCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author peng-yongsheng
@@ -62,22 +63,30 @@ public abstract class PersistenceWorker<INPUT extends Data, OUTPUT extends Data>
     @Override protected final void onWork(INPUT message) throws WorkerException {
         if (dataCache.currentCollectionSize() >= 5000) {
             try {
+                //
                 if (dataCache.trySwitchPointer()) {
+                    // 切换数据指针，并标记原指向正在读取中
                     dataCache.switchPointer();
 
+                    // 准备批量操作集合
                     List<?> collection = buildBatchCollection();
+
+                    // 执行批量操作
                     batchDAO.batchPersistence(collection);
                 }
             } finally {
                 dataCache.trySwitchPointerFinally();
             }
         }
+
+        // 聚合数据
         aggregate(message);
     }
 
     public final List<?> buildBatchCollection() throws WorkerException {
         List<?> batchCollection = new LinkedList<>();
         try {
+            // 等待原指向不在读取中
             while (dataCache.getLast().isWriting()) {
                 try {
                     Thread.sleep(10);
@@ -85,7 +94,7 @@ public abstract class PersistenceWorker<INPUT extends Data, OUTPUT extends Data>
                     logger.warn("thread wake up");
                 }
             }
-
+            // 准备批量操作集合
             if (dataCache.getLast().collection() != null) {
                 batchCollection = prepareBatch(dataCache.getLast().collection());
             }
@@ -128,16 +137,24 @@ public abstract class PersistenceWorker<INPUT extends Data, OUTPUT extends Data>
         return insertBatchCollection;
     }
 
+    /**
+     * 聚合消息到数据
+     *
+     * 逻辑同 {@link AggregationWorker#aggregate(Data)}
+     *
+     * @param message 消息
+     */
     private void aggregate(Object message) {
+        // 标记数据指针正在写入中
         dataCache.writing();
         Data newData = (Data)message;
-
+        // 写入
         if (dataCache.containsKey(newData.getId())) {
             dataCache.get(newData.getId()).mergeData(newData);
         } else {
             dataCache.put(newData.getId(), newData);
         }
-
+        // 标记数据指针完成写入
         dataCache.finishWriting();
     }
 

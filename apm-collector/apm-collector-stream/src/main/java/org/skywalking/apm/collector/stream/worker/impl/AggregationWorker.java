@@ -43,19 +43,26 @@ public abstract class AggregationWorker<INPUT extends Data, OUTPUT extends Data>
 
     @Override protected final void onWork(INPUT message) throws WorkerException {
         messageNum++;
+
+        // 聚合消息到数据
         aggregate(message);
 
+        // 满足消息到达一定量，提交数据给 Next
         if (messageNum >= 100) {
             sendToNext();
             messageNum = 0;
         }
+
+        // TODO 可能要看下队列 提交数据给 Next
         if (message.isEndOfBatch()) {
             sendToNext();
         }
     }
 
     private void sendToNext() throws WorkerException {
+        // 切换数据指针，并标记原指向正在读取中
         dataCache.switchPointer();
+        // 等待原指向不在读取中
         while (dataCache.getLast().isWriting()) {
             try {
                 Thread.sleep(10);
@@ -63,20 +70,32 @@ public abstract class AggregationWorker<INPUT extends Data, OUTPUT extends Data>
                 throw new WorkerException(e.getMessage(), e);
             }
         }
+        // 提交数据给 Next
         dataCache.getLast().collection().forEach((String id, Data data) -> {
             logger.debug(data.toString());
             onNext((OUTPUT)data);
         });
+        // 标记原指向完成读取
         dataCache.finishReadingLast();
     }
 
+    /**
+     * 聚合消息到数据
+     *
+     * 逻辑同 {@link PersistenceWorker#aggregate(Object)}
+     *
+     * @param message 消息
+     */
     private void aggregate(INPUT message) {
+        // 标记数据指针正在写入中
         dataCache.writing();
+        // 写入
         if (dataCache.containsKey(message.getId())) {
             dataCache.get(message.getId()).mergeData(message);
         } else {
             dataCache.put(message.getId(), message);
         }
+        // 标记数据指针完成写入
         dataCache.finishWriting();
     }
 }

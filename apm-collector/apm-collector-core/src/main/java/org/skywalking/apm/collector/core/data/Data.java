@@ -134,6 +134,13 @@ public abstract class Data extends EndOfBatchQueueMessage {
         this.dataStrings[0] = id;
     }
 
+    /**
+     * 合并传入的数据到自身
+     *
+     * @see Operation 合并操作
+     *
+     * @param newData 数据
+     */
     public void mergeData(Data newData) {
         for (int i = 0; i < stringColumns.length; i++) {
             String stringData = stringColumns[i].getOperation().operate(newData.getDataString(i), this.dataStrings[i]);

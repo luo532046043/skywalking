@@ -58,8 +58,11 @@ public class DisruptorEventHandler<MESSAGE extends EndOfBatchQueueMessage> imple
      */
     public void onEvent(MessageHolder<MESSAGE> event, long sequence, boolean endOfBatch) throws CollectorException {
         MESSAGE message = event.getMessage();
+
+        // 清空消息
         event.reset();
 
+        // 设置消息为该批量的结尾（最后一条）
         message.setEndOfBatch(endOfBatch);
 
         // 执行处理消息

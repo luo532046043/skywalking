@@ -21,5 +21,6 @@ package org.skywalking.apm.collector.stream.worker.impl;
 /**
  * @author peng-yongsheng
  */
+@Deprecated // add by 芋艿，目前项目暂未使用
 public class FlushAndSwitch {
 }
