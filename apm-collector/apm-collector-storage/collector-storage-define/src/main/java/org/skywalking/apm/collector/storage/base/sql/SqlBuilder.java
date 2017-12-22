@@ -22,16 +22,41 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * SQL 生成器
+ */
 public class SqlBuilder {
+
+    /**
+     * 生成基于占位符的 SQL
+     *
+     * @param sql SQL
+     * @param args 参数数组
+     * @return SQL
+     */
     public static String buildSql(String sql, Object... args) {
         return MessageFormat.format(sql, args);
     }
 
+    /**
+     * 生成基于占位符的 SQL
+     *
+     * @param sql SQL
+     * @param args 参数数组
+     * @return SQL
+     */
     public static String buildSql(String sql, List<Object> args) {
         MessageFormat messageFormat = new MessageFormat(sql);
         return messageFormat.format(args.toArray(new Object[0]));
     }
 
+    /**
+     * 生成批量插入 SQL
+     *
+     * @param tableName 表名
+     * @param columnNames 字段数组
+     * @return SQL
+     */
     public static String buildBatchInsertSql(String tableName, Set<String> columnNames) {
         StringBuilder sb = new StringBuilder("insert into ");
         sb.append(tableName).append("(");
@@ -46,6 +71,13 @@ public class SqlBuilder {
         return sb.toString();
     }
 
+    /**
+     * 生成批量更新 SQL
+     *
+     * @param tableName 表名
+     * @param columnNames 字段数组
+     * @return SQL
+     */
     public static String buildBatchUpdateSql(String tableName, Set<String> columnNames, String whereClauseName) {
         StringBuilder sb = new StringBuilder("update ");
         sb.append(tableName).append(" set ");
@@ -54,4 +86,5 @@ public class SqlBuilder {
         sb.append(" where ").append(whereClauseName).append("=?");
         return sb.toString();
     }
+
 }

@@ -21,6 +21,8 @@ package org.skywalking.apm.collector.core.data.operator;
 import org.skywalking.apm.collector.core.data.Operation;
 
 /**
+ * 值覆盖操作，即以新值为返回。
+ *
  * @author peng-yongsheng
  */
 public class CoverOperation implements Operation {

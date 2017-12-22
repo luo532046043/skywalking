@@ -21,9 +21,15 @@ package org.skywalking.apm.collector.storage.base.dao;
 import org.skywalking.apm.collector.client.Client;
 
 /**
+ * DAO 抽象基类
+ *
  * @author peng-yongsheng
  */
 public abstract class AbstractDAO<C extends Client> implements DAO {
+
+    /**
+     * 数据操作客户端
+     */
     private final C client;
 
     public AbstractDAO(C client) {

@@ -19,15 +19,23 @@
 package org.skywalking.apm.collector.core.data;
 
 /**
+ * 数据
+ *
  * @author peng-yongsheng
  */
 public abstract class Data extends EndOfBatchQueueMessage {
+
+    // ========== 字段值 ==========
+
     private String[] dataStrings;
     private Long[] dataLongs;
     private Double[] dataDoubles;
     private Integer[] dataIntegers;
     private Boolean[] dataBooleans;
     private byte[][] dataBytes;
+
+    // ========== 字段 ==========
+
     private final Column[] stringColumns;
     private final Column[] longColumns;
     private final Column[] doubleColumns;

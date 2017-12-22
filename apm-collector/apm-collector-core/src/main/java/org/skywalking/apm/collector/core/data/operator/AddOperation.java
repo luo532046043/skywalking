@@ -21,6 +21,8 @@ package org.skywalking.apm.collector.core.data.operator;
 import org.skywalking.apm.collector.core.data.Operation;
 
 /**
+ * 值相加操作
+ *
  * @author peng-yongsheng
  */
 public class AddOperation implements Operation {

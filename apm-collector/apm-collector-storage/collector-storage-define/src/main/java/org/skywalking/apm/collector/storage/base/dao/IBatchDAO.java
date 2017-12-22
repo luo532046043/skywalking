@@ -18,11 +18,24 @@
 
 package org.skywalking.apm.collector.storage.base.dao;
 
+import org.skywalking.apm.collector.core.data.Data;
+
 import java.util.List;
 
 /**
+ * 批量操作 DAO 接口
+ *
+ * 需要配合 {@link IPersistenceDAO#prepareBatchInsert(Data)} 和 {@link IPersistenceDAO#prepareBatchUpdate(Data)} 一起使用
+ *
  * @author peng-yongsheng
  */
 public interface IBatchDAO extends DAO {
+
+    /**
+     * 通过执行批量操作对象数组，实现批量持久化数据
+     *
+     * @param batchCollection 批量操作对象数组
+     */
     void batchPersistence(List<?> batchCollection);
+
 }

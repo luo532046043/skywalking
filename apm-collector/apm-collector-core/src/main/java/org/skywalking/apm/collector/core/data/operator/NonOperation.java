@@ -21,6 +21,8 @@ package org.skywalking.apm.collector.core.data.operator;
 import org.skywalking.apm.collector.core.data.Operation;
 
 /**
+ * 空操作，即以老值为返回。
+ *
  * @author peng-yongsheng
  */
 public class NonOperation implements Operation {

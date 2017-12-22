@@ -21,6 +21,8 @@ package org.skywalking.apm.collector.storage.base.dao;
 import org.skywalking.apm.collector.core.module.Service;
 
 /**
+ * DAO 接口
+ *
  * @author peng-yongsheng
  */
 public interface DAO extends Service {

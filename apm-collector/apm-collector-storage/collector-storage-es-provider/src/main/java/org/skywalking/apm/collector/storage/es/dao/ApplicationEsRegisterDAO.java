@@ -18,8 +18,6 @@
 
 package org.skywalking.apm.collector.storage.es.dao;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.support.WriteRequest;
 import org.skywalking.apm.collector.client.elasticsearch.ElasticSearchClient;
@@ -29,6 +27,9 @@ import org.skywalking.apm.collector.storage.table.register.Application;
 import org.skywalking.apm.collector.storage.table.register.ApplicationTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author peng-yongsheng
@@ -59,4 +60,5 @@ public class ApplicationEsRegisterDAO extends EsDAO implements IApplicationRegis
         IndexResponse response = client.prepareIndex(ApplicationTable.TABLE, application.getId()).setSource(source).setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE).get();
         logger.debug("save application register info, application getId: {}, application code: {}, status: {}", application.getApplicationId(), application.getApplicationCode(), response.status().name());
     }
+
 }

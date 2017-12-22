@@ -19,9 +19,14 @@
 package org.skywalking.apm.collector.core.data;
 
 /**
+ * 操作接口。
+ *
+ * 用于两个值之间的操作，例如，相加等等。
+ *
  * @author peng-yongsheng
  */
 public interface Operation {
+
     String operate(String newValue, String oldValue);
 
     Long operate(Long newValue, Long oldValue);
@@ -33,4 +38,5 @@ public interface Operation {
     Boolean operate(Boolean newValue, Boolean oldValue);
 
     byte[] operate(byte[] newValue, byte[] oldValue);
+
 }

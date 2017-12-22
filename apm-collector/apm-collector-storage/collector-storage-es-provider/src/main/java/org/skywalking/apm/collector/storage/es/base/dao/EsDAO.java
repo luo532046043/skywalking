@@ -29,6 +29,8 @@ import org.skywalking.apm.collector.client.elasticsearch.ElasticSearchClient;
 import org.skywalking.apm.collector.storage.base.dao.AbstractDAO;
 
 /**
+ * 基于 ES 的 DAO 抽象类
+ *
  * @author peng-yongsheng
  */
 public abstract class EsDAO extends AbstractDAO<ElasticSearchClient> {
@@ -37,12 +39,19 @@ public abstract class EsDAO extends AbstractDAO<ElasticSearchClient> {
         super(client);
     }
 
+    /**
+     * 获得索引名的指定字段的最大值
+     *
+     * @param indexName 索引名
+     * @param columnName 字段
+     * @return 最大值
+     */
     public final int getMaxId(String indexName, String columnName) {
         ElasticSearchClient client = getClient();
         SearchRequestBuilder searchRequestBuilder = client.prepareSearch(indexName);
         searchRequestBuilder.setTypes("type");
         searchRequestBuilder.setSize(0);
-        MaxAggregationBuilder aggregation = AggregationBuilders.max("agg").field(columnName);
+        MaxAggregationBuilder aggregation = AggregationBuilders.max("agg").field(columnName); // max
         searchRequestBuilder.addAggregation(aggregation);
 
         SearchResponse searchResponse = searchRequestBuilder.execute().actionGet();
@@ -56,22 +65,30 @@ public abstract class EsDAO extends AbstractDAO<ElasticSearchClient> {
         }
     }
 
+    /**
+     * 获得索引名的指定字段的最小值
+     *
+     * @param indexName 索引名
+     * @param columnName 字段
+     * @return 最小值
+     */
     public final int getMinId(String indexName, String columnName) {
         ElasticSearchClient client = getClient();
         SearchRequestBuilder searchRequestBuilder = client.prepareSearch(indexName);
         searchRequestBuilder.setTypes("type");
         searchRequestBuilder.setSize(0);
-        MinAggregationBuilder aggregation = AggregationBuilders.min("agg").field(columnName);
+        MinAggregationBuilder aggregation = AggregationBuilders.min("agg").field(columnName); // min
         searchRequestBuilder.addAggregation(aggregation);
 
         SearchResponse searchResponse = searchRequestBuilder.execute().actionGet();
         Min agg = searchResponse.getAggregations().get("agg");
 
         int id = (int)agg.getValue();
-        if (id == Integer.MAX_VALUE || id == Integer.MIN_VALUE) {
+        if (id == Integer.MAX_VALUE || id == Integer.MIN_VALUE) { // TODO 这个是为啥
             return 0;
         } else {
             return id;
         }
     }
+
 }

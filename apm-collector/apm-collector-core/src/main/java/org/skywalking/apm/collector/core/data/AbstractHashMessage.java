@@ -19,6 +19,10 @@
 package org.skywalking.apm.collector.core.data;
 
 /**
+ * 带哈希码的消息抽象类
+ *
+ * 见 HashCodeSelector 类。
+ *
  * The <code>AbstractHashMessage</code> implementations represent aggregate message,
  * which use to aggregate metric.
  * <p>
@@ -27,6 +31,10 @@ package org.skywalking.apm.collector.core.data;
  * @since v3.0-2017
  */
 public abstract class AbstractHashMessage {
+
+    /**
+     * 哈希码
+     */
     private int hashCode;
 
     public AbstractHashMessage(String key) {

@@ -19,10 +19,15 @@
 package org.skywalking.apm.collector.core.data;
 
 /**
+ * 带是否消息批处理的最后一条标记的消息抽象类
+ *
  * @author peng-yongsheng
  */
 public abstract class EndOfBatchQueueMessage extends AbstractHashMessage {
 
+    /**
+     * 是否消息批处理的最后一条的标记
+     */
     private boolean endOfBatch;
 
     public EndOfBatchQueueMessage(String key) {

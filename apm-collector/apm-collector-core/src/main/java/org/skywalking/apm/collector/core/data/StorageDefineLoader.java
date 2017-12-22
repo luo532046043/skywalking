@@ -18,13 +18,14 @@
 
 package org.skywalking.apm.collector.core.data;
 
-import java.util.LinkedList;
-import java.util.List;
 import org.skywalking.apm.collector.core.define.DefineException;
 import org.skywalking.apm.collector.core.define.DefinitionLoader;
 import org.skywalking.apm.collector.core.define.Loader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author peng-yongsheng
@@ -45,4 +46,5 @@ public class StorageDefineLoader implements Loader<List<TableDefine>> {
         }
         return tableDefines;
     }
+
 }

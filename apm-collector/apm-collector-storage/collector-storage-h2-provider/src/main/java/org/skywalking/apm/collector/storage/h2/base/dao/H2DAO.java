@@ -18,15 +18,18 @@
 
 package org.skywalking.apm.collector.storage.h2.base.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import org.skywalking.apm.collector.client.h2.H2Client;
 import org.skywalking.apm.collector.client.h2.H2ClientException;
 import org.skywalking.apm.collector.storage.base.dao.AbstractDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 /**
+ * 基于 H2 的 DAO 抽象类
+ *
  * @author peng-yongsheng
  */
 public abstract class H2DAO extends AbstractDAO<H2Client> {
@@ -37,11 +40,25 @@ public abstract class H2DAO extends AbstractDAO<H2Client> {
         super(client);
     }
 
+    /**
+     * 获得指定表的指定字段的最大值
+     *
+     * @param tableName 表名
+     * @param columnName 字段
+     * @return 最大值
+     */
     protected final int getMaxId(String tableName, String columnName) {
         String sql = "select max(" + columnName + ") from " + tableName;
         return getIntValueBySQL(sql);
     }
 
+    /**
+     * 获得指定表的指定字段的最小值
+     *
+     * @param tableName 表名
+     * @param columnName 字段
+     * @return 最小值
+     */
     protected final int getMinId(String tableName, String columnName) {
         String sql = "select min(" + columnName + ") from " + tableName;
         return getIntValueBySQL(sql);
@@ -52,7 +69,7 @@ public abstract class H2DAO extends AbstractDAO<H2Client> {
         try (ResultSet rs = client.executeQuery(sql, null)) {
             if (rs.next()) {
                 int id = rs.getInt(1);
-                if (id == Integer.MAX_VALUE || id == Integer.MIN_VALUE) {
+                if (id == Integer.MAX_VALUE || id == Integer.MIN_VALUE) { // TODO 这个是为啥
                     return 0;
                 } else {
                     return id;
@@ -63,4 +80,5 @@ public abstract class H2DAO extends AbstractDAO<H2Client> {
         }
         return 0;
     }
+
 }

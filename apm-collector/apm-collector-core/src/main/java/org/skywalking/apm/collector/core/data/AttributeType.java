@@ -21,6 +21,7 @@ package org.skywalking.apm.collector.core.data;
 /**
  * @author peng-yongsheng
  */
+@Deprecated // add by 芋艿，目前暂未使用
 public enum AttributeType {
     STRING, LONG, DOUBLE, INTEGER, BYTE, BOOLEAN
 }

@@ -19,10 +19,19 @@
 package org.skywalking.apm.collector.core.data;
 
 /**
+ * 字段
+ *
  * @author peng-yongsheng
  */
 public class Column {
+
+    /**
+     * 字段名
+     */
     private final String name;
+    /**
+     * 操作
+     */
     private final Operation operation;
 
     public Column(String name, Operation operation) {

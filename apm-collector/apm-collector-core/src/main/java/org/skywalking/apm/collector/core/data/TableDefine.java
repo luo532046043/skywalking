@@ -22,10 +22,19 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * 表定义
+ *
  * @author peng-yongsheng
  */
 public abstract class TableDefine {
+
+    /**
+     * 表名
+     */
     private final String name;
+    /**
+     * 字段定义数组
+     */
     private final List<ColumnDefine> columnDefines;
 
     public TableDefine(String name) {

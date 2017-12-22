@@ -19,10 +19,19 @@
 package org.skywalking.apm.collector.core.data;
 
 /**
+ * 字段定义
+ *
  * @author peng-yongsheng
  */
 public abstract class ColumnDefine {
+
+    /**
+     * 字段名
+     */
     private final String name;
+    /**
+     * 字段类型
+     */
     private final String type;
 
     public ColumnDefine(String name, String type) {
