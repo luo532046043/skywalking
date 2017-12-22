@@ -18,15 +18,18 @@
 
 package org.skywalking.apm.collector.storage;
 
-import java.util.List;
 import org.skywalking.apm.collector.client.Client;
-import org.skywalking.apm.collector.core.define.DefineException;
 import org.skywalking.apm.collector.core.data.StorageDefineLoader;
 import org.skywalking.apm.collector.core.data.TableDefine;
+import org.skywalking.apm.collector.core.define.DefineException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 /**
+ * 存储安装器抽象类，基于 TableDefine ，初始化存储器的表
+ *
  * @author peng-yongsheng
  */
 public abstract class StorageInstaller {
@@ -34,12 +37,16 @@ public abstract class StorageInstaller {
     private final Logger logger = LoggerFactory.getLogger(StorageInstaller.class);
 
     public final void install(Client client) throws StorageException {
+        // 加载 TableDefine 数组
         StorageDefineLoader defineLoader = new StorageDefineLoader();
         try {
             List<TableDefine> tableDefines = defineLoader.load();
-            defineFilter(tableDefines);
-            Boolean debug = System.getProperty("debug") != null;
 
+            // 过滤 TableDefine 数组中，非自身需要的
+            defineFilter(tableDefines);
+
+            // 创建 表
+            Boolean debug = System.getProperty("debug") != null; // 调试模式
             for (TableDefine tableDefine : tableDefines) {
                 tableDefine.initialize();
                 if (!isExists(client, tableDefine)) {
@@ -56,11 +63,40 @@ public abstract class StorageInstaller {
         }
     }
 
+    /**
+     * 过滤 TableDefine 数组中，非自身需要的
+     *
+     * @param tableDefines 数组
+     */
     protected abstract void defineFilter(List<TableDefine> tableDefines);
 
+    /**
+     * 判断表是否存在
+     *
+     * @param client 存储器客户端
+     * @param tableDefine 表定义
+     * @return 是否存在
+     * @throws StorageException 异常
+     */
     protected abstract boolean isExists(Client client, TableDefine tableDefine) throws StorageException;
 
+    /**
+     * 删除表
+     *
+     * @param client 存储器客户端
+     * @param tableDefine 表定义
+     * @return 是否成功
+     * @throws StorageException 异常
+     */
     protected abstract boolean deleteTable(Client client, TableDefine tableDefine) throws StorageException;
 
+    /**
+     * 创建表
+     *
+     * @param client 存储器客户端
+     * @param tableDefine 表定义
+     * @return 是否成功
+     * @throws StorageException 异常
+     */
     protected abstract boolean createTable(Client client, TableDefine tableDefine) throws StorageException;
 }

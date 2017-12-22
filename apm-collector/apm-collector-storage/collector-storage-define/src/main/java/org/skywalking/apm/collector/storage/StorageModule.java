@@ -18,46 +18,16 @@
 
 package org.skywalking.apm.collector.storage;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.skywalking.apm.collector.core.module.Module;
 import org.skywalking.apm.collector.storage.base.dao.IBatchDAO;
-import org.skywalking.apm.collector.storage.dao.IApplicationCacheDAO;
-import org.skywalking.apm.collector.storage.dao.IApplicationRegisterDAO;
-import org.skywalking.apm.collector.storage.dao.ICpuMetricPersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.ICpuMetricUIDAO;
-import org.skywalking.apm.collector.storage.dao.IGCMetricPersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.IGCMetricUIDAO;
-import org.skywalking.apm.collector.storage.dao.IGlobalTracePersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.IGlobalTraceUIDAO;
-import org.skywalking.apm.collector.storage.dao.IInstPerformancePersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.IInstPerformanceUIDAO;
-import org.skywalking.apm.collector.storage.dao.IInstanceCacheDAO;
-import org.skywalking.apm.collector.storage.dao.IInstanceHeartBeatPersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.IInstanceRegisterDAO;
-import org.skywalking.apm.collector.storage.dao.IInstanceUIDAO;
-import org.skywalking.apm.collector.storage.dao.IMemoryMetricPersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.IMemoryMetricUIDAO;
-import org.skywalking.apm.collector.storage.dao.IMemoryPoolMetricPersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.IMemoryPoolMetricUIDAO;
-import org.skywalking.apm.collector.storage.dao.INodeComponentPersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.INodeComponentUIDAO;
-import org.skywalking.apm.collector.storage.dao.INodeMappingPersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.INodeMappingUIDAO;
-import org.skywalking.apm.collector.storage.dao.INodeReferencePersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.INodeReferenceUIDAO;
-import org.skywalking.apm.collector.storage.dao.ISegmentCostPersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.ISegmentCostUIDAO;
-import org.skywalking.apm.collector.storage.dao.ISegmentPersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.ISegmentUIDAO;
-import org.skywalking.apm.collector.storage.dao.IServiceEntryPersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.IServiceEntryUIDAO;
-import org.skywalking.apm.collector.storage.dao.IServiceNameCacheDAO;
-import org.skywalking.apm.collector.storage.dao.IServiceNameRegisterDAO;
-import org.skywalking.apm.collector.storage.dao.IServiceReferencePersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.IServiceReferenceUIDAO;
+import org.skywalking.apm.collector.storage.dao.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
+ * 存储组件
+ *
  * @author peng-yongsheng
  */
 public class StorageModule extends Module {
