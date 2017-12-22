@@ -21,6 +21,8 @@ package org.skywalking.apm.collector.storage.es.base.define;
 import org.skywalking.apm.collector.core.data.TableDefine;
 
 /**
+ * 基于 Elasticsearch 的表定义抽象类
+ *
  * @author peng-yongsheng
  */
 public abstract class ElasticSearchTableDefine extends TableDefine {

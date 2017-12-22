@@ -19,8 +19,18 @@
 package org.skywalking.apm.collector.core.define;
 
 /**
+ * 加载器
+ *
  * @author peng-yongsheng
  */
 public interface Loader<T> {
+
+    /**
+     * 加载
+     *
+     * @return 加载结果
+     * @throws DefineException 当加载定义发生异常
+     */
     T load() throws DefineException;
+
 }

@@ -18,20 +18,18 @@
 
 package org.skywalking.apm.collector.core.define;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Properties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.*;
 
 /**
+ * 定义加载器
+ *
  * @author peng-yongsheng
  */
 public class DefinitionLoader<D> implements Iterable<D> {
@@ -39,6 +37,9 @@ public class DefinitionLoader<D> implements Iterable<D> {
     private final Logger logger = LoggerFactory.getLogger(DefinitionLoader.class);
 
     private final Class<D> definition;
+    /**
+     * 定义文件
+     */
     private final DefinitionFile definitionFile;
 
     protected DefinitionLoader(Class<D> svc, DefinitionFile definitionFile) {
@@ -55,13 +56,16 @@ public class DefinitionLoader<D> implements Iterable<D> {
         List<String> definitionList = new LinkedList<>();
         try {
             Enumeration<URL> urlEnumeration = this.getClass().getClassLoader().getResources(definitionFile.get());
+            // 循环查找到的定义文件数组。目前 collector-storage-es-provider 和 collector-storage-h2-provider 各有一个定义文件
             while (urlEnumeration.hasMoreElements()) {
+                // 读取 文件
                 URL definitionFileURL = urlEnumeration.nextElement();
                 logger.info("definition file url: {}", definitionFileURL.getPath());
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(definitionFileURL.openStream()));
                 Properties properties = new Properties();
                 properties.load(bufferedReader);
 
+                // 读取 文件里的每个类
                 Enumeration defineItem = properties.propertyNames();
                 while (defineItem.hasMoreElements()) {
                     String fullNameClass = (String)defineItem.nextElement();
@@ -72,8 +76,8 @@ public class DefinitionLoader<D> implements Iterable<D> {
             logger.error(e.getMessage(), e);
         }
 
+        // 创建 Iterator
         Iterator<String> moduleDefineIterator = definitionList.iterator();
-
         return new Iterator<D>() {
             @Override public boolean hasNext() {
                 return moduleDefineIterator.hasNext();
@@ -82,6 +86,7 @@ public class DefinitionLoader<D> implements Iterable<D> {
             @Override public D next() {
                 String definitionClass = moduleDefineIterator.next();
                 logger.info("definitionClass: {}", definitionClass);
+                // 创建 定义对象
                 try {
                     Class c = Class.forName(definitionClass);
                     return (D)c.newInstance();

@@ -21,6 +21,8 @@ package org.skywalking.apm.collector.storage.h2.base.define;
 import org.skywalking.apm.collector.core.data.TableDefine;
 
 /**
+ * 基于 H2 的表定义抽象类
+ *
  * @author peng-yongsheng
  */
 public abstract class H2TableDefine extends TableDefine {

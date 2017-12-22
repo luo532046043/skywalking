@@ -21,10 +21,14 @@ package org.skywalking.apm.collector.core.data;
 import org.skywalking.apm.collector.core.define.DefinitionFile;
 
 /**
+ * 存储定义文件实现类
+ *
  * @author peng-yongsheng
  */
 public class StorageDefinitionFile extends DefinitionFile {
+
     @Override protected String fileName() {
         return "storage.define";
     }
+
 }

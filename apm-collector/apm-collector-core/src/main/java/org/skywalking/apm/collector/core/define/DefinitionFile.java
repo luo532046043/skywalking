@@ -19,12 +19,20 @@
 package org.skywalking.apm.collector.core.define;
 
 /**
+ * 定义文件抽象类
+ *
  * @author peng-yongsheng
  */
 public abstract class DefinitionFile {
 
+    /**
+     * 基础目录
+     */
     private static final String CATALOG = "META-INF/defines/";
 
+    /**
+     * @return 文件名
+     */
     protected abstract String fileName();
 
     public final String get() {

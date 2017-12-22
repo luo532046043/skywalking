@@ -28,6 +28,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * 存储定义加载器
+ *
  * @author peng-yongsheng
  */
 public class StorageDefineLoader implements Loader<List<TableDefine>> {
@@ -37,9 +39,14 @@ public class StorageDefineLoader implements Loader<List<TableDefine>> {
     @Override public List<TableDefine> load() throws DefineException {
         List<TableDefine> tableDefines = new LinkedList<>();
 
+        // 创建 StorageDefinitionFile 对象
         StorageDefinitionFile definitionFile = new StorageDefinitionFile();
         logger.info("storage definition file name: {}", definitionFile.fileName());
+
+        // 加载 TableDefine
         DefinitionLoader<TableDefine> definitionLoader = DefinitionLoader.load(TableDefine.class, definitionFile);
+
+        // 返回 TableDefine 数组
         for (TableDefine tableDefine : definitionLoader) {
             logger.info("loaded storage definition class: {}", tableDefine.getClass().getName());
             tableDefines.add(tableDefine);
