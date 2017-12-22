@@ -21,9 +21,12 @@ package org.skywalking.apm.collector.storage.es.base.define;
 import org.skywalking.apm.collector.core.data.ColumnDefine;
 
 /**
+ * 基于 ES 的字段定义
+ *
  * @author peng-yongsheng
  */
 public class ElasticSearchColumnDefine extends ColumnDefine {
+
     public ElasticSearchColumnDefine(String name, String type) {
         super(name, type);
     }
@@ -31,4 +34,5 @@ public class ElasticSearchColumnDefine extends ColumnDefine {
     public enum Type {
         Binary, Boolean, Keyword, Long, Integer, Double, Text
     }
+
 }

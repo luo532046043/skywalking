@@ -31,9 +31,18 @@ public abstract class ElasticSearchTableDefine extends TableDefine {
         super(name);
     }
 
+    /**
+     * 文档元数据 _type 字段
+     *
+     * @return {@link org.skywalking.apm.collector.core.data.CommonTable#TABLE_TYPE}
+     */
     public final String type() {
         return "type";
     }
 
+    /**
+     * @return 索引刷新频率，https://www.elastic.co/guide/cn/elasticsearch/guide/current/near-real-time.html#refresh-api
+     */
     public abstract int refreshInterval();
+
 }
