@@ -22,7 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * 表定义
+ * 表定义抽象类
  *
  * @author peng-yongsheng
  */
@@ -42,6 +42,9 @@ public abstract class TableDefine {
         this.columnDefines = new LinkedList<>();
     }
 
+    /**
+     * 初始化
+     */
     public abstract void initialize();
 
     public final void addColumn(ColumnDefine columnDefine) {
