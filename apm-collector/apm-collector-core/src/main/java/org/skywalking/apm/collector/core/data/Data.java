@@ -19,7 +19,7 @@
 package org.skywalking.apm.collector.core.data;
 
 /**
- * 数据
+ * 数据抽象类
  *
  * @author peng-yongsheng
  */
@@ -46,8 +46,10 @@ public abstract class Data extends EndOfBatchQueueMessage {
     public Data(String id, Column[] stringColumns, Column[] longColumns, Column[] doubleColumns,
         Column[] integerColumns, Column[] booleanColumns, Column[] byteColumns) {
         super(id);
+        // dataStrings 第一个为 ID 属性
         this.dataStrings = new String[stringColumns.length];
         this.dataStrings[0] = id;
+        // ....
         this.dataLongs = new Long[longColumns.length];
         this.dataDoubles = new Double[doubleColumns.length];
         this.dataIntegers = new Integer[integerColumns.length];
