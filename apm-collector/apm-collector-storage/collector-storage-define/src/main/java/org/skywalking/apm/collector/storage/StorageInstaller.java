@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 /**
- * 存储安装器抽象类，基于 TableDefine ，初始化存储器的表
+ * 存储安装器抽象类，基于 TableDefine ，初始化存储组件的表
  *
  * @author peng-yongsheng
  */

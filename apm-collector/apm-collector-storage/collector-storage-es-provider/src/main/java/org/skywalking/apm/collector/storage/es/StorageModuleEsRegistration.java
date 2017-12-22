@@ -22,6 +22,8 @@ import org.skywalking.apm.collector.cluster.ModuleRegistration;
 import org.skywalking.apm.collector.core.util.Const;
 
 /**
+ *
+ *
  * @author peng-yongsheng
  */
 public class StorageModuleEsRegistration extends ModuleRegistration {

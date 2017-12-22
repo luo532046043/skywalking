@@ -22,6 +22,8 @@ import org.skywalking.apm.collector.cluster.ClusterModuleListener;
 import org.skywalking.apm.collector.storage.StorageModule;
 
 /**
+ *
+ *
  * @author peng-yongsheng
  */
 public class StorageModuleEsNamingListener extends ClusterModuleListener {

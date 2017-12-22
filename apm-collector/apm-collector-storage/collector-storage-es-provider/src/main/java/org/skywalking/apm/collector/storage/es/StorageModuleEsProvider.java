@@ -18,8 +18,6 @@
 
 package org.skywalking.apm.collector.storage.es;
 
-import java.util.Properties;
-import java.util.UUID;
 import org.skywalking.apm.collector.client.ClientException;
 import org.skywalking.apm.collector.client.elasticsearch.ElasticSearchClient;
 import org.skywalking.apm.collector.cluster.ClusterModule;
@@ -31,80 +29,19 @@ import org.skywalking.apm.collector.core.module.ServiceNotProvidedException;
 import org.skywalking.apm.collector.storage.StorageException;
 import org.skywalking.apm.collector.storage.StorageModule;
 import org.skywalking.apm.collector.storage.base.dao.IBatchDAO;
-import org.skywalking.apm.collector.storage.dao.IApplicationCacheDAO;
-import org.skywalking.apm.collector.storage.dao.IApplicationRegisterDAO;
-import org.skywalking.apm.collector.storage.dao.ICpuMetricPersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.ICpuMetricUIDAO;
-import org.skywalking.apm.collector.storage.dao.IGCMetricPersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.IGCMetricUIDAO;
-import org.skywalking.apm.collector.storage.dao.IGlobalTracePersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.IGlobalTraceUIDAO;
-import org.skywalking.apm.collector.storage.dao.IInstPerformancePersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.IInstPerformanceUIDAO;
-import org.skywalking.apm.collector.storage.dao.IInstanceCacheDAO;
-import org.skywalking.apm.collector.storage.dao.IInstanceHeartBeatPersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.IInstanceRegisterDAO;
-import org.skywalking.apm.collector.storage.dao.IInstanceUIDAO;
-import org.skywalking.apm.collector.storage.dao.IMemoryMetricPersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.IMemoryMetricUIDAO;
-import org.skywalking.apm.collector.storage.dao.IMemoryPoolMetricPersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.IMemoryPoolMetricUIDAO;
-import org.skywalking.apm.collector.storage.dao.INodeComponentPersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.INodeComponentUIDAO;
-import org.skywalking.apm.collector.storage.dao.INodeMappingPersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.INodeMappingUIDAO;
-import org.skywalking.apm.collector.storage.dao.INodeReferencePersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.INodeReferenceUIDAO;
-import org.skywalking.apm.collector.storage.dao.ISegmentCostPersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.ISegmentCostUIDAO;
-import org.skywalking.apm.collector.storage.dao.ISegmentPersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.ISegmentUIDAO;
-import org.skywalking.apm.collector.storage.dao.IServiceEntryPersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.IServiceEntryUIDAO;
-import org.skywalking.apm.collector.storage.dao.IServiceNameCacheDAO;
-import org.skywalking.apm.collector.storage.dao.IServiceNameRegisterDAO;
-import org.skywalking.apm.collector.storage.dao.IServiceReferencePersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.IServiceReferenceUIDAO;
+import org.skywalking.apm.collector.storage.dao.*;
 import org.skywalking.apm.collector.storage.es.base.dao.BatchEsDAO;
 import org.skywalking.apm.collector.storage.es.base.define.ElasticSearchStorageInstaller;
-import org.skywalking.apm.collector.storage.es.dao.ApplicationEsCacheDAO;
-import org.skywalking.apm.collector.storage.es.dao.ApplicationEsRegisterDAO;
-import org.skywalking.apm.collector.storage.es.dao.CpuMetricEsPersistenceDAO;
-import org.skywalking.apm.collector.storage.es.dao.CpuMetricEsUIDAO;
-import org.skywalking.apm.collector.storage.es.dao.GCMetricEsPersistenceDAO;
-import org.skywalking.apm.collector.storage.es.dao.GCMetricEsUIDAO;
-import org.skywalking.apm.collector.storage.es.dao.GlobalTraceEsPersistenceDAO;
-import org.skywalking.apm.collector.storage.es.dao.GlobalTraceEsUIDAO;
-import org.skywalking.apm.collector.storage.es.dao.InstPerformanceEsPersistenceDAO;
-import org.skywalking.apm.collector.storage.es.dao.InstPerformanceEsUIDAO;
-import org.skywalking.apm.collector.storage.es.dao.InstanceEsCacheDAO;
-import org.skywalking.apm.collector.storage.es.dao.InstanceEsRegisterDAO;
-import org.skywalking.apm.collector.storage.es.dao.InstanceEsUIDAO;
-import org.skywalking.apm.collector.storage.es.dao.InstanceHeartBeatEsPersistenceDAO;
-import org.skywalking.apm.collector.storage.es.dao.MemoryMetricEsPersistenceDAO;
-import org.skywalking.apm.collector.storage.es.dao.MemoryMetricEsUIDAO;
-import org.skywalking.apm.collector.storage.es.dao.MemoryPoolMetricEsPersistenceDAO;
-import org.skywalking.apm.collector.storage.es.dao.MemoryPoolMetricEsUIDAO;
-import org.skywalking.apm.collector.storage.es.dao.NodeComponentEsPersistenceDAO;
-import org.skywalking.apm.collector.storage.es.dao.NodeComponentEsUIDAO;
-import org.skywalking.apm.collector.storage.es.dao.NodeMappingEsPersistenceDAO;
-import org.skywalking.apm.collector.storage.es.dao.NodeMappingEsUIDAO;
-import org.skywalking.apm.collector.storage.es.dao.NodeReferenceEsPersistenceDAO;
-import org.skywalking.apm.collector.storage.es.dao.NodeReferenceEsUIDAO;
-import org.skywalking.apm.collector.storage.es.dao.SegmentCostEsPersistenceDAO;
-import org.skywalking.apm.collector.storage.es.dao.SegmentCostEsUIDAO;
-import org.skywalking.apm.collector.storage.es.dao.SegmentEsPersistenceDAO;
-import org.skywalking.apm.collector.storage.es.dao.SegmentEsUIDAO;
-import org.skywalking.apm.collector.storage.es.dao.ServiceEntryEsPersistenceDAO;
-import org.skywalking.apm.collector.storage.es.dao.ServiceEntryEsUIDAO;
-import org.skywalking.apm.collector.storage.es.dao.ServiceNameEsCacheDAO;
-import org.skywalking.apm.collector.storage.es.dao.ServiceNameEsRegisterDAO;
-import org.skywalking.apm.collector.storage.es.dao.ServiceReferenceEsPersistenceDAO;
-import org.skywalking.apm.collector.storage.es.dao.ServiceReferenceEsUIDAO;
+import org.skywalking.apm.collector.storage.es.dao.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Properties;
+import java.util.UUID;
+
 /**
+ * 基于 ES 的存储组件服务提供者
+ *
  * @author peng-yongsheng
  */
 public class StorageModuleEsProvider extends ModuleProvider {
@@ -131,11 +68,13 @@ public class StorageModuleEsProvider extends ModuleProvider {
     }
 
     @Override public void prepare(Properties config) throws ServiceNotProvidedException {
+        // 创建 ElasticSearchClient 对象
         String clusterName = config.getProperty(CLUSTER_NAME);
         Boolean clusterTransportSniffer = (Boolean)config.get(CLUSTER_TRANSPORT_SNIFFER);
         String clusterNodes = config.getProperty(CLUSTER_NODES);
         elasticSearchClient = new ElasticSearchClient(clusterName, clusterTransportSniffer, clusterNodes);
 
+        // 创建并注册 DAO 对象
         this.registerServiceImplementation(IBatchDAO.class, new BatchEsDAO(elasticSearchClient));
         registerCacheDAO();
         registerRegisterDAO();
@@ -147,27 +86,33 @@ public class StorageModuleEsProvider extends ModuleProvider {
         Integer indexShardsNumber = (Integer)config.get(INDEX_SHARDS_NUMBER);
         Integer indexReplicasNumber = (Integer)config.get(INDEX_REPLICAS_NUMBER);
         try {
+            // 初始化 ElasticSearchClient 对象
             elasticSearchClient.initialize();
 
+            // 创建 ElasticSearchStorageInstaller 对象，初始化存储组件的表
             ElasticSearchStorageInstaller installer = new ElasticSearchStorageInstaller(indexShardsNumber, indexReplicasNumber);
             installer.install(elasticSearchClient);
         } catch (ClientException | StorageException e) {
             logger.error(e.getMessage(), e);
         }
 
+        // 创建 StorageModuleEsRegistration 对象，并注册信息到集群管理
         String uuId = UUID.randomUUID().toString();
         ModuleRegisterService moduleRegisterService = getManager().find(ClusterModule.NAME).getService(ModuleRegisterService.class);
         moduleRegisterService.register(StorageModule.NAME, this.name(), new StorageModuleEsRegistration(uuId, 0));
 
+        // 创建 StorageModuleEsNamingListener 对象，并添加监听器到集群管理
         StorageModuleEsNamingListener namingListener = new StorageModuleEsNamingListener();
         ModuleListenerService moduleListenerService = getManager().find(ClusterModule.NAME).getService(ModuleListenerService.class);
         moduleListenerService.addListener(namingListener);
 
+        // 创建 DataTTLKeeperTimer 对象
         Integer beforeDay = (Integer)config.getOrDefault(TIME_TO_LIVE_OF_DATA, 3);
         deleteTimer = new DataTTLKeeperTimer(getManager(), namingListener, uuId + 0, beforeDay);
     }
 
     @Override public void notifyAfterCompleted() throws ServiceNotProvidedException {
+        // 启动 DataTTLKeeperTimer 对象
         deleteTimer.start();
     }
 

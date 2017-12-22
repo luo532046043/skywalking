@@ -51,52 +51,52 @@ public class StorageModule extends Module {
     }
 
     private void addCacheDAO(List<Class> classes) {
-        classes.add(IApplicationCacheDAO.class);
-        classes.add(IInstanceCacheDAO.class);
-        classes.add(IServiceNameCacheDAO.class);
+        classes.add(IApplicationCacheDAO.class); // Application
+        classes.add(IInstanceCacheDAO.class); // Instance
+        classes.add(IServiceNameCacheDAO.class); // ServiceName
     }
 
     private void addRegisterDAO(List<Class> classes) {
-        classes.add(IApplicationRegisterDAO.class);
-        classes.add(IInstanceRegisterDAO.class);
-        classes.add(IServiceNameRegisterDAO.class);
+        classes.add(IApplicationRegisterDAO.class); // Application
+        classes.add(IInstanceRegisterDAO.class); // Instance
+        classes.add(IServiceNameRegisterDAO.class); // ServiceName
     }
 
     private void addPersistenceDAO(List<Class> classes) {
-        classes.add(ICpuMetricPersistenceDAO.class);
-        classes.add(IGCMetricPersistenceDAO.class);
-        classes.add(IMemoryMetricPersistenceDAO.class);
-        classes.add(IMemoryPoolMetricPersistenceDAO.class);
+        classes.add(ICpuMetricPersistenceDAO.class); // CpuMetric
+        classes.add(IGCMetricPersistenceDAO.class); // CMetric
+        classes.add(IMemoryMetricPersistenceDAO.class); // MemoryMetric
+        classes.add(IMemoryPoolMetricPersistenceDAO.class); // MemoryPoolMetric
 
-        classes.add(IGlobalTracePersistenceDAO.class);
-        classes.add(IInstPerformancePersistenceDAO.class);
-        classes.add(INodeComponentPersistenceDAO.class);
-        classes.add(INodeMappingPersistenceDAO.class);
-        classes.add(INodeReferencePersistenceDAO.class);
-        classes.add(ISegmentCostPersistenceDAO.class);
-        classes.add(ISegmentPersistenceDAO.class);
-        classes.add(IServiceEntryPersistenceDAO.class);
-        classes.add(IServiceReferencePersistenceDAO.class);
+        classes.add(IGlobalTracePersistenceDAO.class); // GlobalTrace
+        classes.add(IInstPerformancePersistenceDAO.class); // InstPerformance
+        classes.add(INodeComponentPersistenceDAO.class); // NodeComponent
+        classes.add(INodeMappingPersistenceDAO.class); // NodeMapping
+        classes.add(INodeReferencePersistenceDAO.class); // NodeReference
+        classes.add(ISegmentCostPersistenceDAO.class); // SegmentCost
+        classes.add(ISegmentPersistenceDAO.class); // Segment
+        classes.add(IServiceEntryPersistenceDAO.class); // ServiceEntry
+        classes.add(IServiceReferencePersistenceDAO.class); // ServiceReference
 
-        classes.add(IInstanceHeartBeatPersistenceDAO.class);
+        classes.add(IInstanceHeartBeatPersistenceDAO.class); // Instance
     }
 
     private void addUiDAO(List<Class> classes) {
-        classes.add(IInstanceUIDAO.class);
+        classes.add(IInstanceUIDAO.class); // Instance
 
-        classes.add(ICpuMetricUIDAO.class);
-        classes.add(IGCMetricUIDAO.class);
-        classes.add(IMemoryMetricUIDAO.class);
-        classes.add(IMemoryPoolMetricUIDAO.class);
+        classes.add(ICpuMetricUIDAO.class); // CpuMetric
+        classes.add(IGCMetricUIDAO.class); // CMetric
+        classes.add(IMemoryMetricUIDAO.class); // MemoryMetric
+        classes.add(IMemoryPoolMetricUIDAO.class); // MemoryPoolMetric
 
-        classes.add(IGlobalTraceUIDAO.class);
-        classes.add(IInstPerformanceUIDAO.class);
-        classes.add(INodeComponentUIDAO.class);
-        classes.add(INodeMappingUIDAO.class);
-        classes.add(INodeReferenceUIDAO.class);
-        classes.add(ISegmentCostUIDAO.class);
-        classes.add(ISegmentUIDAO.class);
-        classes.add(IServiceEntryUIDAO.class);
-        classes.add(IServiceReferenceUIDAO.class);
+        classes.add(IGlobalTraceUIDAO.class); // GlobalTrace
+        classes.add(IInstPerformanceUIDAO.class); // InstPerformance
+        classes.add(INodeComponentUIDAO.class); // NodeComponent
+        classes.add(INodeMappingUIDAO.class); // NodeMapping
+        classes.add(INodeReferenceUIDAO.class); // NodeReference
+        classes.add(ISegmentCostUIDAO.class); // SegmentCost
+        classes.add(ISegmentUIDAO.class); // Segment
+        classes.add(IServiceEntryUIDAO.class); // ServiceEntry
+        classes.add(IServiceReferenceUIDAO.class); // ServiceReference
     }
 }
