@@ -129,6 +129,7 @@ public class ElasticSearchClient implements Client {
         }
     }
 
+    // 参见 http://geosmart.github.io/2016/07/22/Elasticsearch%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/
     public boolean createIndex(String indexName, String indexType, Settings settings, XContentBuilder mappingBuilder) {
         IndicesAdminClient adminClient = client.admin().indices();
         CreateIndexResponse response = adminClient.prepareCreate(indexName).setSettings(settings).addMapping(indexType, mappingBuilder).get();

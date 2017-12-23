@@ -18,7 +18,6 @@
 
 package org.skywalking.apm.collector.storage.es.base.dao;
 
-import java.util.List;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequestBuilder;
@@ -29,7 +28,11 @@ import org.skywalking.apm.collector.storage.base.dao.IBatchDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 /**
+ * 基于 ES 批量操作 DAO 实现类
+ *
  * @author peng-yongsheng
  */
 public class BatchEsDAO extends EsDAO implements IBatchDAO {
@@ -47,9 +50,11 @@ public class BatchEsDAO extends EsDAO implements IBatchDAO {
         if (CollectionUtils.isNotEmpty(batchCollection)) {
             for (int i = 0; i < batchCollection.size(); i++) {
                 Object builder = batchCollection.get(i);
+                // 添加
                 if (builder instanceof IndexRequestBuilder) {
                     bulkRequest.add((IndexRequestBuilder)builder);
                 }
+                // 修改
                 if (builder instanceof UpdateRequestBuilder) {
                     bulkRequest.add((UpdateRequestBuilder)builder);
                 }
