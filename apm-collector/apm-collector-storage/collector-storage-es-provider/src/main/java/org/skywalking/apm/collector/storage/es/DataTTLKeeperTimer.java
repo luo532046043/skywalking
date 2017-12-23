@@ -47,7 +47,7 @@ public class DataTTLKeeperTimer {
     public void start() {
         //TODO: Don't release auto delete feature, yet
 //        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(this::delete, 1, 8, TimeUnit.HOURS);
-        delete();
+//        delete();
     }
 
     private void delete() {
