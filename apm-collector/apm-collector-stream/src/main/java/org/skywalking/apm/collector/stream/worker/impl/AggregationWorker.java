@@ -27,13 +27,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * 异步聚合 Worker
+ *
  * @author peng-yongsheng
  */
 public abstract class AggregationWorker<INPUT extends Data, OUTPUT extends Data> extends AbstractLocalAsyncWorker<INPUT, OUTPUT> {
 
     private final Logger logger = LoggerFactory.getLogger(AggregationWorker.class);
 
+    /**
+     * 数据缓存
+     */
     private DataCache dataCache;
+    /**
+     * 消息数量
+     */
     private int messageNum;
 
     public AggregationWorker(ModuleManager moduleManager) {
