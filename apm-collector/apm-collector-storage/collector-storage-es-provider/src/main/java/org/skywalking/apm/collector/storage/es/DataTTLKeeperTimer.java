@@ -25,6 +25,8 @@ import org.skywalking.apm.collector.storage.dao.*;
 import java.util.Calendar;
 
 /**
+ * 过期数据删除定时器
+ *
  * @author peng-yongsheng
  */
 public class DataTTLKeeperTimer {
