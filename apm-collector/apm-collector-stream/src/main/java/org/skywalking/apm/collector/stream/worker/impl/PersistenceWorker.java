@@ -35,13 +35,21 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 异步批量存储 Worker
+ *
  * @author peng-yongsheng
  */
 public abstract class PersistenceWorker<INPUT extends Data, OUTPUT extends Data> extends AbstractLocalAsyncWorker<INPUT, OUTPUT> {
 
     private final Logger logger = LoggerFactory.getLogger(PersistenceWorker.class);
 
+    /**
+     * 数据存储
+     */
     private final DataCache dataCache;
+    /**
+     * 批量操作 DAO
+     */
     private final IBatchDAO batchDAO;
 
     public PersistenceWorker(ModuleManager moduleManager) {
@@ -83,6 +91,12 @@ public abstract class PersistenceWorker<INPUT extends Data, OUTPUT extends Data>
         aggregate(message);
     }
 
+    /**
+     * 创建批量操作对象数组
+     *
+     * @return 批量操作对象数组
+     * @throws WorkerException
+     */
     public final List<?> buildBatchCollection() throws WorkerException {
         List<?> batchCollection = new LinkedList<>();
         try {
@@ -108,8 +122,9 @@ public abstract class PersistenceWorker<INPUT extends Data, OUTPUT extends Data>
         List<Object> insertBatchCollection = new LinkedList<>();
         List<Object> updateBatchCollection = new LinkedList<>();
         dataMap.forEach((id, data) -> {
-            if (needMergeDBData()) {
+            if (needMergeDBData()) { // 需要合并
                 Data dbData = persistenceDAO().get(id);
+                // 存在，则更新操作
                 if (ObjectUtils.isNotEmpty(dbData)) {
                     dbData.mergeData(data);
                     try {
@@ -117,6 +132,7 @@ public abstract class PersistenceWorker<INPUT extends Data, OUTPUT extends Data>
                     } catch (Throwable t) {
                         logger.error(t.getMessage(), t);
                     }
+                // 不存在，则新增操作
                 } else {
                     try {
                         insertBatchCollection.add(persistenceDAO().prepareBatchInsert(data));
@@ -125,6 +141,7 @@ public abstract class PersistenceWorker<INPUT extends Data, OUTPUT extends Data>
                     }
                 }
             } else {
+                // 新增操作
                 try {
                     insertBatchCollection.add(persistenceDAO().prepareBatchInsert(data));
                 } catch (Throwable t) {
@@ -158,7 +175,13 @@ public abstract class PersistenceWorker<INPUT extends Data, OUTPUT extends Data>
         dataCache.finishWriting();
     }
 
+    /**
+     * @return 持久化 DAO 接口
+     */
     protected abstract IPersistenceDAO persistenceDAO();
 
+    /**
+     * @return 是否需要合并数据
+     */
     protected abstract boolean needMergeDBData();
 }
