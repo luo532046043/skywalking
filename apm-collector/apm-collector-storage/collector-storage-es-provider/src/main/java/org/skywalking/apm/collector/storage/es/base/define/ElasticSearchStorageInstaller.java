@@ -34,6 +34,8 @@ import java.io.IOException;
 import java.util.List;
 
 /**
+ * 基于 ES 存储安装器实现类。基于 TableDefine ，初始化存储组件的表
+ *
  * @author peng-yongsheng
  */
 public class ElasticSearchStorageInstaller extends StorageInstaller {
