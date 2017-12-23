@@ -28,32 +28,64 @@ import org.skywalking.apm.collector.core.data.Data;
  */
 public class DataCache extends Window<DataCollection> {
 
+    /**
+     * 写入的窗口数据
+     */
     private DataCollection lockedDataCollection;
 
     @Override public DataCollection collectionInstance() {
         return new DataCollection();
     }
 
+    /**
+     * 根据 ID 判断 Data 是否存在
+     *
+     * @param id 编号
+     * @return 是否存在
+     */
     public boolean containsKey(String id) {
         return lockedDataCollection.containsKey(id);
     }
 
+    /**
+     * 根据 ID 获得 Data
+     *
+     * @param id 编号
+     * @return Data
+     */
     public Data get(String id) {
         return lockedDataCollection.get(id);
     }
 
+    /**
+     * 写入 Data
+     *
+     * @param id 编号
+     * @param data Data
+     */
     public void put(String id, Data data) {
         lockedDataCollection.put(id, data);
     }
 
+    /**
+     * 开始写入
+     */
     public void writing() {
         lockedDataCollection = getCurrentAndWriting();
     }
 
+    /**
+     * 获得当前数据指向的数据数量
+     *
+     * @return 数量
+     */
     public int currentCollectionSize() {
         return getCurrent().size();
     }
 
+    /**
+     * 完成写入
+     */
     public void finishWriting() {
         lockedDataCollection.finishWriting();
         lockedDataCollection = null;
