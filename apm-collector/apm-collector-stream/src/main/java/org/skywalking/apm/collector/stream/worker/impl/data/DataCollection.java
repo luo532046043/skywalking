@@ -25,12 +25,24 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * 数据采集
+ *
  * @author peng-yongsheng
  */
 public class DataCollection implements Collection<Map<String, Data>> {
 
+    /**
+     * Data 映射
+     * key ：{@link Data#getId()}
+     */
     private Map<String, Data> data;
+    /**
+     * 正在写入中的标记
+     */
     private volatile boolean writing;
+    /**
+     * 正在读取中的标记
+     */
     private volatile boolean reading;
 
     public DataCollection() {

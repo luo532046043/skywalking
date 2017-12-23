@@ -19,6 +19,8 @@
 package org.skywalking.apm.collector.core.cache;
 
 /**
+ * 采集接口
+ *
  * @author peng-yongsheng
  */
 public interface Collection<Data> {

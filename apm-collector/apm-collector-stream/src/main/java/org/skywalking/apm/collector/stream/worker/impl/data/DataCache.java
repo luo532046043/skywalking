@@ -22,6 +22,8 @@ import org.skywalking.apm.collector.core.cache.Window;
 import org.skywalking.apm.collector.core.data.Data;
 
 /**
+ * 数据缓存
+ *
  * @author peng-yongsheng
  */
 public class DataCache extends Window<DataCollection> {

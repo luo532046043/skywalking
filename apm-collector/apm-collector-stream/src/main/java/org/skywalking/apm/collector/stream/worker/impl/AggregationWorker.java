@@ -53,7 +53,7 @@ public abstract class AggregationWorker<INPUT extends Data, OUTPUT extends Data>
             messageNum = 0;
         }
 
-        // TODO 可能要看下队列 提交数据给 Next
+        // 当消息是批处理的最后一条时，提交数据给 Next
         if (message.isEndOfBatch()) {
             sendToNext();
         }
