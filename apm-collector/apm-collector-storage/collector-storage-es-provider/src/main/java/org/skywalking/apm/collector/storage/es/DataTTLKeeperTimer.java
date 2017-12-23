@@ -18,21 +18,11 @@
 
 package org.skywalking.apm.collector.storage.es;
 
-import java.util.Calendar;
 import org.skywalking.apm.collector.core.module.ModuleManager;
 import org.skywalking.apm.collector.storage.StorageModule;
-import org.skywalking.apm.collector.storage.dao.ICpuMetricPersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.IGCMetricPersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.IGlobalTracePersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.IInstPerformancePersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.IMemoryMetricPersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.IMemoryPoolMetricPersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.INodeComponentPersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.INodeMappingPersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.INodeReferencePersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.ISegmentCostPersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.ISegmentPersistenceDAO;
-import org.skywalking.apm.collector.storage.dao.IServiceReferencePersistenceDAO;
+import org.skywalking.apm.collector.storage.dao.*;
+
+import java.util.Calendar;
 
 /**
  * @author peng-yongsheng
@@ -54,23 +44,26 @@ public class DataTTLKeeperTimer {
 
     public void start() {
         //TODO: Don't release auto delete feature, yet
-        //Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(this::delete, 1, 8, TimeUnit.HOURS);
+//        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(this::delete, 1, 8, TimeUnit.HOURS);
+        delete();
     }
 
     private void delete() {
+        // 计算 删除开始时间与结束时间
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.DAY_OF_MONTH, -daysBefore);
+        calendar.add(Calendar.DAY_OF_MONTH, -daysBefore);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
-
         long startTimestamp = calendar.getTimeInMillis();
 
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
         calendar.set(Calendar.MINUTE, 59);
         calendar.set(Calendar.SECOND, 59);
         long endTimestamp = calendar.getTimeInMillis();
 
+        // 执行删除
         deleteJVMRelatedData(startTimestamp, endTimestamp);
         deleteTraceRelatedData(startTimestamp, endTimestamp);
     }
