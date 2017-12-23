@@ -71,41 +71,53 @@ public class DataTTLKeeperTimer {
     }
 
     private void deleteJVMRelatedData(long startTimestamp, long endTimestamp) {
+        // CpuMetric
         ICpuMetricPersistenceDAO cpuMetricPersistenceDAO = moduleManager.find(StorageModule.NAME).getService(ICpuMetricPersistenceDAO.class);
         cpuMetricPersistenceDAO.deleteHistory(startTimestamp, endTimestamp);
 
+        // CMetric
         IGCMetricPersistenceDAO gcMetricPersistenceDAO = moduleManager.find(StorageModule.NAME).getService(IGCMetricPersistenceDAO.class);
         gcMetricPersistenceDAO.deleteHistory(startTimestamp, endTimestamp);
 
+        // MemoryMetric
         IMemoryMetricPersistenceDAO memoryMetricPersistenceDAO = moduleManager.find(StorageModule.NAME).getService(IMemoryMetricPersistenceDAO.class);
         memoryMetricPersistenceDAO.deleteHistory(startTimestamp, endTimestamp);
 
+        // MemoryPoolMetric
         IMemoryPoolMetricPersistenceDAO memoryPoolMetricPersistenceDAO = moduleManager.find(StorageModule.NAME).getService(IMemoryPoolMetricPersistenceDAO.class);
         memoryPoolMetricPersistenceDAO.deleteHistory(startTimestamp, endTimestamp);
     }
 
     private void deleteTraceRelatedData(long startTimestamp, long endTimestamp) {
+        // GlobalTrace
         IGlobalTracePersistenceDAO globalTracePersistenceDAO = moduleManager.find(StorageModule.NAME).getService(IGlobalTracePersistenceDAO.class);
         globalTracePersistenceDAO.deleteHistory(startTimestamp, endTimestamp);
 
+        // InstPerformance
         IInstPerformancePersistenceDAO instPerformancePersistenceDAO = moduleManager.find(StorageModule.NAME).getService(IInstPerformancePersistenceDAO.class);
         instPerformancePersistenceDAO.deleteHistory(startTimestamp, endTimestamp);
 
+        // NodeComponent
         INodeComponentPersistenceDAO nodeComponentPersistenceDAO = moduleManager.find(StorageModule.NAME).getService(INodeComponentPersistenceDAO.class);
         nodeComponentPersistenceDAO.deleteHistory(startTimestamp, endTimestamp);
 
+        // NodeMapping
         INodeMappingPersistenceDAO nodeMappingPersistenceDAO = moduleManager.find(StorageModule.NAME).getService(INodeMappingPersistenceDAO.class);
         nodeMappingPersistenceDAO.deleteHistory(startTimestamp, endTimestamp);
 
+        // NodeReference
         INodeReferencePersistenceDAO nodeReferencePersistenceDAO = moduleManager.find(StorageModule.NAME).getService(INodeReferencePersistenceDAO.class);
         nodeReferencePersistenceDAO.deleteHistory(startTimestamp, endTimestamp);
 
+        // SegmentCost
         ISegmentCostPersistenceDAO segmentCostPersistenceDAO = moduleManager.find(StorageModule.NAME).getService(ISegmentCostPersistenceDAO.class);
         segmentCostPersistenceDAO.deleteHistory(startTimestamp, endTimestamp);
 
+        // Segment
         ISegmentPersistenceDAO segmentPersistenceDAO = moduleManager.find(StorageModule.NAME).getService(ISegmentPersistenceDAO.class);
         segmentPersistenceDAO.deleteHistory(startTimestamp, endTimestamp);
 
+        // ServiceReference
         IServiceReferencePersistenceDAO serviceReferencePersistenceDAO = moduleManager.find(StorageModule.NAME).getService(IServiceReferencePersistenceDAO.class);
         serviceReferencePersistenceDAO.deleteHistory(startTimestamp, endTimestamp);
     }
