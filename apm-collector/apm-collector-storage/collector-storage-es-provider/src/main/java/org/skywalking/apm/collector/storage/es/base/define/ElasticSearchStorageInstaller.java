@@ -18,19 +18,20 @@
 
 package org.skywalking.apm.collector.storage.es.base.define;
 
-import java.io.IOException;
-import java.util.List;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.index.IndexNotFoundException;
 import org.skywalking.apm.collector.client.Client;
 import org.skywalking.apm.collector.client.elasticsearch.ElasticSearchClient;
-import org.skywalking.apm.collector.storage.StorageInstaller;
 import org.skywalking.apm.collector.core.data.ColumnDefine;
 import org.skywalking.apm.collector.core.data.TableDefine;
+import org.skywalking.apm.collector.storage.StorageInstaller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * @author peng-yongsheng
@@ -48,6 +49,7 @@ public class ElasticSearchStorageInstaller extends StorageInstaller {
     }
 
     @Override protected void defineFilter(List<TableDefine> tableDefines) {
+        // 过滤非 ElasticSearchTableDefine
         int size = tableDefines.size();
         for (int i = size - 1; i >= 0; i--) {
             if (!(tableDefines.get(i) instanceof ElasticSearchTableDefine)) {
@@ -57,19 +59,22 @@ public class ElasticSearchStorageInstaller extends StorageInstaller {
     }
 
     @Override protected boolean createTable(Client client, TableDefine tableDefine) {
-        ElasticSearchClient esClient = (ElasticSearchClient)client;
-        ElasticSearchTableDefine esTableDefine = (ElasticSearchTableDefine)tableDefine;
+        ElasticSearchClient esClient = (ElasticSearchClient) client;
+        ElasticSearchTableDefine esTableDefine = (ElasticSearchTableDefine) tableDefine;
         // mapping
         XContentBuilder mappingBuilder = null;
 
+        // Settings
         Settings settings = createSettingBuilder(esTableDefine);
         try {
+            // XContentBuilder
             mappingBuilder = createMappingBuilder(esTableDefine);
             logger.info("mapping builder str: {}", mappingBuilder.string());
         } catch (Exception e) {
             logger.error("create {} index mapping builder error", esTableDefine.getName());
         }
 
+        // 调用
         boolean isAcknowledged = esClient.createIndex(esTableDefine.getName(), esTableDefine.type(), settings, mappingBuilder);
         logger.info("create {} index with type of {} finished, isAcknowledged: {}", esTableDefine.getName(), esTableDefine.type(), isAcknowledged);
         return isAcknowledged;
@@ -77,10 +82,14 @@ public class ElasticSearchStorageInstaller extends StorageInstaller {
 
     private Settings createSettingBuilder(ElasticSearchTableDefine tableDefine) {
         return Settings.builder()
+            // 参见 https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-create-index.html
             .put("index.number_of_shards", indexShardsNumber)
             .put("index.number_of_replicas", indexReplicasNumber)
-            .put("index.refresh_interval", String.valueOf(tableDefine.refreshInterval()) + "s")
 
+            // 参见 https://www.elastic.co/guide/cn/elasticsearch/guide/current/near-real-time.html#refresh-api
+            .put("index.refresh_interval", String.valueOf(tableDefine.refreshInterval()) + "s") // 索引刷新频率
+
+             // 参见 https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-standard-analyzer.html
             .put("analysis.analyzer.collector_analyzer.tokenizer", "collector_tokenizer")
             .put("analysis.tokenizer.collector_tokenizer.type", "standard")
             .put("analysis.tokenizer.collector_tokenizer.max_token_length", 5)
@@ -92,6 +101,7 @@ public class ElasticSearchStorageInstaller extends StorageInstaller {
             .startObject()
             .startObject("properties");
 
+        // 循环 ColumnDefine 数组
         for (ColumnDefine columnDefine : tableDefine.getColumnDefines()) {
             ElasticSearchColumnDefine elasticSearchColumnDefine = (ElasticSearchColumnDefine)columnDefine;
 
@@ -99,7 +109,7 @@ public class ElasticSearchStorageInstaller extends StorageInstaller {
                 mappingBuilder
                     .startObject(elasticSearchColumnDefine.getName())
                     .field("type", elasticSearchColumnDefine.getType().toLowerCase())
-                    .field("fielddata", true)
+                    .field("fielddata", true) // 目前使用的字段都是 SERVICE_NAME 。参见 http://cwiki.apachecn.org/pages/viewpage.action?pageId=10028596
                     .endObject();
             } else {
                 mappingBuilder
