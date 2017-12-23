@@ -18,10 +18,6 @@
 
 package org.skywalking.apm.collector.stream.timer;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import org.skywalking.apm.collector.core.module.ModuleManager;
 import org.skywalking.apm.collector.storage.StorageModule;
 import org.skywalking.apm.collector.storage.base.dao.IBatchDAO;
@@ -30,7 +26,14 @@ import org.skywalking.apm.collector.stream.worker.impl.PersistenceWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 /**
+ * 持久化定时任务
+ *
  * @author peng-yongsheng
  */
 public class PersistenceTimer {
@@ -48,11 +51,14 @@ public class PersistenceTimer {
 
     private void extractDataAndSave(IBatchDAO batchDAO, List<PersistenceWorker> persistenceWorkers) {
         try {
+            // 获得
             List batchAllCollection = new ArrayList<>();
             persistenceWorkers.forEach((PersistenceWorker worker) -> {
                 logger.debug("extract {} worker data and save", worker.getClass().getName());
                 try {
+                    // 切换数据指针，即切换读写 Collection
                     worker.flushAndSwitch();
+                    // 创建批量操作对象数组
                     List<?> batchCollection = worker.buildBatchCollection();
                     logger.debug("extract {} worker data size: {}", worker.getClass().getName(), batchCollection.size());
                     batchAllCollection.addAll(batchCollection);
@@ -61,6 +67,7 @@ public class PersistenceTimer {
                 }
             });
 
+            // 执行批量操作
             batchDAO.batchPersistence(batchAllCollection);
         } catch (Throwable e) {
             logger.error(e.getMessage(), e);

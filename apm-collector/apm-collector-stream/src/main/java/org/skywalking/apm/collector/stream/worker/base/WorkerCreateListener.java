@@ -18,11 +18,14 @@
 
 package org.skywalking.apm.collector.stream.worker.base;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.skywalking.apm.collector.stream.worker.impl.PersistenceWorker;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
+ * Worker 创建监听器
+ *
  * @author peng-yongsheng
  */
 public class WorkerCreateListener {

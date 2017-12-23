@@ -45,7 +45,6 @@ public class AgentStreamBootStartup {
 
         PersistenceTimer timer = new PersistenceTimer();
         timer.start(moduleManager, workerCreateListener.getPersistenceWorkers());
-
     }
 
     private void createJVMGraph() {
