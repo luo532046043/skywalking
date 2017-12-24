@@ -22,7 +22,7 @@ import org.skywalking.apm.collector.core.module.Service;
 import org.skywalking.apm.collector.storage.table.register.Instance;
 
 /**
- * 应用实例数据缓存服务
+ * 应用实例数据缓存服务接口
  *
  * {@link org.skywalking.apm.collector.storage.table.register.Instance}
  *
@@ -31,13 +31,20 @@ import org.skywalking.apm.collector.storage.table.register.Instance;
 public interface InstanceCacheService extends Service {
 
     /**
-     * 获得应用实例编号 {@link Instance#getId()}
+     * 获得应用编号 {@link Instance#getApplicationId()} ()}
      *
      * @param applicationInstanceId 应用实例编号
-     * @return
+     * @return 应用编号
      */
     int get(int applicationInstanceId);
 
+    /**
+     * 获得应用实例编号  {@link Instance#getId()}
+     *
+     * @param applicationId 应用编号
+     * @param agentUUID Agent UUID
+     * @return 应用实例编号
+     */
     int getInstanceId(int applicationId, String agentUUID);
 
 }

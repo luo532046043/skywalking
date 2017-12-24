@@ -24,6 +24,8 @@ import org.skywalking.apm.collector.core.data.operator.CoverOperation;
 import org.skywalking.apm.collector.core.data.operator.NonOperation;
 
 /**
+ * 应用实例
+ *
  * @author peng-yongsheng
  */
 public class Instance extends Data {

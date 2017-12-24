@@ -25,9 +25,19 @@ import org.skywalking.apm.collector.core.data.CommonTable;
  */
 public class InstanceTable extends CommonTable {
     public static final String TABLE = "instance";
+
+    /**
+     * 应用编号
+     */
     public static final String COLUMN_APPLICATION_ID = "application_id";
+    /**
+     * Agent UUID
+     */
     public static final String COLUMN_AGENT_UUID = "agent_uuid";
     public static final String COLUMN_REGISTER_TIME = "register_time";
+    /**
+     * 应用实例编号
+     */
     public static final String COLUMN_INSTANCE_ID = "instance_id";
     public static final String COLUMN_HEARTBEAT_TIME = "heartbeat_time";
     public static final String COLUMN_OS_INFO = "os_info";

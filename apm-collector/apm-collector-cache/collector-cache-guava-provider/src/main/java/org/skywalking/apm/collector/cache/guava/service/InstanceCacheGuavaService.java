@@ -30,14 +30,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * 应用实例数据缓存服务实现类
+ *
  * @author peng-yongsheng
  */
 public class InstanceCacheGuavaService implements InstanceCacheService {
 
     private final Logger logger = LoggerFactory.getLogger(InstanceCacheGuavaService.class);
 
+    /**
+     * 应用实例编号与应用编号的映射
+     * key ：应用实例编号
+     */
     private final Cache<Integer, Integer> integerCache = CacheBuilder.newBuilder().initialCapacity(100).maximumSize(5000).build();
 
+    /**
+     * 应用编号_AgentUUID与应用实例编号的映射
+     * key ：应用编号_AgentUUID
+     */
     private final Cache<String, Integer> stringCache = CacheBuilder.newBuilder().initialCapacity(100).maximumSize(5000).build();
 
     private final ModuleManager moduleManager;
@@ -55,7 +65,6 @@ public class InstanceCacheGuavaService implements InstanceCacheService {
     }
 
     public int get(int applicationInstanceId) {
-
         int applicationId = 0;
         try {
             applicationId = integerCache.get(applicationInstanceId, () -> getInstanceCacheDAO().getApplicationId(applicationInstanceId));
@@ -63,6 +72,7 @@ public class InstanceCacheGuavaService implements InstanceCacheService {
             logger.error(e.getMessage(), e);
         }
 
+        // 若缓存的结果为 0 ，调用 DAO 重新读取
         if (applicationId == 0) {
             applicationId = getInstanceCacheDAO().getApplicationId(applicationInstanceId);
             if (applicationId != 0) {
