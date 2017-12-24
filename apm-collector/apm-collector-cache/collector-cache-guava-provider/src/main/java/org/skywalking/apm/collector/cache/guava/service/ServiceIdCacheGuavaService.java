@@ -30,12 +30,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * 服务编号数据缓存服务实现类
+ *
  * @author peng-yongsheng
  */
 public class ServiceIdCacheGuavaService implements ServiceIdCacheService {
 
     private final Logger logger = LoggerFactory.getLogger(ServiceIdCacheGuavaService.class);
 
+    /**
+     * ApplicationId_ServiceName与服务编号的映射
+     * key ：ApplicationId_ServiceName
+     */
     private final Cache<String, Integer> serviceIdCache = CacheBuilder.newBuilder().maximumSize(1000).build();
 
     private final ModuleManager moduleManager;

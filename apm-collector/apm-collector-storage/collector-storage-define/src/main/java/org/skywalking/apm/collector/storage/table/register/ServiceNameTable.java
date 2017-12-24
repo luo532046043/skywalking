@@ -24,8 +24,20 @@ import org.skywalking.apm.collector.core.data.CommonTable;
  * @author peng-yongsheng
  */
 public class ServiceNameTable extends CommonTable {
+
     public static final String TABLE = "service_name";
+
+    /**
+     * 服务名
+     */
     public static final String COLUMN_SERVICE_NAME = "service_name";
+    /**
+     * 应用编号
+     */
     public static final String COLUMN_APPLICATION_ID = "application_id";
+    /**
+     * 服务编号
+     */
     public static final String COLUMN_SERVICE_ID = "service_id";
+
 }

@@ -19,12 +19,22 @@
 package org.skywalking.apm.collector.cache.service;
 
 import org.skywalking.apm.collector.core.module.Service;
+import org.skywalking.apm.collector.storage.table.register.ServiceName;
 
 /**
+ * 服务编号数据缓存服务接口
+ *
  * @author peng-yongsheng
  */
 public interface ServiceIdCacheService extends Service {
 
+    /**
+     * 获得服务编号 {@link ServiceName#getId()}
+     *
+     * @param applicationId 应用编号
+     * @param serviceName 服务名
+     * @return 服务编号
+     */
     int get(int applicationId, String serviceName);
 
 }

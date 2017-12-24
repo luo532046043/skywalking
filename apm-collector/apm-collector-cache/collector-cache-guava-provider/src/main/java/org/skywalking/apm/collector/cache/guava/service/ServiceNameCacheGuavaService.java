@@ -27,16 +27,23 @@ import org.skywalking.apm.collector.core.util.ObjectUtils;
 import org.skywalking.apm.collector.core.util.StringUtils;
 import org.skywalking.apm.collector.storage.StorageModule;
 import org.skywalking.apm.collector.storage.dao.IServiceNameCacheDAO;
+import org.skywalking.apm.collector.storage.table.register.ServiceName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * 服务名数据缓存服务实现类
+ *
  * @author peng-yongsheng
  */
 public class ServiceNameCacheGuavaService implements ServiceNameCacheService {
 
     private final Logger logger = LoggerFactory.getLogger(ServiceNameCacheGuavaService.class);
 
+    /**
+     * 服务编号与服务名的映射
+     * key ：{@link ServiceName#getId()}
+     */
     private final Cache<Integer, String> serviceNameCache = CacheBuilder.newBuilder().maximumSize(10000).build();
 
     private final ModuleManager moduleManager;
@@ -61,6 +68,7 @@ public class ServiceNameCacheGuavaService implements ServiceNameCacheService {
             logger.error(e.getMessage(), e);
         }
 
+        // 若缓存的结果为 0 ，调用 DAO 重新读取
         if (StringUtils.isEmpty(serviceName)) {
             serviceName = getServiceNameCacheDAO().getServiceName(serviceId);
             if (StringUtils.isNotEmpty(serviceName)) {
@@ -73,7 +81,7 @@ public class ServiceNameCacheGuavaService implements ServiceNameCacheService {
 
     public String getSplitServiceName(String serviceName) {
         if (StringUtils.isNotEmpty(serviceName)) {
-            String[] serviceNames = serviceName.split(Const.ID_SPLIT);
+            String[] serviceNames = serviceName.split(Const.ID_SPLIT); // ApplicationId_ServiceName
             if (serviceNames.length == 2) {
                 return serviceNames[1];
             } else {

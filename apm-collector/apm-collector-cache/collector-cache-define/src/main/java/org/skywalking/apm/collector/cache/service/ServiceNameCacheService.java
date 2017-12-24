@@ -19,12 +19,23 @@
 package org.skywalking.apm.collector.cache.service;
 
 import org.skywalking.apm.collector.core.module.Service;
+import org.skywalking.apm.collector.storage.table.register.ServiceName;
 
 /**
+ * 服务名数据缓存服务接口
+ *
  * @author peng-yongsheng
  */
 public interface ServiceNameCacheService extends Service {
+
+    /**
+     * 获得服务名 {@link ServiceName#getServiceName()}
+     *
+     * @param serviceId 服务编号
+     * @return 服务名
+     */
     String get(int serviceId);
 
     String getSplitServiceName(String serviceName);
+
 }

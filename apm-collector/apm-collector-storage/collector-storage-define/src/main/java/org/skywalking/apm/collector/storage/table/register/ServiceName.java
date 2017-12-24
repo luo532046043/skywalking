@@ -24,6 +24,8 @@ import org.skywalking.apm.collector.core.data.operator.CoverOperation;
 import org.skywalking.apm.collector.core.data.operator.NonOperation;
 
 /**
+ * 服务名
+ *
  * @author peng-yongsheng
  */
 public class ServiceName extends Data {
