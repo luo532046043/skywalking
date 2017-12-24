@@ -21,10 +21,19 @@ package org.skywalking.apm.collector.storage.table.register;
 import org.skywalking.apm.collector.core.data.CommonTable;
 
 /**
+ * 应用表
+ *
  * @author peng-yongsheng
  */
 public class ApplicationTable extends CommonTable {
     public static final String TABLE = "application";
+
+    /**
+     * 应用编码
+     */
     public static final String COLUMN_APPLICATION_CODE = "application_code";
+    /**
+     * 应用编号
+     */
     public static final String COLUMN_APPLICATION_ID = "application_id";
 }

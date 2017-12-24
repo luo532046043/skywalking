@@ -19,12 +19,31 @@
 package org.skywalking.apm.collector.cache.service;
 
 import org.skywalking.apm.collector.core.module.Service;
+import org.skywalking.apm.collector.storage.table.register.Application;
 
 /**
+ * 应用数据缓存服务接口
+ *
+ * {@link org.skywalking.apm.collector.storage.table.register.Application}
+ *
  * @author peng-yongsheng
  */
 public interface ApplicationCacheService extends Service {
+
+    /**
+     * 获得应用编号 {@link Application#getId()}
+     *
+     * @param applicationCode 应用编码
+     * @return 应用编号
+     */
     int get(String applicationCode);
 
+    /**
+     * 获得应用编码 {@link Application#getApplicationCode()}
+     *
+     * @param applicationId 应用编号
+     * @return 应用编码
+     */
     String get(int applicationId);
+
 }

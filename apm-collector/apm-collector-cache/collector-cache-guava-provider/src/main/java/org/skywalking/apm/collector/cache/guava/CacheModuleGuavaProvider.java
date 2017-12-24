@@ -18,7 +18,6 @@
 
 package org.skywalking.apm.collector.cache.guava;
 
-import java.util.Properties;
 import org.skywalking.apm.collector.cache.CacheModule;
 import org.skywalking.apm.collector.cache.guava.service.ApplicationCacheGuavaService;
 import org.skywalking.apm.collector.cache.guava.service.InstanceCacheGuavaService;
@@ -33,7 +32,11 @@ import org.skywalking.apm.collector.core.module.ModuleProvider;
 import org.skywalking.apm.collector.core.module.ServiceNotProvidedException;
 import org.skywalking.apm.collector.storage.StorageModule;
 
+import java.util.Properties;
+
 /**
+ * 缓存组件服务提供者
+ *
  * @author peng-yongsheng
  */
 public class CacheModuleGuavaProvider extends ModuleProvider {

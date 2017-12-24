@@ -19,12 +19,25 @@
 package org.skywalking.apm.collector.cache.service;
 
 import org.skywalking.apm.collector.core.module.Service;
+import org.skywalking.apm.collector.storage.table.register.Instance;
 
 /**
+ * 应用实例数据缓存服务
+ *
+ * {@link org.skywalking.apm.collector.storage.table.register.Instance}
+ *
  * @author peng-yongsheng
  */
 public interface InstanceCacheService extends Service {
+
+    /**
+     * 获得应用实例编号 {@link Instance#getId()}
+     *
+     * @param applicationInstanceId 应用实例编号
+     * @return
+     */
     int get(int applicationInstanceId);
 
     int getInstanceId(int applicationId, String agentUUID);
+
 }

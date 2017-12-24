@@ -27,16 +27,23 @@ import org.skywalking.apm.collector.core.util.ObjectUtils;
 import org.skywalking.apm.collector.core.util.StringUtils;
 import org.skywalking.apm.collector.storage.StorageModule;
 import org.skywalking.apm.collector.storage.dao.IApplicationCacheDAO;
+import org.skywalking.apm.collector.storage.table.register.Application;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * 应用数据缓存服务实现类
+ *
  * @author peng-yongsheng
  */
 public class ApplicationCacheGuavaService implements ApplicationCacheService {
 
     private final Logger logger = LoggerFactory.getLogger(ApplicationCacheGuavaService.class);
 
+    /**
+     * 应用编码与应用编号的映射
+     * key ：{@link Application#getApplicationCode()}
+     */
     private final Cache<String, Integer> codeCache = CacheBuilder.newBuilder().initialCapacity(100).maximumSize(1000).build();
 
     private final ModuleManager moduleManager;
@@ -61,6 +68,7 @@ public class ApplicationCacheGuavaService implements ApplicationCacheService {
             logger.error(e.getMessage(), e);
         }
 
+        // 若缓存的结果为 0 ，调用 DAO 重新读取
         if (applicationId == 0) {
             applicationId = getApplicationCacheDAO().getApplicationId(applicationCode);
             if (applicationId != 0) {
@@ -70,6 +78,10 @@ public class ApplicationCacheGuavaService implements ApplicationCacheService {
         return applicationId;
     }
 
+    /**
+     * 应用编号与应用编码的映射
+     * key ：{@link Application#getId()}
+     */
     private final Cache<Integer, String> idCache = CacheBuilder.newBuilder().maximumSize(1000).build();
 
     public String get(int applicationId) {

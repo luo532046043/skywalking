@@ -25,6 +25,8 @@ import org.skywalking.apm.collector.cache.service.ServiceNameCacheService;
 import org.skywalking.apm.collector.core.module.Module;
 
 /**
+ * 缓存组件
+ *
  * @author peng-yongsheng
  */
 public class CacheModule extends Module {
