@@ -32,8 +32,8 @@ import org.skywalking.apm.commons.datacarrier.partition.SimpleRollingPartitioner
  * Created by wusheng on 2016/10/25.
  */
 public class DataCarrier<T> {
-    private final int bufferSize;
-    private final int channelSize;
+    private final int bufferSize; // TODO 芋艿，用途
+    private final int channelSize; // TODO 芋艿，用途
     private Channels<T> channels;
     private ConsumerPool<T> consumerPool;
 
