@@ -36,6 +36,14 @@ public interface ServiceNameCacheService extends Service {
      */
     String get(int serviceId);
 
+    /**
+     * 获得服务名
+     *
+     * 非调用缓存方法
+     *
+     * @param serviceName 格式为 ApplicationId_ServiceName
+     * @return 服务名
+     */
     String getSplitServiceName(String serviceName);
 
 }
