@@ -24,6 +24,7 @@ package org.skywalking.apm.collector.remote.service;
  * @author peng-yongsheng
  */
 public enum Selector {
+
     /**
      * hash
      */
@@ -36,4 +37,5 @@ public enum Selector {
      * 第一个
      */
     ForeverFirst
+
 }

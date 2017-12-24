@@ -21,6 +21,7 @@ package org.skywalking.apm.collector.remote;
 /**
  * @author peng-yongsheng
  */
+@Deprecated // add by 芋艿，被 Selector 取代
 public enum RoutingRule {
     HashCode, ForeverFirst
 }

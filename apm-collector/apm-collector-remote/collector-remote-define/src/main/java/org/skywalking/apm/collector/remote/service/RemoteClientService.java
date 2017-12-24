@@ -21,8 +21,21 @@ package org.skywalking.apm.collector.remote.service;
 import org.skywalking.apm.collector.core.module.Service;
 
 /**
+ * 远程客户端服务接口
+ *
  * @author peng-yongsheng
  */
 public interface RemoteClientService extends Service {
+
+    /**
+     * 创建远程客户端对象
+     *
+     * @param host host
+     * @param port 端口
+     * @param channelSize
+     * @param bufferSize
+     * @return 远程客户端对象
+     */
     RemoteClient create(String host, int port, int channelSize, int bufferSize);
+
 }

@@ -21,8 +21,18 @@ package org.skywalking.apm.collector.remote.service;
 import org.skywalking.apm.collector.core.data.Data;
 
 /**
+ * 远程通信反序列化服务接口
+ *
  * @author peng-yongsheng
  */
 public interface RemoteDeserializeService<RemoteData> {
+
+    /**
+     * 反序列化传输数据
+     *
+     * @param remoteData 传输数据
+     * @param data 反序列化的结果数据
+     */
     void deserialize(RemoteData remoteData, Data data);
+
 }

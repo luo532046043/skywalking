@@ -19,9 +19,13 @@
 package org.skywalking.apm.collector.remote.service;
 
 /**
+ * 远程数据创建器的获取器
+ *
  * @author peng-yongsheng
  */
 public interface RemoteDataInstanceCreatorGetter {
+
     RemoteDataRegisterService.RemoteDataInstanceCreator getInstanceCreator(
         Integer remoteDataId) throws RemoteDataInstanceCreatorNotFoundException;
+
 }

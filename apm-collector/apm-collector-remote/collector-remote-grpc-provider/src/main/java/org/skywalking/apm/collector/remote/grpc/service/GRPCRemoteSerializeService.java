@@ -23,6 +23,8 @@ import org.skywalking.apm.collector.remote.grpc.proto.RemoteData;
 import org.skywalking.apm.collector.remote.service.RemoteSerializeService;
 
 /**
+ * 基于 gRPC 的远程通信序列化服务实现类
+ *
  * @author peng-yongsheng
  */
 public class GRPCRemoteSerializeService implements RemoteSerializeService<RemoteData.Builder> {
@@ -49,4 +51,5 @@ public class GRPCRemoteSerializeService implements RemoteSerializeService<Remote
         }
         return builder;
     }
+
 }

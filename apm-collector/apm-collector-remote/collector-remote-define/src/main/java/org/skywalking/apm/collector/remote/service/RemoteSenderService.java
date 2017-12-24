@@ -28,6 +28,15 @@ import org.skywalking.apm.collector.core.module.Service;
  */
 public interface RemoteSenderService extends Service {
 
+    /**
+     * 发送数据
+     *
+     * @param graphId Graph 编号
+     * @param nodeId Node 编号
+     * @param data 数据
+     * @param selector 选择器
+     * @return 模式
+     */
     Mode send(int graphId, int nodeId, Data data, Selector selector);
 
     /**

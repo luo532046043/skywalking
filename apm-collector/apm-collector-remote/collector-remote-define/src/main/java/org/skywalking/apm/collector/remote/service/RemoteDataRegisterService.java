@@ -22,12 +22,30 @@ import org.skywalking.apm.collector.core.data.Data;
 import org.skywalking.apm.collector.core.module.Service;
 
 /**
+ * 远程数据注册服务接口
+ *
  * @author peng-yongsheng
  */
 public interface RemoteDataRegisterService extends Service {
+
+    /**
+     * 注册数据类型对应的远程数据创建器对象
+     *
+     * @param dataClass 数据类型
+     * @param instanceCreator 远程数据创建器对象
+     */
     void register(Class<? extends Data> dataClass, RemoteDataInstanceCreator instanceCreator);
 
     interface RemoteDataInstanceCreator<RemoteData extends Data> {
+
+        /**
+         * 创建数据对象
+         *
+         * @param id 数据编号 {@link Data#getId()}
+         * @return 数据对象
+         */
         RemoteData createInstance(String id);
+
     }
+
 }

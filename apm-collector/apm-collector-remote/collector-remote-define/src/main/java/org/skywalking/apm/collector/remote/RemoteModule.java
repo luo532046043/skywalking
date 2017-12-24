@@ -23,6 +23,8 @@ import org.skywalking.apm.collector.remote.service.RemoteDataRegisterService;
 import org.skywalking.apm.collector.remote.service.RemoteSenderService;
 
 /**
+ * 远程通信组件
+ *
  * @author peng-yongsheng
  */
 public class RemoteModule extends Module {
@@ -36,4 +38,5 @@ public class RemoteModule extends Module {
     @Override public Class[] services() {
         return new Class[] {RemoteSenderService.class, RemoteDataRegisterService.class};
     }
+
 }

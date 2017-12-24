@@ -21,8 +21,19 @@ package org.skywalking.apm.collector.remote.service;
 import org.skywalking.apm.collector.core.data.Data;
 
 /**
+ * 远程数据协议编号获取器
+ *
  * @author peng-yongsheng
  */
 public interface RemoteDataIDGetter {
+
+    /**
+     * 根据数据类型获取数据协议编号
+     *
+     * @param dataClass 数据类型
+     * @return 数据协议编号
+     * @throws RemoteDataMappingIdNotFoundException
+     */
     Integer getRemoteDataId(Class<? extends Data> dataClass) throws RemoteDataMappingIdNotFoundException;
+
 }

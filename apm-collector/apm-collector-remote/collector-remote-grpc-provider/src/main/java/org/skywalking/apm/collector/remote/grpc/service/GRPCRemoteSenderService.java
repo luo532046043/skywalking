@@ -18,9 +18,6 @@
 
 package org.skywalking.apm.collector.remote.grpc.service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import org.skywalking.apm.collector.cluster.ClusterModuleListener;
 import org.skywalking.apm.collector.core.UnexpectedException;
 import org.skywalking.apm.collector.core.data.Data;
@@ -34,13 +31,23 @@ import org.skywalking.apm.collector.remote.service.RemoteDataIDGetter;
 import org.skywalking.apm.collector.remote.service.RemoteSenderService;
 import org.skywalking.apm.collector.remote.service.Selector;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
+ * 基于 gPRC 的远程发送服务实现类
+ *
  * @author peng-yongsheng
  */
 public class GRPCRemoteSenderService extends ClusterModuleListener implements RemoteSenderService {
 
     private static final String PATH = "/" + RemoteModule.NAME + "/" + RemoteModuleGRPCProvider.NAME;
+
     private final GRPCRemoteClientService service;
+    /**
+     * 远程客户端数组
+     */
     private List<RemoteClient> remoteClients;
     private final String selfAddress;
     private final HashCodeSelector hashCodeSelector;

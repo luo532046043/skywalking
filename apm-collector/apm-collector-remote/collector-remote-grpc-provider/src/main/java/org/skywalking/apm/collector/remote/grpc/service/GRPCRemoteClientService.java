@@ -27,6 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * 基于 gRPC 的远程客户端服务实现类
+ *
  * @author peng-yongsheng
  */
 public class GRPCRemoteClientService implements RemoteClientService {
@@ -40,12 +42,15 @@ public class GRPCRemoteClientService implements RemoteClientService {
     }
 
     @Override public RemoteClient create(String host, int port, int channelSize, int bufferSize) {
+        // 创建 GRPCClient 对象，并初始化
         GRPCClient client = new GRPCClient(host, port);
         try {
             client.initialize();
         } catch (ClientException e) {
             logger.error(e.getMessage(), e);
         }
+        // 创建 GRPCRemoteClient 对象
         return new GRPCRemoteClient(client, remoteDataIDGetter, channelSize, bufferSize);
     }
+
 }

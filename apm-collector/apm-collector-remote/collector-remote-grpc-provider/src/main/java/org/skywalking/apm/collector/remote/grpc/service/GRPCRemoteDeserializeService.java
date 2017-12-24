@@ -23,6 +23,8 @@ import org.skywalking.apm.collector.remote.grpc.proto.RemoteData;
 import org.skywalking.apm.collector.remote.service.RemoteDeserializeService;
 
 /**
+ * 基于 gRPC 的远程通信反序列化服务实现类
+ *
  * @author peng-yongsheng
  */
 public class GRPCRemoteDeserializeService implements RemoteDeserializeService<RemoteData> {

@@ -18,21 +18,33 @@
 
 package org.skywalking.apm.collector.remote.service;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.skywalking.apm.collector.core.data.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
+ * 通用远程数据注册服务
+ *
  * @author peng-yongsheng
  */
 public class CommonRemoteDataRegisterService implements RemoteDataRegisterService, RemoteDataIDGetter, RemoteDataInstanceCreatorGetter {
 
     private final Logger logger = LoggerFactory.getLogger(CommonRemoteDataRegisterService.class);
 
+    /**
+     * 数据协议自增编号
+     */
     private Integer id;
+    /**
+     * 数据类型与数据协议编号的映射
+     */
     private final Map<Class<? extends Data>, Integer> dataClassMapping;
+    /**
+     * 数据协议编号与数据对象创建器的映射
+     */
     private final Map<Integer, RemoteDataInstanceCreator> dataInstanceCreatorMapping;
 
     public CommonRemoteDataRegisterService() {
@@ -68,4 +80,5 @@ public class CommonRemoteDataRegisterService implements RemoteDataRegisterServic
             throw new RemoteDataInstanceCreatorNotFoundException("Could not found the instance creator of remote data id " + remoteDataId);
         }
     }
+
 }

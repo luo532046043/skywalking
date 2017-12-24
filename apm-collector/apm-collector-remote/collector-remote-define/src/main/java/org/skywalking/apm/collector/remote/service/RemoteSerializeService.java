@@ -21,8 +21,18 @@ package org.skywalking.apm.collector.remote.service;
 import org.skywalking.apm.collector.core.data.Data;
 
 /**
+ * 远程通信序列化服务接口
+ *
  * @author peng-yongsheng
  */
 public interface RemoteSerializeService<Builder> {
+
+    /**
+     * 序列化数据，生成 Builder 对象
+     *
+     * @param data 数据
+     * @return Builder 对象
+     */
     Builder serialize(Data data);
+
 }

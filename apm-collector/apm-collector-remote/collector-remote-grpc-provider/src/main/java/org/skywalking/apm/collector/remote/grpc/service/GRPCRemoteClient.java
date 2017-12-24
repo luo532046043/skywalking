@@ -19,7 +19,6 @@
 package org.skywalking.apm.collector.remote.grpc.service;
 
 import io.grpc.stub.StreamObserver;
-import java.util.List;
 import org.skywalking.apm.collector.client.grpc.GRPCClient;
 import org.skywalking.apm.collector.core.data.Data;
 import org.skywalking.apm.collector.remote.grpc.proto.Empty;
@@ -34,7 +33,11 @@ import org.skywalking.apm.commons.datacarrier.consumer.IConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 /**
+ * 基于 gRPC 的远程客户端实现类
+ *
  * @author peng-yongsheng
  */
 public class GRPCRemoteClient implements RemoteClient {
@@ -78,6 +81,7 @@ public class GRPCRemoteClient implements RemoteClient {
     }
 
     class RemoteMessageConsumer implements IConsumer<RemoteMessage> {
+
         @Override public void init() {
         }
 
@@ -95,9 +99,11 @@ public class GRPCRemoteClient implements RemoteClient {
 
         @Override public void onExit() {
         }
+
     }
 
     private StreamObserver<RemoteMessage> createStreamObserver() {
+
         RemoteCommonServiceGrpc.RemoteCommonServiceStub stub = RemoteCommonServiceGrpc.newStub(client.getChannel());
 
         StreamStatus status = new StreamStatus(false);
@@ -113,6 +119,7 @@ public class GRPCRemoteClient implements RemoteClient {
                 status.finished();
             }
         });
+
     }
 
     class StreamStatus {
@@ -159,6 +166,7 @@ public class GRPCRemoteClient implements RemoteClient {
                 logger.error(e.getMessage(), e);
             }
         }
+
     }
 
     @Override public boolean equals(String address) {

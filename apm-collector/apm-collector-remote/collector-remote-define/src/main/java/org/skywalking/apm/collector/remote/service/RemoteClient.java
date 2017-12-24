@@ -21,12 +21,26 @@ package org.skywalking.apm.collector.remote.service;
 import org.skywalking.apm.collector.core.data.Data;
 
 /**
+ * 远程客户端接口
+ *
  * @author peng-yongsheng
  */
 public interface RemoteClient extends Comparable<RemoteClient> {
+
+    /**
+     * @return 地址
+     */
     String getAddress();
 
+    /**
+     * 发送数据
+     *
+     * @param graphId Graph 编号
+     * @param nodeId Node 编号
+     * @param data 数据
+     */
     void push(int graphId, int nodeId, Data data);
 
     boolean equals(String address);
+
 }
