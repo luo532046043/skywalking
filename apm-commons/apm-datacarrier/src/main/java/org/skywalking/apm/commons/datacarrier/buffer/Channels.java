@@ -46,7 +46,7 @@ public class Channels<T> {
      *
      * @param channelSize 通道数量
      * @param bufferSize 缓冲区大小
-     * @param partitioner
+     * @param partitioner 数据分配者对象
      * @param strategy 缓冲策略
      */
     public Channels(int channelSize, int bufferSize, IDataPartitioner<T> partitioner, BufferStrategy strategy) {

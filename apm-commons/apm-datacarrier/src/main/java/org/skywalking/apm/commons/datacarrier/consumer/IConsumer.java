@@ -27,12 +27,29 @@ import java.util.List;
  */
 public interface IConsumer<T> {
 
+    /**
+     * 初始化
+     */
     void init();
 
+    /**
+     * 批量消费消息
+     *
+     * @param data 消息数组
+     */
     void consume(List<T> data);
 
+    /**
+     * 处理当消费发生异常
+     *
+     * @param data 消息
+     * @param t 异常
+     */
     void onError(List<T> data, Throwable t);
 
+    /**
+     * 处理当消费结束。此处的结束时，ConsumerThread 关闭。
+     */
     void onExit();
 
 }
