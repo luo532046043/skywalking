@@ -35,6 +35,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * 远程通信通用逻辑处理器
+ *
  * @author peng-yongsheng
  */
 public class RemoteCommonServiceHandler extends RemoteCommonServiceGrpc.RemoteCommonServiceImplBase implements GRPCHandler {
@@ -59,8 +61,12 @@ public class RemoteCommonServiceHandler extends RemoteCommonServiceGrpc.RemoteCo
                 RemoteData remoteData = message.getRemoteData();
 
                 try {
+                    // 获得数据协议编号对应的 RemoteDataInstanceCreator 对象，创建对应的 Data 对象
                     Data output = instanceCreatorGetter.getInstanceCreator(remoteDataId).createInstance(Const.EMPTY_STRING);
+                    // 反序列化传输数据到 Data 对象
                     service.deserialize(remoteData, output);
+
+                    // 获得 Next ，并执行
                     Next next = GraphManager.INSTANCE.findGraph(graphId).toFinder().findNext(nodeId);
                     next.execute(output);
                 } catch (RemoteDataInstanceCreatorNotFoundException e) {
@@ -72,7 +78,7 @@ public class RemoteCommonServiceHandler extends RemoteCommonServiceGrpc.RemoteCo
                 logger.error(throwable.getMessage(), throwable);
             }
 
-            @Override public void onCompleted() {
+            @Override public void onCompleted() { // 返回结果
                 responseObserver.onNext(Empty.newBuilder().build());
                 responseObserver.onCompleted();
             }
