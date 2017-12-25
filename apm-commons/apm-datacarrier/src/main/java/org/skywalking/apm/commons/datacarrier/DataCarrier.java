@@ -32,9 +32,22 @@ import org.skywalking.apm.commons.datacarrier.partition.SimpleRollingPartitioner
  * Created by wusheng on 2016/10/25.
  */
 public class DataCarrier<T> {
-    private final int bufferSize; // TODO 芋艿，用途
-    private final int channelSize; // TODO 芋艿，用途
+
+    /**
+     * buffer 大小
+     */
+    private final int bufferSize;
+    /**
+     * 通道数量
+     */
+    private final int channelSize;
+    /**
+     * 通道
+     */
     private Channels<T> channels;
+    /**
+     * 消费线程
+     */
     private ConsumerPool<T> consumerPool;
 
     public DataCarrier(int channelSize, int bufferSize) {
@@ -83,11 +96,13 @@ public class DataCarrier<T> {
     }
 
     /**
+     * 设置消费者
+     *
      * set consumers to this Carrier.
      * consumer begin to run when {@link DataCarrier<T>#produce(T)} begin to work.
      *
-     * @param consumerClass class of consumer
-     * @param num number of consumer threads
+     * @param consumerClass class of consumer 消费者类
+     * @param num number of consumer threads 线程数
      */
     public DataCarrier consume(Class<? extends IConsumer<T>> consumerClass, int num) {
         if (consumerPool != null) {
@@ -125,4 +140,5 @@ public class DataCarrier<T> {
             consumerPool.close();
         }
     }
+
 }

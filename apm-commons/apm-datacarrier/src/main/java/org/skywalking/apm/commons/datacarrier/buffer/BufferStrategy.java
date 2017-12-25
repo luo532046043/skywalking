@@ -19,10 +19,23 @@
 package org.skywalking.apm.commons.datacarrier.buffer;
 
 /**
+ * 缓冲策略
+ *
  * Created by wusheng on 2016/10/25.
  */
 public enum BufferStrategy {
+
+    /**
+     * 阻塞
+     */
     BLOCKING,
+    /**
+     * 覆盖
+     */
     OVERRIDE,
+    /**
+     * 跳过
+     */
     IF_POSSIBLE
+
 }

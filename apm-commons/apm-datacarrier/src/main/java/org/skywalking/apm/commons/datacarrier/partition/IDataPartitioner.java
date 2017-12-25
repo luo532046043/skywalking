@@ -21,15 +21,28 @@ package org.skywalking.apm.commons.datacarrier.partition;
 import org.skywalking.apm.commons.datacarrier.buffer.BufferStrategy;
 
 /**
+ * 数据分配者接口
+ *
  * Created by wusheng on 2016/10/25.
  */
 public interface IDataPartitioner<T> {
+
+    /**
+     * 获得数据被分配的分区位置
+     *
+     * @param total 分区总数
+     * @param data 数据
+     * @return 分区位置
+     */
     int partition(int total, T data);
 
     /**
+     * 获得最大重试次数
+     *
      * @return an integer represents how many times should retry when {@link BufferStrategy#IF_POSSIBLE}.
      *
      * Less or equal 1, means not support retry.
      */
     int maxRetryCount();
+
 }

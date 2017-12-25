@@ -18,20 +18,36 @@
 
 package org.skywalking.apm.commons.datacarrier.consumer;
 
-import java.util.ArrayList;
-import java.util.concurrent.locks.ReentrantLock;
 import org.skywalking.apm.commons.datacarrier.buffer.Buffer;
 import org.skywalking.apm.commons.datacarrier.buffer.Channels;
 
+import java.util.ArrayList;
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
+ * 消费者池
+ *
  * Pool of consumers
  * <p>
  * Created by wusheng on 2016/10/25.
  */
 public class ConsumerPool<T> {
+
+    /**
+     * 是否运行中
+     */
     private boolean running;
+    /**
+     * 线程数组
+     */
     private ConsumerThread[] consumerThreads;
+    /**
+     * 通道
+     */
     private Channels<T> channels;
+    /**
+     * 锁
+     */
     private ReentrantLock lock;
 
     public ConsumerPool(Channels<T> channels, Class<? extends IConsumer<T>> consumerClass, int num) {
@@ -59,6 +75,12 @@ public class ConsumerPool<T> {
         lock = new ReentrantLock();
     }
 
+    /**
+     * 创建消费者对象，并初始化
+     *
+     * @param consumerClass 消费者类
+     * @return 消费者对象
+     */
     private IConsumer<T> getNewConsumerInstance(Class<? extends IConsumer<T>> consumerClass) {
         try {
             IConsumer<T> inst = consumerClass.newInstance();
@@ -77,10 +99,16 @@ public class ConsumerPool<T> {
         }
         try {
             lock.lock();
+
+            // 分配 Buffer 给 Thread
             this.allocateBuffer2Thread();
+
+            // 启动消费线程
             for (ConsumerThread consumerThread : consumerThreads) {
                 consumerThread.start();
             }
+
+            // 标记 运行中
             running = true;
         } finally {
             lock.unlock();

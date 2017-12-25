@@ -21,9 +21,12 @@ package org.skywalking.apm.commons.datacarrier.partition;
 /**
  * use threadid % total to partition
  *
+ * 基于线程编号分配策略的数据分配者实现类
+ *
  * Created by wusheng on 2016/10/25.
  */
 public class ProducerThreadPartitioner<T> implements IDataPartitioner<T> {
+
     private int retryTime = 3;
 
     public ProducerThreadPartitioner() {
@@ -42,4 +45,5 @@ public class ProducerThreadPartitioner<T> implements IDataPartitioner<T> {
     public int maxRetryCount() {
         return 1;
     }
+
 }

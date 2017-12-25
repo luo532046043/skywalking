@@ -18,16 +18,29 @@
 
 package org.skywalking.apm.commons.datacarrier.consumer;
 
-import java.util.LinkedList;
-import java.util.List;
 import org.skywalking.apm.commons.datacarrier.buffer.Buffer;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
+ * 消费线程
+ *
  * Created by wusheng on 2016/10/25.
  */
 public class ConsumerThread<T> extends Thread {
+
+    /**
+     * 是否运行中
+     */
     private volatile boolean running;
+    /**
+     * 消费者
+     */
     private IConsumer<T> consumer;
+    /**
+     * 数据源数组
+     */
     private List<DataSource> dataSources;
 
     ConsumerThread(String threadName, IConsumer<T> consumer) {
@@ -61,10 +74,12 @@ public class ConsumerThread<T> extends Thread {
     public void run() {
         running = true;
 
+        // 不断消费，直到关闭
         while (running) {
+            // 消费
             boolean hasData = consume();
 
-            if (!hasData) {
+            if (!hasData) { // 无数据，sleep 等待
                 try {
                     Thread.sleep(20);
                 } catch (InterruptedException e) {
@@ -72,6 +87,7 @@ public class ConsumerThread<T> extends Thread {
             }
         }
 
+        // 消费剩余部分
         // consumer thread is going to stop
         // consume the last time
         consume();
@@ -79,8 +95,15 @@ public class ConsumerThread<T> extends Thread {
         consumer.onExit();
     }
 
+    /**
+     * 消费
+     *
+     * @return 是否消费了数据
+     */
     private boolean consume() {
         boolean hasData = false;
+
+        // 获得数据
         LinkedList<T> consumeList = new LinkedList<T>();
         for (DataSource dataSource : dataSources) {
             LinkedList<T> data = dataSource.obtain();
@@ -93,6 +116,7 @@ public class ConsumerThread<T> extends Thread {
             hasData = true;
         }
 
+        // 若有数据，进行消费
         if (consumeList.size() > 0) {
             try {
                 consumer.consume(consumeList);
@@ -108,6 +132,8 @@ public class ConsumerThread<T> extends Thread {
     }
 
     /**
+     * 数据源
+     *
      * DataSource is a refer to {@link Buffer}.
      */
     class DataSource {
@@ -125,4 +151,5 @@ public class ConsumerThread<T> extends Thread {
             return sourceBuffer.obtain(start, end);
         }
     }
+
 }

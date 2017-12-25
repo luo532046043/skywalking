@@ -21,10 +21,15 @@ package org.skywalking.apm.commons.datacarrier.partition;
 /**
  * use normal int to rolling.
  *
+ * 基于顺序分配策略的数据分配者实现类
  *
  * Created by wusheng on 2016/10/25.
  */
 public class SimpleRollingPartitioner<T> implements IDataPartitioner<T> {
+
+    /**
+     * 当前顺序
+     */
     private volatile int i = 0;
 
     @Override
@@ -36,4 +41,5 @@ public class SimpleRollingPartitioner<T> implements IDataPartitioner<T> {
     public int maxRetryCount() {
         return 3;
     }
+
 }

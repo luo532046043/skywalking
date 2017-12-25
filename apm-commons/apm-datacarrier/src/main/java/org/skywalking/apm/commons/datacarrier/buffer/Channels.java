@@ -21,6 +21,8 @@ package org.skywalking.apm.commons.datacarrier.buffer;
 import org.skywalking.apm.commons.datacarrier.partition.IDataPartitioner;
 
 /**
+ * 多 Buffer 的通道
+ *
  * Channels of Buffer
  * It contais all buffer data which belongs to this channel.
  * It supports several strategy when buffer is full. The Default is BLOCKING
@@ -28,13 +30,29 @@ import org.skywalking.apm.commons.datacarrier.partition.IDataPartitioner;
  * Created by wusheng on 2016/10/25.
  */
 public class Channels<T> {
+
+    /**
+     * Buffer 数组
+     */
     private final Buffer<T>[] bufferChannels;
     private IDataPartitioner<T> dataPartitioner;
+    /**
+     * 缓冲策略
+     */
     private BufferStrategy strategy;
 
+    /**
+     * 创建 Channels
+     *
+     * @param channelSize 通道数量
+     * @param bufferSize 缓冲区大小
+     * @param partitioner
+     * @param strategy 缓冲策略
+     */
     public Channels(int channelSize, int bufferSize, IDataPartitioner<T> partitioner, BufferStrategy strategy) {
         this.dataPartitioner = partitioner;
         this.strategy = strategy;
+        // 创建 Buffer 数组
         bufferChannels = new Buffer[channelSize];
         for (int i = 0; i < channelSize; i++) {
             bufferChannels[i] = new Buffer<T>(bufferSize, strategy);
@@ -43,6 +61,8 @@ public class Channels<T> {
 
     public boolean save(T data) {
         int index = dataPartitioner.partition(bufferChannels.length, data);
+
+        // 计算最大重试次数
         int retryCountDown = 1;
         if (BufferStrategy.IF_POSSIBLE.equals(strategy)) {
             int maxRetryCount = dataPartitioner.maxRetryCount();
@@ -50,6 +70,8 @@ public class Channels<T> {
                 retryCountDown = maxRetryCount;
             }
         }
+
+        // 多次重试，保存数据直到成功
         for (; retryCountDown > 0; retryCountDown--) {
             if (bufferChannels[index].save(data)) {
                 return true;

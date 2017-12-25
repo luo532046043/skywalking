@@ -18,15 +18,28 @@
 
 package org.skywalking.apm.commons.datacarrier.buffer;
 
-import java.util.LinkedList;
 import org.skywalking.apm.commons.datacarrier.common.AtomicRangeInteger;
 
+import java.util.LinkedList;
+
 /**
+ * 缓存区
+ *
  * Created by wusheng on 2016/10/25.
  */
 public class Buffer<T> {
+
+    /**
+     * 缓存数组
+     */
     private final Object[] buffer;
+    /**
+     * 缓冲策略
+     */
     private BufferStrategy strategy;
+    /**
+     * 递增位置
+     */
     private AtomicRangeInteger index;
 
     Buffer(int bufferSize, BufferStrategy strategy) {
@@ -39,11 +52,18 @@ public class Buffer<T> {
         this.strategy = strategy;
     }
 
+    /**
+     * 保存数据
+     *
+     * @param data 数据
+     * @return 是否保存成功
+     */
     boolean save(T data) {
         int i = index.getAndIncrement();
         if (buffer[i] != null) {
             switch (strategy) {
                 case BLOCKING:
+                    // 等待
                     while (buffer[i] != null) {
                         try {
                             Thread.sleep(1L);

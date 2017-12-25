@@ -22,10 +22,14 @@ import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * 支持范围的 AtomicInteger
+ *
  * Created by wusheng on 2016/10/25.
  */
 public class AtomicRangeInteger extends Number implements Serializable {
+
     private static final long serialVersionUID = -4099792402691141643L;
+
     private AtomicInteger value;
     private int startValue;
     private int endValue;
@@ -39,6 +43,7 @@ public class AtomicRangeInteger extends Number implements Serializable {
     public final int getAndIncrement() {
         int current;
         int next;
+        // CAS 获得值
         do {
             current = this.value.get();
             next = current >= this.endValue ? this.startValue : current + 1;
