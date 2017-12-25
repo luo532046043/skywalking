@@ -46,6 +46,9 @@ public class GRPCRemoteClient implements RemoteClient {
 
     private final GRPCRemoteSerializeService service;
     private final GRPCClient client;
+    /**
+     * 本地消息队列
+     */
     private final DataCarrier<RemoteMessage> carrier;
     private final String address;
     private final RemoteDataIDGetter remoteDataIDGetter;
@@ -66,13 +69,17 @@ public class GRPCRemoteClient implements RemoteClient {
 
     @Override public void push(int graphId, int nodeId, Data data) {
         try {
+            // 获得 数据协议编号
             Integer remoteDataId = remoteDataIDGetter.getRemoteDataId(data.getClass());
+
+            // 创建 传输数据 RemoteMessage.Builder 对象
             RemoteMessage.Builder builder = RemoteMessage.newBuilder();
             builder.setGraphId(graphId);
             builder.setNodeId(nodeId);
             builder.setRemoteDataId(remoteDataId);
             builder.setRemoteData(service.serialize(data));
 
+            // 发送到本地队列
             this.carrier.produce(builder.build());
             logger.debug("put remote message into queue, id: {}", data.getId());
         } catch (RemoteDataMappingIdNotFoundException e) {
@@ -80,16 +87,22 @@ public class GRPCRemoteClient implements RemoteClient {
         }
     }
 
+    /**
+     * 消费者
+     */
     class RemoteMessageConsumer implements IConsumer<RemoteMessage> {
 
         @Override public void init() {
         }
 
         @Override public void consume(List<RemoteMessage> remoteMessages) {
+            // 创建 StreamObserver 对象
             StreamObserver<RemoteMessage> streamObserver = createStreamObserver();
             for (RemoteMessage remoteMessage : remoteMessages) {
                 streamObserver.onNext(remoteMessage);
             }
+
+            // 全部请求发送完成
             streamObserver.onCompleted();
         }
 
@@ -103,25 +116,30 @@ public class GRPCRemoteClient implements RemoteClient {
     }
 
     private StreamObserver<RemoteMessage> createStreamObserver() {
-
+        // 创建 异步 Stub
         RemoteCommonServiceGrpc.RemoteCommonServiceStub stub = RemoteCommonServiceGrpc.newStub(client.getChannel());
 
         StreamStatus status = new StreamStatus(false);
         return stub.call(new StreamObserver<Empty>() {
-            @Override public void onNext(Empty empty) {
+
+            @Override public void onNext(Empty empty) { // 接收到一个请求的成功响应
+//                System.out.println("6666");
             }
 
-            @Override public void onError(Throwable throwable) {
+            @Override public void onError(Throwable throwable) { // 接收到一个请求的异常响应
                 logger.error(throwable.getMessage(), throwable);
             }
 
-            @Override public void onCompleted() {
+            @Override public void onCompleted() { // 全部请求响应完成
                 status.finished();
             }
         });
 
     }
 
+    /**
+     * Stream 状态
+     */
     class StreamStatus {
 
         private final Logger logger = LoggerFactory.getLogger(StreamStatus.class);
