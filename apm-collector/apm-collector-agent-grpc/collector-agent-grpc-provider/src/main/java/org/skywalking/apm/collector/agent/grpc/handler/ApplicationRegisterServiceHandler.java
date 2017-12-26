@@ -32,6 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * 应用注册逻辑处理器
+ *
  * @author peng-yongsheng
  */
 public class ApplicationRegisterServiceHandler extends ApplicationRegisterServiceGrpc.ApplicationRegisterServiceImplBase implements GRPCHandler {
@@ -51,14 +53,19 @@ public class ApplicationRegisterServiceHandler extends ApplicationRegisterServic
         ApplicationMapping.Builder builder = ApplicationMapping.newBuilder();
         for (int i = 0; i < applicationCodes.size(); i++) {
             String applicationCode = applicationCodes.get(i);
+            // 获取 应用编号
             int applicationId = applicationIDService.getOrCreate(applicationCode);
 
+            // 应用编号存在，则添加到响应
             if (applicationId != 0) {
                 KeyWithIntegerValue value = KeyWithIntegerValue.newBuilder().setKey(applicationCode).setValue(applicationId).build();
                 builder.addApplication(value);
             }
         }
+
+        // 响应
         responseObserver.onNext(builder.build());
         responseObserver.onCompleted();
     }
+
 }

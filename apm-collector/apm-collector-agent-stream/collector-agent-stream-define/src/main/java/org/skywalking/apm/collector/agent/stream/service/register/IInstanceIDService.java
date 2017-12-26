@@ -24,7 +24,9 @@ import org.skywalking.apm.collector.core.module.Service;
  * @author peng-yongsheng
  */
 public interface IInstanceIDService extends Service {
+
     int getOrCreate(int applicationId, String agentUUID, long registerTime, String osInfo);
 
     void recover(int instanceId, int applicationId, long registerTime, String osInfo);
+
 }

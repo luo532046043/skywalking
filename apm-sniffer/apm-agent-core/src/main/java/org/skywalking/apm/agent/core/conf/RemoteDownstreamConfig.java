@@ -33,16 +33,27 @@ import java.util.List;
  * @author wusheng
  */
 public class RemoteDownstreamConfig {
+
     public static class Agent {
+
+        /**
+         * 应用编号
+         */
         public volatile static int APPLICATION_ID = DictionaryUtil.nullValue();
 
+        /**
+         * 应用实例编号
+         */
         public volatile static int APPLICATION_INSTANCE_ID = DictionaryUtil.nullValue();
+
     }
 
     public static class Collector {
+
         /**
          * Collector GRPC-Service address.
          */
         public volatile static List<String> GRPC_SERVERS = new LinkedList<String>();
+
     }
 }

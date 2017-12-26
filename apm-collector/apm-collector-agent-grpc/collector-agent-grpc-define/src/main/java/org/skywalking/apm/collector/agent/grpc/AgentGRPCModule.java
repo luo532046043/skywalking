@@ -21,6 +21,8 @@ package org.skywalking.apm.collector.agent.grpc;
 import org.skywalking.apm.collector.core.module.Module;
 
 /**
+ * Agent gRPC 组件
+ *
  * @author peng-yongsheng
  */
 public class AgentGRPCModule extends Module {

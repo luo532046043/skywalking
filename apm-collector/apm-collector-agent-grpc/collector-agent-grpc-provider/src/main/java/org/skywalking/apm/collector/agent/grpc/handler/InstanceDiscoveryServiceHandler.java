@@ -36,6 +36,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * 应用实例发现逻辑处理器
+ *
  * @author peng-yongsheng
  */
 public class InstanceDiscoveryServiceHandler extends InstanceDiscoveryServiceGrpc.InstanceDiscoveryServiceImplBase implements GRPCHandler {
@@ -50,23 +52,36 @@ public class InstanceDiscoveryServiceHandler extends InstanceDiscoveryServiceGrp
 
     @Override
     public void register(ApplicationInstance request, StreamObserver<ApplicationInstanceMapping> responseObserver) {
+        // 将 registerTime 转成 timeBucket
         long timeBucket = TimeBucketUtils.INSTANCE.getSecondTimeBucket(request.getRegisterTime());
+        // 获得 应用实例编号
         int instanceId = instanceIDService.getOrCreate(request.getApplicationId(), request.getAgentUUID(), timeBucket, buildOsInfo(request.getOsinfo()));
         ApplicationInstanceMapping.Builder builder = ApplicationInstanceMapping.newBuilder();
+        // 添加 应用实例编号 到响应
         builder.setApplicationId(request.getApplicationId());
         builder.setApplicationInstanceId(instanceId);
+        // 响应
         responseObserver.onNext(builder.build());
         responseObserver.onCompleted();
     }
 
     @Override
     public void registerRecover(ApplicationInstanceRecover request, StreamObserver<Downstream> responseObserver) {
+        // 将 registerTime 转成 timeBucket
         long timeBucket = TimeBucketUtils.INSTANCE.getSecondTimeBucket(request.getRegisterTime());
+        // 恢复
         instanceIDService.recover(request.getApplicationInstanceId(), request.getApplicationId(), timeBucket, buildOsInfo(request.getOsinfo()));
+        // 响应
         responseObserver.onNext(Downstream.newBuilder().build());
         responseObserver.onCompleted();
     }
 
+    /**
+     * 将 OSInfo 转成 JSON 字符串
+     *
+     * @param osinfo 系统信息对象
+     * @return JSON 字符串
+     */
     private String buildOsInfo(OSInfo osinfo) {
         JsonObject osInfoJson = new JsonObject();
         osInfoJson.addProperty("osName", osinfo.getOsName());
@@ -80,4 +95,5 @@ public class InstanceDiscoveryServiceHandler extends InstanceDiscoveryServiceGrp
         osInfoJson.add("ipv4s", ipv4Array);
         return osInfoJson.toString();
     }
+
 }

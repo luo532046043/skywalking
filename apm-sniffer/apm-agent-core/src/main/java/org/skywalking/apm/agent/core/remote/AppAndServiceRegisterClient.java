@@ -43,20 +43,35 @@ import java.util.concurrent.TimeUnit;
 import static org.skywalking.apm.agent.core.remote.GRPCChannelStatus.CONNECTED;
 
 /**
- *
+ * 注册应用与实例的客户端
  *
  * @author wusheng
  */
 public class AppAndServiceRegisterClient implements BootService, GRPCChannelListener, Runnable, TracingContextListener {
 
     private static final ILog logger = LogManager.getLogger(AppAndServiceRegisterClient.class);
+    /**
+     * Agent UUID
+     */
     private static final String PROCESS_UUID = UUID.randomUUID().toString().replaceAll("-", "");
 
     private volatile GRPCChannelStatus status = GRPCChannelStatus.DISCONNECT;
+    /**
+     *
+     */
     private volatile ApplicationRegisterServiceGrpc.ApplicationRegisterServiceBlockingStub applicationRegisterServiceBlockingStub;
+    /**
+     *
+     */
     private volatile InstanceDiscoveryServiceGrpc.InstanceDiscoveryServiceBlockingStub instanceDiscoveryServiceBlockingStub;
+    /**
+     *
+     */
     private volatile ServiceNameDiscoveryServiceGrpc.ServiceNameDiscoveryServiceBlockingStub serviceNameDiscoveryServiceBlockingStub;
     private volatile ScheduledFuture<?> applicationRegisterFuture;
+    /**
+     * 是否需要发起恢复的注册
+     */
     private volatile boolean needRegisterRecover = false;
     private volatile long lastSegmentTime = -1;
 
@@ -66,6 +81,7 @@ public class AppAndServiceRegisterClient implements BootService, GRPCChannelList
             ManagedChannel channel = ServiceManager.INSTANCE.findService(GRPCChannelManager.class).getManagedChannel();
             applicationRegisterServiceBlockingStub = ApplicationRegisterServiceGrpc.newBlockingStub(channel);
             instanceDiscoveryServiceBlockingStub = InstanceDiscoveryServiceGrpc.newBlockingStub(channel);
+            // 标记 需要发起恢复的注册
             if (RemoteDownstreamConfig.Agent.APPLICATION_INSTANCE_ID != DictionaryUtil.nullValue()) {
                 needRegisterRecover = true;
             }
@@ -109,17 +125,18 @@ public class AppAndServiceRegisterClient implements BootService, GRPCChannelList
             try {
                 if (RemoteDownstreamConfig.Agent.APPLICATION_ID == DictionaryUtil.nullValue()) {
                     if (applicationRegisterServiceBlockingStub != null) {
+                        // 注册 应用
                         ApplicationMapping applicationMapping = applicationRegisterServiceBlockingStub.register(
                             Application.newBuilder().addApplicationCode(Config.Agent.APPLICATION_CODE).build());
                         if (applicationMapping.getApplicationCount() > 0) {
-                            RemoteDownstreamConfig.Agent.APPLICATION_ID = applicationMapping.getApplication(0).getValue();
+                            RemoteDownstreamConfig.Agent.APPLICATION_ID = applicationMapping.getApplication(0).getValue(); // 应用编号
                             shouldTry = true;
                         }
                     }
                 } else {
                     if (instanceDiscoveryServiceBlockingStub != null) {
                         if (RemoteDownstreamConfig.Agent.APPLICATION_INSTANCE_ID == DictionaryUtil.nullValue()) {
-
+                            // 注册 应用实例
                             ApplicationInstanceMapping instanceMapping = instanceDiscoveryServiceBlockingStub.register(ApplicationInstance.newBuilder()
                                 .setApplicationId(RemoteDownstreamConfig.Agent.APPLICATION_ID)
                                 .setAgentUUID(PROCESS_UUID)
@@ -127,11 +144,11 @@ public class AppAndServiceRegisterClient implements BootService, GRPCChannelList
                                 .setOsinfo(OSUtil.buildOSInfo())
                                 .build());
                             if (instanceMapping.getApplicationInstanceId() != DictionaryUtil.nullValue()) {
-                                RemoteDownstreamConfig.Agent.APPLICATION_INSTANCE_ID
-                                    = instanceMapping.getApplicationInstanceId();
+                                RemoteDownstreamConfig.Agent.APPLICATION_INSTANCE_ID = instanceMapping.getApplicationInstanceId(); // 应用实例编号
                             }
                         } else {
                             if (needRegisterRecover) {
+                                // 注册 应用实例
                                 instanceDiscoveryServiceBlockingStub.registerRecover(ApplicationInstanceRecover.newBuilder()
                                     .setApplicationId(RemoteDownstreamConfig.Agent.APPLICATION_ID)
                                     .setApplicationInstanceId(RemoteDownstreamConfig.Agent.APPLICATION_INSTANCE_ID)
@@ -141,19 +158,24 @@ public class AppAndServiceRegisterClient implements BootService, GRPCChannelList
                                 needRegisterRecover = false;
                             } else {
                                 if (lastSegmentTime - System.currentTimeMillis() > 60 * 1000) {
+                                    // 心跳 应用实例
                                     instanceDiscoveryServiceBlockingStub.heartbeat(ApplicationInstanceHeartbeat.newBuilder()
                                         .setApplicationInstanceId(RemoteDownstreamConfig.Agent.APPLICATION_INSTANCE_ID)
                                         .setHeartbeatTime(System.currentTimeMillis())
                                         .build());
+                                    System.out.println("心跳完成！");
                                 }
                             }
 
+                            // 同步 应用字典
                             ApplicationDictionary.INSTANCE.syncRemoteDictionary(applicationRegisterServiceBlockingStub);
+                            // 同步 操作字典
                             OperationNameDictionary.INSTANCE.syncRemoteDictionary(serviceNameDiscoveryServiceBlockingStub);
                         }
                     }
                 }
             } catch (Throwable t) {
+                // 报告 异常
                 logger.error(t, "AppAndServiceRegisterClient execute fail.");
                 ServiceManager.INSTANCE.findService(GRPCChannelManager.class).reportError(t);
             }
