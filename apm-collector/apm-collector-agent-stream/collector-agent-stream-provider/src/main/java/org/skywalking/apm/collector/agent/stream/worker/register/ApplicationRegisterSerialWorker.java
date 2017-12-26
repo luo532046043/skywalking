@@ -61,22 +61,27 @@ public class ApplicationRegisterSerialWorker extends AbstractLocalAsyncWorker<Ap
             Application newApplication;
             int min = applicationRegisterDAO.getMinApplicationId();
             if (min == 0) {
+                // 创建并保存 User 对应的 Application
                 Application userApplication = new Application(String.valueOf(Const.USER_ID));
                 userApplication.setApplicationCode(Const.USER_CODE);
                 userApplication.setApplicationId(Const.USER_ID);
                 applicationRegisterDAO.save(userApplication);
 
+                // 保存 当前请求 对应的 Application
                 newApplication = new Application("-1");
                 newApplication.setApplicationId(-1);
                 newApplication.setApplicationCode(application.getApplicationCode());
             } else {
+                // 获得 应用编号
                 int max = applicationRegisterDAO.getMaxApplicationId();
                 applicationId = IdAutoIncrement.INSTANCE.increment(min, max);
 
+                // 创建 当前请求 对应的 Application
                 newApplication = new Application(String.valueOf(applicationId));
                 newApplication.setApplicationId(applicationId);
                 newApplication.setApplicationCode(application.getApplicationCode());
             }
+            // 保存 当前请求 对应的 Application
             applicationRegisterDAO.save(newApplication);
         }
     }

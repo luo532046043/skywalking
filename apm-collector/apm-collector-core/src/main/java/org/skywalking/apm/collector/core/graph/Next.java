@@ -45,7 +45,7 @@ public class Next<INPUT> implements Executor<INPUT> {
     /**
      * Drive to the next nodes
      *
-     * @param input
+     * @param input 数据
      */
     @Override public void execute(INPUT input) {
         ways.forEach(way -> way.in(input));

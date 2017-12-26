@@ -84,7 +84,7 @@ public abstract class EsDAO extends AbstractDAO<ElasticSearchClient> {
         Min agg = searchResponse.getAggregations().get("agg");
 
         int id = (int)agg.getValue();
-        if (id == Integer.MAX_VALUE || id == Integer.MIN_VALUE) {
+        if (id == Integer.MAX_VALUE || id == Integer.MIN_VALUE) { // 数据为空时，会存在该情况
             return 0;
         } else {
             return id;

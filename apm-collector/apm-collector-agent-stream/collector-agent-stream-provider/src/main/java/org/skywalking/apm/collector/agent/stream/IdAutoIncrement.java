@@ -19,24 +19,34 @@
 package org.skywalking.apm.collector.agent.stream;
 
 /**
+ * ID 自增器
+ *
  * @author peng-yongsheng
  */
 public enum IdAutoIncrement {
     INSTANCE;
 
+    /**
+     * 双向均匀自增
+     *
+     * @param min 最小值
+     * @param max 最大值
+     * @return 自增值
+     */
     public int increment(int min, int max) {
         int instanceId;
-        if (min == max) {
+        if (min == max) { // 起点
             instanceId = -1;
-        } else if (min + max == 0) {
+        } else if (min + max == 0) { // max 过小
             instanceId = max + 1;
-        } else if (min + max > 0) {
+        } else if (min + max > 0) { // max 过大
             instanceId = min - 1;
-        } else if (max < 0) {
+        } else if (max < 0) { // max 小于 0
             instanceId = 1;
-        } else {
+        } else { // max 过小
             instanceId = max + 1;
         }
         return instanceId;
     }
+
 }
