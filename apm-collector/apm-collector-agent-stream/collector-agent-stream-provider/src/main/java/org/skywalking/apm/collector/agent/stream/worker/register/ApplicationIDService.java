@@ -31,6 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * 应用编号服务实现类
+ *
  * @author peng-yongsheng
  */
 public class ApplicationIDService implements IApplicationIDService {
@@ -60,13 +62,16 @@ public class ApplicationIDService implements IApplicationIDService {
     }
 
     public int getOrCreate(String applicationCode) {
+        // 从缓存中获取应用比那好
         int applicationId = getApplicationCacheService().get(applicationCode);
 
+        // 获取不到，创建应用
         if (applicationId == 0) {
             Application application = new Application(applicationCode);
             application.setApplicationCode(applicationCode);
             application.setApplicationId(0);
 
+            // 调用 Graph<Application> ，流式处理
             getApplicationRegisterGraph().start(application);
         }
         return applicationId;

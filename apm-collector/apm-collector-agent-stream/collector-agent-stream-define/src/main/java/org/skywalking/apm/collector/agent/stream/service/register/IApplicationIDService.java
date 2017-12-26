@@ -21,8 +21,18 @@ package org.skywalking.apm.collector.agent.stream.service.register;
 import org.skywalking.apm.collector.core.module.Service;
 
 /**
+ * 应用编号服务接口
+ *
  * @author peng-yongsheng
  */
 public interface IApplicationIDService extends Service {
+
+    /**
+     * 根据应用编码获取或创建应用，并获得应用编号
+     *
+     * @param applicationCode 应用编码
+     * @return 应用编号
+     */
     int getOrCreate(String applicationCode);
+
 }
