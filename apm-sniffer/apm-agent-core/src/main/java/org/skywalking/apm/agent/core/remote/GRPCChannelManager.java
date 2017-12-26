@@ -40,6 +40,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * gRPC Channel 管理器
+ *
  * @author wusheng
  */
 public class GRPCChannelManager implements BootService, Runnable {
