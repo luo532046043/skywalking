@@ -24,13 +24,6 @@ import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.internal.DnsNameResolverProvider;
 import io.grpc.netty.NettyChannelBuilder;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 import org.skywalking.apm.agent.core.boot.BootService;
 import org.skywalking.apm.agent.core.boot.DefaultNamedThreadFactory;
 import org.skywalking.apm.agent.core.conf.Config;
@@ -38,16 +31,38 @@ import org.skywalking.apm.agent.core.conf.RemoteDownstreamConfig;
 import org.skywalking.apm.agent.core.logging.api.ILog;
 import org.skywalking.apm.agent.core.logging.api.LogManager;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
 /**
  * @author wusheng
  */
 public class GRPCChannelManager implements BootService, Runnable {
+
     private static final ILog logger = LogManager.getLogger(GRPCChannelManager.class);
 
+    /**
+     * 连接 gRPC Server 的 Channel
+     */
     private volatile ManagedChannel managedChannel = null;
+    /**
+     * 定时重连 gRPC Server 的定时任务
+     */
     private volatile ScheduledFuture<?> connectCheckFuture;
+    /**
+     * 是否重连
+     * {@link #run()}
+     */
     private volatile boolean reconnect = true;
     private Random random = new Random();
+    /**
+     * 监听器数组
+     */
     private List<GRPCChannelListener> listeners = Collections.synchronizedList(new LinkedList<GRPCChannelListener>());
 
     @Override
@@ -83,23 +98,28 @@ public class GRPCChannelManager implements BootService, Runnable {
             if (RemoteDownstreamConfig.Collector.GRPC_SERVERS.size() > 0) {
                 String server = "";
                 try {
+                    // 随机获得准备链接的 Collector Agent gRPC Server
                     int index = Math.abs(random.nextInt()) % RemoteDownstreamConfig.Collector.GRPC_SERVERS.size();
                     server = RemoteDownstreamConfig.Collector.GRPC_SERVERS.get(index);
                     String[] ipAndPort = server.split(":");
+                    // 创建 Channel ，并连接
                     ManagedChannelBuilder<?> channelBuilder =
                         NettyChannelBuilder.forAddress(ipAndPort[0], Integer.parseInt(ipAndPort[1]))
                             .nameResolverFactory(new DnsNameResolverProvider())
                             .maxInboundMessageSize(1024 * 1024 * 50)
                             .usePlaintext(true);
                     managedChannel = channelBuilder.build();
+                    // 连接成功
                     if (!managedChannel.isShutdown() && !managedChannel.isTerminated()) {
                         reconnect = false;
                         notify(GRPCChannelStatus.CONNECTED);
+                    // 连接失败
                     } else {
                         notify(GRPCChannelStatus.DISCONNECT);
                     }
                     return;
                 } catch (Throwable t) {
+                    // 连接异常
                     logger.error(t, "Create channel to {} fail.", server);
                     notify(GRPCChannelStatus.DISCONNECT);
                 }
@@ -119,8 +139,10 @@ public class GRPCChannelManager implements BootService, Runnable {
 
     /**
      * If the given expcetion is triggered by network problem, connect in background.
+     * 监听器通知 Manager ，使用 Channel 时发生的异常。
+     * 若是网络异常，则后台进行重连
      *
-     * @param throwable
+     * @param throwable 异常
      */
     public void reportError(Throwable throwable) {
         if (isNetworkError(throwable)) {
@@ -128,6 +150,11 @@ public class GRPCChannelManager implements BootService, Runnable {
         }
     }
 
+    /**
+     * 通知监听器们，Channel 的连接状态
+     *
+     * @param status 连接状态
+     */
     private void notify(GRPCChannelStatus status) {
         for (GRPCChannelListener listener : listeners) {
             try {
@@ -138,6 +165,12 @@ public class GRPCChannelManager implements BootService, Runnable {
         }
     }
 
+    /**
+     * 判断异常是否为网络异常
+     *
+     * @param throwable 异常
+     * @return 是否
+     */
     private boolean isNetworkError(Throwable throwable) {
         if (throwable instanceof StatusRuntimeException) {
             StatusRuntimeException statusRuntimeException = (StatusRuntimeException)throwable;
@@ -160,4 +193,5 @@ public class GRPCChannelManager implements BootService, Runnable {
         }
         return false;
     }
+
 }

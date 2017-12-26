@@ -19,9 +19,18 @@
 package org.skywalking.apm.agent.core.remote;
 
 /**
+ * gRPC Channel 连接状态
+ *
  * @author wusheng
  */
 public enum GRPCChannelStatus {
+
+    /**
+     * 连接
+     */
     CONNECTED,
+    /**
+     * 未链接
+     */
     DISCONNECT
 }

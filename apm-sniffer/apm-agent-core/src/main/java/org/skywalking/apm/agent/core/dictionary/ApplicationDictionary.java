@@ -19,13 +19,14 @@
 package org.skywalking.apm.agent.core.dictionary;
 
 import io.netty.util.internal.ConcurrentSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import org.skywalking.apm.network.proto.Application;
 import org.skywalking.apm.network.proto.ApplicationMapping;
 import org.skywalking.apm.network.proto.ApplicationRegisterServiceGrpc;
 import org.skywalking.apm.network.proto.KeyWithIntegerValue;
+
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static org.skywalking.apm.agent.core.conf.Config.Dictionary.APPLICATION_CODE_BUFFER_SIZE;
 
@@ -35,7 +36,9 @@ import static org.skywalking.apm.agent.core.conf.Config.Dictionary.APPLICATION_C
  * @author wusheng
  */
 public enum ApplicationDictionary {
+
     INSTANCE;
+
     private Map<String, Integer> applicationDictionary = new ConcurrentHashMap<String, Integer>();
     private Set<String> unRegisterApplications = new ConcurrentSet<String>();
 

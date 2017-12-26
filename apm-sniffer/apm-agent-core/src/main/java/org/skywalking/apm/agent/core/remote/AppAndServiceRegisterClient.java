@@ -48,6 +48,7 @@ import static org.skywalking.apm.agent.core.remote.GRPCChannelStatus.CONNECTED;
  * @author wusheng
  */
 public class AppAndServiceRegisterClient implements BootService, GRPCChannelListener, Runnable, TracingContextListener {
+
     private static final ILog logger = LogManager.getLogger(AppAndServiceRegisterClient.class);
     private static final String PROCESS_UUID = UUID.randomUUID().toString().replaceAll("-", "");
 

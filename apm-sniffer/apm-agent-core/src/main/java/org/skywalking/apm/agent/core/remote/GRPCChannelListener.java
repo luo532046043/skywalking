@@ -19,8 +19,17 @@
 package org.skywalking.apm.agent.core.remote;
 
 /**
+ * gRPC Channel 的监听器接口
+ *
  * @author wusheng
  */
 public interface GRPCChannelListener {
+
+    /**
+     * 通知 gRPC Channel 状态变更
+     *
+     * @param status 状态
+     */
     void statusChanged(GRPCChannelStatus status);
+
 }
