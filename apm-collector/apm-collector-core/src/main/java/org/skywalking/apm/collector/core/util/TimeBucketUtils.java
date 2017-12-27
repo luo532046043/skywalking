@@ -18,10 +18,11 @@
 
 package org.skywalking.apm.collector.core.util;
 
+import org.skywalking.apm.collector.core.UnexpectedException;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
-import org.skywalking.apm.collector.core.UnexpectedException;
 
 /**
  * @author peng-yongsheng
@@ -41,6 +42,12 @@ public enum TimeBucketUtils {
         return Long.valueOf(timeStr);
     }
 
+    /**
+     * 将时间格式化成 {@link #secondDateFormat}
+     *
+     * @param time 时间
+     * @return bucket
+     */
     public long getSecondTimeBucket(long time) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(time);
