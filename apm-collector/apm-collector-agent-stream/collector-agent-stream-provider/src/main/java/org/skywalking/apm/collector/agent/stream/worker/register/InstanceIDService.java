@@ -33,6 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * 应用实例服务实现类
+ *
  * @author peng-yongsheng
  */
 public class InstanceIDService implements IInstanceIDService {
@@ -71,8 +73,10 @@ public class InstanceIDService implements IInstanceIDService {
 
     public int getOrCreate(int applicationId, String agentUUID, long registerTime, String osInfo) {
         logger.debug("get or create instance id, application id: {}, agentUUID: {}, registerTime: {}, osInfo: {}", applicationId, agentUUID, registerTime, osInfo);
+        // 从缓存中获取应用实例编号
         int instanceId = getInstanceCacheService().getInstanceId(applicationId, agentUUID);
 
+        // 获取不到，创建应用实例
         if (instanceId == 0) {
             Instance instance = new Instance("0");
             instance.setApplicationId(applicationId);
@@ -82,6 +86,7 @@ public class InstanceIDService implements IInstanceIDService {
             instance.setInstanceId(0);
             instance.setOsInfo(osInfo);
 
+            // 调用 Graph<Instance> ，流式处理
             getInstanceRegisterGraph().start(instance);
         }
         return instanceId;

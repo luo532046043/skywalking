@@ -62,7 +62,7 @@ public class ApplicationIDService implements IApplicationIDService {
     }
 
     public int getOrCreate(String applicationCode) {
-        // 从缓存中获取应用比那好
+        // 从缓存中获取应用编号
         int applicationId = getApplicationCacheService().get(applicationCode);
 
         // 获取不到，创建应用

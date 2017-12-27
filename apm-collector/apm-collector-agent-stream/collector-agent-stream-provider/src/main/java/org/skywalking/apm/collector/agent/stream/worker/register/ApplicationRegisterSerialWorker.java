@@ -67,7 +67,7 @@ public class ApplicationRegisterSerialWorker extends AbstractLocalAsyncWorker<Ap
                 userApplication.setApplicationId(Const.USER_ID);
                 applicationRegisterDAO.save(userApplication);
 
-                // 保存 当前请求 对应的 Application
+                // 创建 当前请求 对应的 Application
                 newApplication = new Application("-1");
                 newApplication.setApplicationId(-1);
                 newApplication.setApplicationCode(application.getApplicationCode());
