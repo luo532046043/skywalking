@@ -96,12 +96,14 @@ public class InstanceIDService implements IInstanceIDService {
         logger.debug("instance recover, instance id: {}, application id: {}, register time: {}", instanceId, applicationId, registerTime);
         Instance instance = new Instance(String.valueOf(instanceId));
         instance.setApplicationId(applicationId);
-        instance.setAgentUUID("");
+        instance.setAgentUUID(""); // 设置 AgentUUID 为空串
         instance.setRegisterTime(registerTime);
         instance.setHeartBeatTime(registerTime);
         instance.setInstanceId(instanceId);
         instance.setOsInfo(osInfo);
 
+        // 更新应用实例
         getInstanceRegisterDAO().save(instance);
     }
+
 }
