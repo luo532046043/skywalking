@@ -31,15 +31,26 @@ import java.util.concurrent.ConcurrentHashMap;
 import static org.skywalking.apm.agent.core.conf.Config.Dictionary.APPLICATION_CODE_BUFFER_SIZE;
 
 /**
+ * 应用字典
+ *
  * Map of application id to application code, which is from the collector side.
  *
  * @author wusheng
  */
 public enum ApplicationDictionary {
 
+    /**
+     * 单例
+     */
     INSTANCE;
 
+    /**
+     * 应用编码与应用编号的映射
+     */
     private Map<String, Integer> applicationDictionary = new ConcurrentHashMap<String, Integer>();
+    /**
+     * 未知应用编码集合
+     */
     private Set<String> unRegisterApplications = new ConcurrentSet<String>();
 
     public PossibleFound find(String applicationCode) {
@@ -47,6 +58,7 @@ public enum ApplicationDictionary {
         if (applicationId != null) {
             return new Found(applicationId);
         } else {
+            // 添加到 unRegisterApplications
             if (applicationDictionary.size() + unRegisterApplications.size() < APPLICATION_CODE_BUFFER_SIZE) {
                 unRegisterApplications.add(applicationCode);
             }
@@ -54,12 +66,19 @@ public enum ApplicationDictionary {
         }
     }
 
+    /**
+     * 从 Collector 同步未知应用编码集合
+     *
+     * @param applicationRegisterServiceBlockingStub stub
+     */
     public void syncRemoteDictionary(
         ApplicationRegisterServiceGrpc.ApplicationRegisterServiceBlockingStub applicationRegisterServiceBlockingStub) {
         if (unRegisterApplications.size() > 0) {
+            // 注册未知应用编码集合
             ApplicationMapping applicationMapping = applicationRegisterServiceBlockingStub.register(
                 Application.newBuilder().addAllApplicationCode(unRegisterApplications).build());
             if (applicationMapping.getApplicationCount() > 0) {
+                // 注册成功
                 for (KeyWithIntegerValue keyWithIntegerValue : applicationMapping.getApplicationList()) {
                     unRegisterApplications.remove(keyWithIntegerValue.getKey());
                     applicationDictionary.put(keyWithIntegerValue.getKey(), keyWithIntegerValue.getValue());

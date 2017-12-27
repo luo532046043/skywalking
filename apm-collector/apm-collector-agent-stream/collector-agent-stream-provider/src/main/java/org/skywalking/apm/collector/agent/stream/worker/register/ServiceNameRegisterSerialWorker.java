@@ -61,25 +61,30 @@ public class ServiceNameRegisterSerialWorker extends AbstractLocalAsyncWorker<Se
 
             int min = serviceNameRegisterDAO.getMinServiceId();
             if (min == 0) {
+                // 创建并保存 NONE_SERVICE_NAME 对应的 ServiceName
                 ServiceName noneServiceName = new ServiceName("1");
                 noneServiceName.setApplicationId(0);
                 noneServiceName.setServiceId(Const.NONE_SERVICE_ID);
                 noneServiceName.setServiceName(Const.NONE_SERVICE_NAME);
                 serviceNameRegisterDAO.save(noneServiceName);
 
+                // 创建 当前请求 对应的 ServiceName
                 newServiceName = new ServiceName("-1");
                 newServiceName.setApplicationId(serviceName.getApplicationId());
                 newServiceName.setServiceId(-1);
                 newServiceName.setServiceName(serviceName.getServiceName());
             } else {
+                // 获得 操作编号
                 int max = serviceNameRegisterDAO.getMaxServiceId();
                 serviceId = IdAutoIncrement.INSTANCE.increment(min, max);
 
+                // 创建 当前请求 对应的 ServiceName
                 newServiceName = new ServiceName(String.valueOf(serviceId));
                 newServiceName.setApplicationId(serviceName.getApplicationId());
                 newServiceName.setServiceId(serviceId);
                 newServiceName.setServiceName(serviceName.getServiceName());
             }
+            // 保存 当前请求 对应的 ServiceName
             serviceNameRegisterDAO.save(newServiceName);
         }
     }

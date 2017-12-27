@@ -19,10 +19,14 @@
 package org.skywalking.apm.agent.core.dictionary;
 
 /**
+ * NotFound
+ *
  * @author wusheng
  */
 public class NotFound extends PossibleFound {
+
     public NotFound() {
         super();
     }
+
 }

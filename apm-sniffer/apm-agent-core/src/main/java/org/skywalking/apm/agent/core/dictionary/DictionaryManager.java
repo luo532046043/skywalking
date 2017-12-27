@@ -19,6 +19,9 @@
 package org.skywalking.apm.agent.core.dictionary;
 
 /**
+ * 字典管理。
+ * 字典，用于缓存记录，例如应用记录，操作名记录。
+ *
  * @author wusheng
  */
 public class DictionaryManager {

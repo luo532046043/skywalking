@@ -19,14 +19,11 @@
 package org.skywalking.apm.agent.core.dictionary;
 
 import io.netty.util.internal.ConcurrentSet;
+import org.skywalking.apm.network.proto.*;
+
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import org.skywalking.apm.network.proto.ServiceNameCollection;
-import org.skywalking.apm.network.proto.ServiceNameDiscoveryServiceGrpc;
-import org.skywalking.apm.network.proto.ServiceNameElement;
-import org.skywalking.apm.network.proto.ServiceNameMappingCollection;
-import org.skywalking.apm.network.proto.ServiceNameMappingElement;
 
 import static org.skywalking.apm.agent.core.conf.Config.Dictionary.OPERATION_NAME_BUFFER_SIZE;
 
@@ -34,8 +31,19 @@ import static org.skywalking.apm.agent.core.conf.Config.Dictionary.OPERATION_NAM
  * @author wusheng
  */
 public enum OperationNameDictionary {
+
+    /**
+     * 单例
+     */
     INSTANCE;
+
+    /**
+     * 操作名与操作编号的映射
+     */
     private Map<OperationNameKey, Integer> operationNameDictionary = new ConcurrentHashMap<OperationNameKey, Integer>();
+    /**
+     * 未注册的操作名集合
+     */
     private Set<OperationNameKey> unRegisterOperationNames = new ConcurrentSet<OperationNameKey>();
 
     public PossibleFound findOrPrepare4Register(int applicationId, String operationName) {
@@ -55,6 +63,7 @@ public enum OperationNameDictionary {
         if (operationId != null) {
             return new Found(operationId);
         } else {
+            // 添加到 unRegisterOperationNames
             if (registerWhenNotFound &&
                 operationNameDictionary.size() + unRegisterOperationNames.size() < OPERATION_NAME_BUFFER_SIZE) {
                 unRegisterOperationNames.add(key);
@@ -66,6 +75,7 @@ public enum OperationNameDictionary {
     public void syncRemoteDictionary(
         ServiceNameDiscoveryServiceGrpc.ServiceNameDiscoveryServiceBlockingStub serviceNameDiscoveryServiceBlockingStub) {
         if (unRegisterOperationNames.size() > 0) {
+            // 创建请求
             ServiceNameCollection.Builder builder = ServiceNameCollection.newBuilder();
             for (OperationNameKey operationNameKey : unRegisterOperationNames) {
                 ServiceNameElement serviceNameElement = ServiceNameElement.newBuilder()
@@ -74,6 +84,7 @@ public enum OperationNameDictionary {
                     .build();
                 builder.addElements(serviceNameElement);
             }
+            // 查找未知应用编码集合
             ServiceNameMappingCollection serviceNameMappingCollection = serviceNameDiscoveryServiceBlockingStub.discovery(builder.build());
             if (serviceNameMappingCollection.getElementsCount() > 0) {
                 for (ServiceNameMappingElement serviceNameMappingElement : serviceNameMappingCollection.getElementsList()) {
@@ -87,8 +98,18 @@ public enum OperationNameDictionary {
         }
     }
 
+    /**
+     * 操作名 Key
+     */
     private class OperationNameKey {
+
+        /**
+         * 应用编号
+         */
         private int applicationId;
+        /**
+         * 操作名
+         */
         private String operationName;
 
         public OperationNameKey(int applicationId, String operationName) {

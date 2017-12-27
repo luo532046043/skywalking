@@ -19,20 +19,21 @@
 package org.skywalking.apm.collector.agent.grpc.handler;
 
 import io.grpc.stub.StreamObserver;
-import java.util.List;
 import org.skywalking.apm.collector.agent.stream.AgentStreamModule;
 import org.skywalking.apm.collector.agent.stream.service.register.IServiceNameService;
 import org.skywalking.apm.collector.core.module.ModuleManager;
 import org.skywalking.apm.collector.server.grpc.GRPCHandler;
-import org.skywalking.apm.network.proto.ServiceNameCollection;
-import org.skywalking.apm.network.proto.ServiceNameDiscoveryServiceGrpc;
-import org.skywalking.apm.network.proto.ServiceNameElement;
-import org.skywalking.apm.network.proto.ServiceNameMappingCollection;
-import org.skywalking.apm.network.proto.ServiceNameMappingElement;
+import org.skywalking.apm.network.proto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 /**
+ * 操作名查找逻辑处理器
+ *
+ * 逻辑类似于 {@link ApplicationRegisterServiceHandler}
+ *
  * @author peng-yongsheng
  */
 public class ServiceNameDiscoveryServiceHandler extends ServiceNameDiscoveryServiceGrpc.ServiceNameDiscoveryServiceImplBase implements GRPCHandler {
@@ -51,6 +52,7 @@ public class ServiceNameDiscoveryServiceHandler extends ServiceNameDiscoveryServ
 
         ServiceNameMappingCollection.Builder builder = ServiceNameMappingCollection.newBuilder();
         for (ServiceNameElement serviceNameElement : serviceNameElementList) {
+            // 获取 操作编号
             int applicationId = serviceNameElement.getApplicationId();
             String serviceName = serviceNameElement.getServiceName();
             int serviceId = serviceNameService.getOrCreate(applicationId, serviceName);
@@ -63,6 +65,7 @@ public class ServiceNameDiscoveryServiceHandler extends ServiceNameDiscoveryServ
             }
         }
 
+        // 响应
         responseObserver.onNext(builder.build());
         responseObserver.onCompleted();
     }

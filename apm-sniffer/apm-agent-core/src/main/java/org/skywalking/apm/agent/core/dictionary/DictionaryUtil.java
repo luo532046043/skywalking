@@ -19,14 +19,27 @@
 package org.skywalking.apm.agent.core.dictionary;
 
 /**
+ * 字典工具类
+ *
  * @author wusheng
  */
 public class DictionaryUtil {
+
+    /**
+     * @return 空值
+     */
     public static int nullValue() {
         return 0;
     }
 
+    /**
+     * 判断是否为空值
+     *
+     * @param id 编号
+     * @return 是否为空值
+     */
     public static boolean isNull(int id) {
         return id == nullValue();
     }
+
 }

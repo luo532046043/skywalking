@@ -31,6 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * 操作名服务实现类
+ *
  * @author peng-yongsheng
  */
 public class ServiceNameService implements IServiceNameService {
@@ -60,16 +62,20 @@ public class ServiceNameService implements IServiceNameService {
     }
 
     public int getOrCreate(int applicationId, String serviceName) {
+        // 服务编号
         int serviceId = getServiceIdCacheService().get(applicationId, serviceName);
 
+        // 获取不到，创建操作名
         if (serviceId == 0) {
             ServiceName service = new ServiceName("0");
             service.setApplicationId(applicationId);
             service.setServiceName(serviceName);
             service.setServiceId(0);
 
+            // 调用 Graph<ServiceName> ，流式处理
             getServiceNameRegisterGraph().start(service);
         }
         return serviceId;
     }
+
 }
