@@ -21,6 +21,8 @@ package org.skywalking.apm.agent.core.context.ids;
 import org.skywalking.apm.network.proto.UniqueId;
 
 /**
+ * 分布式链路追踪编号
+ *
  * The <code>DistributedTraceId</code> presents a distributed call chain.
  * <p>
  * This call chain has an unique (service) entrance,
@@ -35,6 +37,9 @@ import org.skywalking.apm.network.proto.UniqueId;
  */
 public abstract class DistributedTraceId {
 
+    /**
+     * 编号
+     */
     private ID id;
 
     public DistributedTraceId(ID id) {
@@ -45,6 +50,9 @@ public abstract class DistributedTraceId {
         this.id = new ID(id);
     }
 
+    /**
+     * @return 编码编号( id )
+     */
     public String encode() {
         return id.encode();
     }
