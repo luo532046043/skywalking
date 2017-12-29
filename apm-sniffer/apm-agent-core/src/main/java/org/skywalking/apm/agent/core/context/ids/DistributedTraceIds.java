@@ -23,9 +23,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * DistributedTraceId 数组
+ *
  * @author wusheng
  */
 public class DistributedTraceIds {
+
+    /**
+     * 关联的 DistributedTraceId 链式数组
+     */
     private LinkedList<DistributedTraceId> relatedGlobalTraces;
 
     public DistributedTraceIds() {
@@ -36,12 +42,20 @@ public class DistributedTraceIds {
         return Collections.unmodifiableList(relatedGlobalTraces);
     }
 
+    /**
+     * 添加分布式链路追踪编号
+     *
+     * @param distributedTraceId 分布式链路追踪编号
+     */
     public void append(DistributedTraceId distributedTraceId) {
+        // 移除首个 NewDistributedTraceId 对象
         if (relatedGlobalTraces.size() > 0 && relatedGlobalTraces.getFirst() instanceof NewDistributedTraceId) {
             relatedGlobalTraces.removeFirst();
         }
+        // 添加 distributedTraceId
         if (!relatedGlobalTraces.contains(distributedTraceId)) {
             relatedGlobalTraces.add(distributedTraceId);
         }
     }
+
 }
