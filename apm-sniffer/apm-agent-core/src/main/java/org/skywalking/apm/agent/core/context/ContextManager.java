@@ -101,7 +101,7 @@ public class ContextManager implements TracingContextListener, BootService, Igno
     public static AbstractSpan createEntrySpan(String operationName, ContextCarrier carrier) {
         SamplingService samplingService = ServiceManager.INSTANCE.findService(SamplingService.class);
         AbstractTracerContext context;
-        if (carrier != null && carrier.isValid()) { // TODO 芋艿，晚点研究下
+        if (carrier != null && carrier.isValid()) {
             samplingService.forceSampled();
             context = getOrCreate(operationName, true);
             context.extract(carrier);

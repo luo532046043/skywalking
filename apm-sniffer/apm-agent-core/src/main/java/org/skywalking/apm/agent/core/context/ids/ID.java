@@ -74,10 +74,9 @@ public class ID {
                     part3 = Long.parseLong(idParts[part]);
                 }
             } catch (NumberFormatException e) {
-                this.isValid = false;
+                this.isValid = false; // 不合法
                 break;
             }
-
         }
     }
 

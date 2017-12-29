@@ -34,6 +34,7 @@ import org.skywalking.apm.network.proto.UniqueId;
  * @author wusheng
  */
 public abstract class DistributedTraceId {
+
     private ID id;
 
     public DistributedTraceId(ID id) {
@@ -80,4 +81,5 @@ public abstract class DistributedTraceId {
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
     }
+
 }

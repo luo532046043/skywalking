@@ -31,11 +31,18 @@ import java.util.List;
  * A {@link TraceSegment} means the segment, which exists in current {@link Thread}. And the distributed trace is formed
  * by multi {@link TraceSegment}s, because the distributed trace crosses multi-processes, multi-threads. <p>
  *
+ * TraceSegment 是一次分布式链路追踪( Distributed Trace ) 的一段。
+ *  一条 TraceSegment ，用于记录所在线程( Thread )的链路。
+ *  一次分布式链路追踪，可以包含多条 TraceSegment ，因为存在跨进程( 例如，RPC 、MQ 等等)，或者垮线程( 例如，并发执行、异步回调等等 )。
+ *
  * @author wusheng
  */
 public class TraceSegment {
+
     /**
      * The id of this trace segment. Every segment has its unique-global-id.
+     *
+     * TraceSegment 的编号，全局唯一。
      */
     private ID traceSegmentId;
 
