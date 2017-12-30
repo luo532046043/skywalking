@@ -21,6 +21,8 @@ package org.skywalking.apm.agent.core.context.tag;
 import org.skywalking.apm.agent.core.context.trace.AbstractSpan;
 
 /**
+ * String 值的标签实现类
+ *
  * A subclass of {@link AbstractTag},
  * represent a tag with a {@link String} value.
  * <p>

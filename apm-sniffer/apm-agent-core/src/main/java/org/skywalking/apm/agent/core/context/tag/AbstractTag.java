@@ -36,6 +36,12 @@ public abstract class AbstractTag<T> {
         this.key = tagKey;
     }
 
+    /**
+     * 设置值
+     *
+     * @param span Span
+     * @param tagValue 值
+     */
     protected abstract void set(AbstractSpan span, T tagValue);
 
     /**
