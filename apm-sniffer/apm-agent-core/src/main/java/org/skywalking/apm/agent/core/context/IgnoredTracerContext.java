@@ -34,8 +34,14 @@ import java.util.List;
  */
 public class IgnoredTracerContext implements AbstractTracerContext {
 
+    /**
+     * NoopSpan 单例
+     */
     private static final NoopSpan NOOP_SPAN = new NoopSpan();
 
+    /**
+     * 栈深度
+     */
     private int stackDepth;
 
     public IgnoredTracerContext() {

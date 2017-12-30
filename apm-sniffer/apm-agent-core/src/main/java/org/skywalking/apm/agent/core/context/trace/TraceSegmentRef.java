@@ -27,6 +27,8 @@ import org.skywalking.apm.network.proto.RefType;
 import org.skywalking.apm.network.proto.TraceSegmentReference;
 
 /**
+ * TraceSegment 引用
+ *
  * {@link TraceSegmentRef} is like a pointer, which ref to another {@link TraceSegment},
  * use {@link #spanId} point to the exact span of the ref {@link TraceSegment}.
  * <p>
