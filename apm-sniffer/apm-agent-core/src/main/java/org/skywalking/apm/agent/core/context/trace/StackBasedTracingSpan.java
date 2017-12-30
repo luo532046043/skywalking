@@ -23,6 +23,8 @@ import org.skywalking.apm.agent.core.dictionary.DictionaryUtil;
 import org.skywalking.apm.agent.core.dictionary.PossibleFound;
 
 /**
+ * 基于栈的链路追踪 Span 抽象类
+ *
  * The <code>StackBasedTracingSpan</code> represents a span with an inside stack construction.
  *
  * This kind of span can start and finish multi times in a stack-like invoke line.
@@ -30,6 +32,10 @@ import org.skywalking.apm.agent.core.dictionary.PossibleFound;
  * @author wusheng
  */
 public abstract class StackBasedTracingSpan extends AbstractTracingSpan {
+
+    /**
+     * 栈层级
+     */
     protected int stackDepth;
 
     protected StackBasedTracingSpan(int spanId, int parentSpanId, String operationName) {
@@ -44,16 +50,18 @@ public abstract class StackBasedTracingSpan extends AbstractTracingSpan {
 
     @Override
     public boolean finish(TraceSegment owner) {
-        if (--stackDepth == 0) {
+        if (--stackDepth == 0) { // 为零，成功出栈
             if (this.operationId == DictionaryUtil.nullValue()) {
                 this.operationId = (Integer)DictionaryManager.findOperationNameCodeSection()
                     .findOrPrepare4Register(owner.getApplicationId(), operationName)
                     .doInCondition(
+                        // 找到的处理逻辑，返回操作编号
                         new PossibleFound.FoundAndObtain() {
                             @Override public Object doProcess(int value) {
                                 return value;
                             }
                         },
+                        // 找不到的处理逻辑，返回空值
                         new PossibleFound.NotFoundAndObtain() {
                             @Override public Object doProcess() {
                                 return DictionaryUtil.nullValue();
@@ -66,4 +74,5 @@ public abstract class StackBasedTracingSpan extends AbstractTracingSpan {
             return false;
         }
     }
+
 }
