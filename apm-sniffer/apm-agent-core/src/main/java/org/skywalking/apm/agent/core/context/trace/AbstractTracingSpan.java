@@ -18,15 +18,16 @@
 
 package org.skywalking.apm.agent.core.context.trace;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import org.skywalking.apm.agent.core.context.util.KeyValuePair;
 import org.skywalking.apm.agent.core.context.util.ThrowableTransformer;
 import org.skywalking.apm.agent.core.dictionary.DictionaryUtil;
 import org.skywalking.apm.network.proto.SpanObject;
 import org.skywalking.apm.network.proto.SpanType;
 import org.skywalking.apm.network.trace.component.Component;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The <code>AbstractTracingSpan</code> represents a group of {@link AbstractSpan} implementations, which belongs a real
@@ -35,6 +36,7 @@ import org.skywalking.apm.network.trace.component.Component;
  * @author wusheng
  */
 public abstract class AbstractTracingSpan implements AbstractSpan {
+
     protected int spanId;
     protected int parentSpanId;
     protected List<KeyValuePair> tags;

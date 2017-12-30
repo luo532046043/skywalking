@@ -20,7 +20,13 @@ package org.skywalking.apm.agent.core.context.tag;
 
 import org.skywalking.apm.agent.core.context.trace.AbstractSpan;
 
+/**
+ * 标签抽象类
+ *
+ * @param <T> 泛型
+ */
 public abstract class AbstractTag<T> {
+
     /**
      * The key of this Tag.
      */
@@ -38,4 +44,5 @@ public abstract class AbstractTag<T> {
     public String key() {
         return this.key;
     }
+
 }

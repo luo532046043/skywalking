@@ -23,6 +23,10 @@ import org.skywalking.apm.network.trace.component.Component;
 import java.util.Map;
 
 /**
+ * Span 接口
+ *
+ * https://github.com/opentracing-contrib/opentracing-specification-zh/blob/master/specification.md#span
+ *
  * The <code>AbstractSpan</code> represents the span's skeleton, which contains all open methods.
  *
  * @author wusheng
@@ -30,6 +34,8 @@ import java.util.Map;
 public interface AbstractSpan {
 
     /**
+     * 设置 Component
+     *
      * Set the component id, which defines in {@link org.skywalking.apm.network.trace.component.ComponentsDefine}
      *
      * @param component
@@ -38,6 +44,8 @@ public interface AbstractSpan {
     AbstractSpan setComponent(Component component);
 
     /**
+     * 设置 Component 名字
+     *
      * Only use this method in explicit instrumentation, like opentracing-skywalking-bridge. It it higher recommend
      * don't use this for performance consideration.
      *
@@ -46,9 +54,17 @@ public interface AbstractSpan {
      */
     AbstractSpan setComponent(String componentName);
 
+    /**
+     * 设置 SpanLayer
+     *
+     * @param layer 所属分层
+     * @return the span for chaining.
+     */
     AbstractSpan setLayer(SpanLayer layer);
 
     /**
+     * 设置 Tag
+     *
      * Set a key:value tag on the Span.
      *
      * @return this Span instance, for chaining
@@ -63,6 +79,11 @@ public interface AbstractSpan {
      */
     AbstractSpan log(Throwable t);
 
+    /**
+     * 标记发生异常
+     *
+     * @return the Span, for chaining
+     */
     AbstractSpan errorOccurred();
 
     /**
@@ -85,6 +106,8 @@ public interface AbstractSpan {
     AbstractSpan log(long timestamp, Map<String, ?> event);
 
     /**
+     * 设置操作名
+     *
      * Sets the string name for the logical operation this span represents.
      *
      * @return this Span instance, for chaining
@@ -109,5 +132,11 @@ public interface AbstractSpan {
 
     String getOperationName();
 
+    /**
+     * 设置操作编号
+     *
+     * @param operationId 操作编号
+     * @return this Span instance, for chaining
+     */
     AbstractSpan setOperationId(int operationId);
 }

@@ -19,9 +19,12 @@
 package org.skywalking.apm.agent.core.context.trace;
 
 /**
+ * Span 分层
+ *
  * @author wusheng
  */
 public enum SpanLayer {
+
     DB(1),
     RPC_FRAMEWORK(2),
     HTTP(3),
