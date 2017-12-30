@@ -19,7 +19,7 @@
 package org.skywalking.apm.agent.core.context.trace;
 
 /**
- *
+ * 节点信息接口
  *
  * @author wusheng
  */
