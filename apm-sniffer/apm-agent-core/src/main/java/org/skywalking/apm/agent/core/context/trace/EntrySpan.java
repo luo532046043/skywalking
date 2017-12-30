@@ -22,6 +22,7 @@ import org.skywalking.apm.agent.core.dictionary.DictionaryUtil;
 import org.skywalking.apm.network.trace.component.Component;
 
 /**
+ * 入口 Span
  * The <code>EntrySpan</code> represents a service provider point, such as Tomcat server entrance.
  *
  * It is a start point of {@link TraceSegment}, even in a complex application, there maybe have multi-layer entry point,
@@ -35,6 +36,10 @@ import org.skywalking.apm.network.trace.component.Component;
  * @author wusheng
  */
 public class EntrySpan extends StackBasedTracingSpan {
+
+    /**
+     * 当前栈最大深度
+     */
     private int currentMaxDepth;
 
     public EntrySpan(int spanId, int parentSpanId, String operationName) {
@@ -52,15 +57,18 @@ public class EntrySpan extends StackBasedTracingSpan {
      */
     @Override
     public EntrySpan start() {
+        // 只有首次启动时，设置开始时间
         if ((currentMaxDepth = ++stackDepth) == 1) {
             super.start();
         }
+        // 再次启动时，清空信息
         clearWhenRestart();
         return this;
     }
 
     @Override
     public EntrySpan tag(String key, String value) {
+        // 只有最深的栈，才设置，否则 `#clearWhenRestart()` 没有意思。
         if (stackDepth == currentMaxDepth) {
             super.tag(key, value);
         }
@@ -69,6 +77,7 @@ public class EntrySpan extends StackBasedTracingSpan {
 
     @Override
     public AbstractTracingSpan setLayer(SpanLayer layer) {
+        // 只有最深的栈，才设置，否则 `#clearWhenRestart()` 没有意思。
         if (stackDepth == currentMaxDepth) {
             return super.setLayer(layer);
         } else {
@@ -78,6 +87,7 @@ public class EntrySpan extends StackBasedTracingSpan {
 
     @Override
     public AbstractTracingSpan setComponent(Component component) {
+        // 只有最深的栈，才设置，否则 `#clearWhenRestart()` 没有意思。
         if (stackDepth == currentMaxDepth) {
             return super.setComponent(component);
         } else {
@@ -87,6 +97,7 @@ public class EntrySpan extends StackBasedTracingSpan {
 
     @Override
     public AbstractTracingSpan setComponent(String componentName) {
+        // 只有最深的栈，才设置，否则 `#clearWhenRestart()` 没有意思。
         if (stackDepth == currentMaxDepth) {
             return super.setComponent(componentName);
         } else {
@@ -96,6 +107,7 @@ public class EntrySpan extends StackBasedTracingSpan {
 
     @Override
     public AbstractTracingSpan setOperationName(String operationName) {
+        // 只有最深的栈，才设置，否则 `#clearWhenRestart()` 没有意思。
         if (stackDepth == currentMaxDepth) {
             return super.setOperationName(operationName);
         } else {
@@ -105,6 +117,7 @@ public class EntrySpan extends StackBasedTracingSpan {
 
     @Override
     public AbstractTracingSpan setOperationId(int operationId) {
+        // 只有最深的栈，才设置，否则 `#clearWhenRestart()` 没有意思。
         if (stackDepth == currentMaxDepth) {
             return super.setOperationId(operationId);
         } else {
@@ -133,4 +146,5 @@ public class EntrySpan extends StackBasedTracingSpan {
         this.logs = null;
         this.tags = null;
     }
+
 }

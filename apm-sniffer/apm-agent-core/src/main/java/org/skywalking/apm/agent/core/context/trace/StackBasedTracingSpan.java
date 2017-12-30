@@ -34,7 +34,7 @@ import org.skywalking.apm.agent.core.dictionary.PossibleFound;
 public abstract class StackBasedTracingSpan extends AbstractTracingSpan {
 
     /**
-     * 栈层级
+     * 栈深度
      */
     protected int stackDepth;
 

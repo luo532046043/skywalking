@@ -45,4 +45,5 @@ public class NoopExitSpan extends NoopSpan implements WithPeerInfo {
     public boolean isExit() {
         return true;
     }
+
 }

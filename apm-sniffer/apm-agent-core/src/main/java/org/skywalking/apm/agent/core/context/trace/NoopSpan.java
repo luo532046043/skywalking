@@ -18,9 +18,10 @@
 
 package org.skywalking.apm.agent.core.context.trace;
 
-import java.util.Map;
 import org.skywalking.apm.agent.core.context.IgnoredTracerContext;
 import org.skywalking.apm.network.trace.component.Component;
+
+import java.util.Map;
 
 /**
  * The <code>NoopSpan</code> represents a span implementation without any actual operation.
@@ -30,6 +31,7 @@ import org.skywalking.apm.network.trace.component.Component;
  * @author wusheng
  */
 public class NoopSpan implements AbstractSpan {
+
     public NoopSpan() {
     }
 
@@ -98,4 +100,5 @@ public class NoopSpan implements AbstractSpan {
     @Override public AbstractSpan setOperationId(int operationId) {
         return this;
     }
+
 }
