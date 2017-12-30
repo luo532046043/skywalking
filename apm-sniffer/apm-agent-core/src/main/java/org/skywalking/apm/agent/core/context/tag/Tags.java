@@ -19,6 +19,8 @@
 package org.skywalking.apm.agent.core.context.tag;
 
 /**
+ * 常用 Tag 枚举类
+ *
  * The span tags are supported by sky-walking engine.
  * As default, all tags will be stored, but these ones have particular meanings.
  * <p>
