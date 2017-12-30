@@ -19,6 +19,8 @@
 package org.skywalking.apm.network.trace.component;
 
 /**
+ * 组件接口
+ *
  * The <code>Component</code> represents component library,
  * which has been supported by skywalking sniffer.
  *
@@ -27,7 +29,15 @@ package org.skywalking.apm.network.trace.component;
  * @author wusheng
  */
 public interface Component {
+
+    /**
+     * @return 编号
+     */
     int getId();
 
+    /**
+     * @return 组件名
+     */
     String getName();
+
 }

@@ -19,6 +19,8 @@
 package org.skywalking.apm.network.trace.component;
 
 /**
+ * 官方组件实现类
+ *
  * @author wusheng
  */
 public class OfficialComponent implements Component {

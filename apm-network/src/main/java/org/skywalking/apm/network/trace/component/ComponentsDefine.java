@@ -19,6 +19,8 @@
 package org.skywalking.apm.network.trace.component;
 
 /**
+ * 组件定义
+ *
  * The supported list of skywalking java sniffer.
  *
  * @author wusheng
