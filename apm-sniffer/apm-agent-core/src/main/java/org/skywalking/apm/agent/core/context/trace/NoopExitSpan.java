@@ -18,6 +18,9 @@
 
 package org.skywalking.apm.agent.core.context.trace;
 
+/**
+ * 无操作的出口 Span
+ */
 public class NoopExitSpan extends NoopSpan implements WithPeerInfo {
 
     private String peer;

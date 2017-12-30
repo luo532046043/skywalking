@@ -24,6 +24,8 @@ import org.skywalking.apm.network.trace.component.Component;
 import java.util.Map;
 
 /**
+ * 无操作的 Span
+ *
  * The <code>NoopSpan</code> represents a span implementation without any actual operation.
  * This span implementation is for {@link IgnoredTracerContext},
  * for keeping the memory and gc cost as low as possible.
