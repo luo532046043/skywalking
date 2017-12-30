@@ -23,6 +23,8 @@ import org.skywalking.apm.network.proto.SpanObject;
 import org.skywalking.apm.network.trace.component.Component;
 
 /**
+ * 出口 Span
+ *
  * The <code>ExitSpan</code> represents a service consumer point, such as Feign, Okhttp client for a Http service.
  *
  * It is an exit point or a leaf span(our old name) of trace tree.
@@ -36,7 +38,14 @@ import org.skywalking.apm.network.trace.component.Component;
  * @author wusheng
  */
 public class ExitSpan extends StackBasedTracingSpan implements WithPeerInfo {
+
+    /**
+     * 节点地址
+     */
     private String peer;
+    /**
+     * 节点编号
+     */
     private int peerId;
 
     public ExitSpan(int spanId, int parentSpanId, String operationName, String peer) {
