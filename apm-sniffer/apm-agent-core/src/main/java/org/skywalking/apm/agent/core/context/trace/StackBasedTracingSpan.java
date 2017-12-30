@@ -51,6 +51,7 @@ public abstract class StackBasedTracingSpan extends AbstractTracingSpan {
     @Override
     public boolean finish(TraceSegment owner) {
         if (--stackDepth == 0) { // 为零，成功出栈
+            // 获得 操作编号
             if (this.operationId == DictionaryUtil.nullValue()) {
                 this.operationId = (Integer)DictionaryManager.findOperationNameCodeSection()
                     .findOrPrepare4Register(owner.getApplicationId(), operationName)
