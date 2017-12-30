@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 链路追踪 Span 抽象类
+ *
  * The <code>AbstractTracingSpan</code> represents a group of {@link AbstractSpan} implementations, which belongs a real
  * distributed trace.
  *
@@ -37,11 +39,29 @@ import java.util.Map;
  */
 public abstract class AbstractTracingSpan implements AbstractSpan {
 
+    /**
+     * Span 编号
+     */
     protected int spanId;
+    /**
+     * 父 Span 编号
+     */
     protected int parentSpanId;
+    /**
+     * 键值标签数组
+     */
     protected List<KeyValuePair> tags;
+    /**
+     * 操作名
+     */
     protected String operationName;
+    /**
+     * 操作编号
+     */
     protected int operationId;
+    /**
+     * 分层
+     */
     protected SpanLayer layer;
     /**
      * The start time of this Span.
@@ -55,9 +75,13 @@ public abstract class AbstractTracingSpan implements AbstractSpan {
      * Error has occurred in the scope of span.
      */
     protected boolean errorOccurred = false;
-
+    /**
+     * Component 编号
+     */
     protected int componentId = 0;
-
+    /**
+     * Component 名字
+     */
     protected String componentName;
 
     /**
@@ -122,6 +146,7 @@ public abstract class AbstractTracingSpan implements AbstractSpan {
         if (logs == null) {
             logs = new LinkedList<LogDataEntity>();
         }
+        // https://github.com/opentracing-contrib/opentracing-specification-zh/blob/master/semantic_conventions.md#log-field-%E6%B8%85%E5%8D%95
         logs.add(new LogDataEntity.Builder()
             .add(new KeyValuePair("event", "error"))
             .add(new KeyValuePair("error.kind", t.getClass().getName()))

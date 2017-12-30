@@ -19,10 +19,20 @@
 package org.skywalking.apm.agent.core.context.trace;
 
 /**
+ *
+ *
  * @author wusheng
  */
 public interface WithPeerInfo {
+
+    /**
+     * @return 节点
+     */
     int getPeerId();
 
+    /**
+     * @return 节点地址
+     */
     String getPeer();
+
 }

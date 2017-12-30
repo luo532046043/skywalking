@@ -18,10 +18,11 @@
 
 package org.skywalking.apm.agent.core.context.trace;
 
-import java.util.LinkedList;
-import java.util.List;
 import org.skywalking.apm.agent.core.context.util.KeyValuePair;
 import org.skywalking.apm.network.proto.LogMessage;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * The <code>LogDataEntity</code> represents a collection of {@link KeyValuePair},
@@ -30,7 +31,14 @@ import org.skywalking.apm.network.proto.LogMessage;
  * @author wusheng
  */
 public class LogDataEntity {
+
+    /**
+     * 时间戳
+     */
     private long timestamp = 0;
+    /**
+     * 键值日志数组
+     */
     private List<KeyValuePair> logs;
 
     private LogDataEntity(long timestamp, List<KeyValuePair> logs) {

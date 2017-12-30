@@ -18,10 +18,11 @@
 
 package org.skywalking.apm.agent.core.context;
 
-import java.util.LinkedList;
-import java.util.List;
 import org.skywalking.apm.agent.core.context.trace.AbstractSpan;
 import org.skywalking.apm.agent.core.context.trace.NoopSpan;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * The <code>IgnoredTracerContext</code> represent a context should be ignored.
@@ -32,6 +33,7 @@ import org.skywalking.apm.agent.core.context.trace.NoopSpan;
  * @author wusheng
  */
 public class IgnoredTracerContext implements AbstractTracerContext {
+
     private static final NoopSpan NOOP_SPAN = new NoopSpan();
 
     private int stackDepth;
