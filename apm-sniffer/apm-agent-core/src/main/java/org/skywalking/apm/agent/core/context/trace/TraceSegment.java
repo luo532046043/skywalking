@@ -79,6 +79,7 @@ public class TraceSegment {
     public TraceSegment() {
         this.traceSegmentId = GlobalIdGenerator.generate();
         this.spans = new LinkedList<AbstractTracingSpan>();
+        // 创建 DistributedTraceIds 对象，并添加 NewDistributedTraceId 到它。
         this.relatedGlobalTraces = new DistributedTraceIds();
         this.relatedGlobalTraces.append(new NewDistributedTraceId());
     }
