@@ -43,33 +43,50 @@ import org.skywalking.apm.util.StringUtil;
  * @author wusheng
  */
 public class ContextManager implements TracingContextListener, BootService, IgnoreTracerContextListener {
+
     private static final ILog logger = LogManager.getLogger(ContextManager.class);
 
+    /**
+     * 线程变量，AbstractTracerContext 对象
+     */
     private static ThreadLocal<AbstractTracerContext> CONTEXT = new ThreadLocal<AbstractTracerContext>();
 
+    /**
+     * 获取 AbstractTracerContext 对象。若不存在，进行创建。
+     *
+     * @param operationName 操作名
+     * @param forceSampling 是否强制收集
+     * @return AbstractTracerContext 对象
+     */
     private static AbstractTracerContext getOrCreate(String operationName, boolean forceSampling) {
         AbstractTracerContext context = CONTEXT.get();
         if (context == null) {
+            // 操作名，创建 IgnoredTracerContext 对象
             if (StringUtil.isEmpty(operationName)) {
                 if (logger.isDebugEnable()) {
                     logger.debug("No operation name, ignore this trace.");
                 }
                 context = new IgnoredTracerContext();
             } else {
+                // 应用实例已经注册
                 if (RemoteDownstreamConfig.Agent.APPLICATION_ID != DictionaryUtil.nullValue()
                     && RemoteDownstreamConfig.Agent.APPLICATION_INSTANCE_ID != DictionaryUtil.nullValue()
                     ) {
+                    // 根据操作名后缀判断是否是忽略的操作，创建 IgnoredTracerContext 对象
                     int suffixIdx = operationName.lastIndexOf(".");
                     if (suffixIdx > -1 && Config.Agent.IGNORE_SUFFIX.contains(operationName.substring(suffixIdx))) { // 忽略的操作名，例如操作名为 .jpg,.jpeg,.js,.css,.png,.bmp,.gif,.ico,.mp3,.mp4,.html,.svg
                         context = new IgnoredTracerContext();
                     } else {
+                        // 强制收集或者需要收集，创建 TracingContext 对象
                         SamplingService samplingService = ServiceManager.INSTANCE.findService(SamplingService.class);
                         if (forceSampling || samplingService.trySampling()) {
                             context = new TracingContext();
                         } else {
+                        // 无需收集，创建 IgnoredTracerContext
                             context = new IgnoredTracerContext();
                         }
                     }
+                // 应用实例未注册，创建 IgnoredTracerContext 对象
                 } else {
                     /**
                      * Can't register to collector, no need to trace anything.
@@ -102,12 +119,17 @@ public class ContextManager implements TracingContextListener, BootService, Igno
         SamplingService samplingService = ServiceManager.INSTANCE.findService(SamplingService.class);
         AbstractTracerContext context;
         if (carrier != null && carrier.isValid()) {
+            // 强制收集，因为传递的链路汇总
             samplingService.forceSampled();
+            // 获得 AbstractTracerContext
             context = getOrCreate(operationName, true);
+            // 提取 ContextCarrier 到 AbstractTracerContext
             context.extract(carrier);
         } else {
+            // 获得 AbstractTracerContext
             context = getOrCreate(operationName, false);
         }
+        // 创建 EntrySpan
         return context.createEntrySpan(operationName);
     }
 

@@ -114,4 +114,5 @@ public interface AbstractTracerContext {
      * @param span to finish
      */
     void stopSpan(AbstractSpan span);
+
 }

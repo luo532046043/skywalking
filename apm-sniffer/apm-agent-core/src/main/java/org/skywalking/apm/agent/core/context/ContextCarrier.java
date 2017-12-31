@@ -18,8 +18,6 @@
 
 package org.skywalking.apm.agent.core.context;
 
-import java.io.Serializable;
-import java.util.List;
 import org.skywalking.apm.agent.core.context.ids.DistributedTraceId;
 import org.skywalking.apm.agent.core.context.ids.ID;
 import org.skywalking.apm.agent.core.context.ids.PropagatedTraceId;
@@ -27,13 +25,19 @@ import org.skywalking.apm.agent.core.context.trace.TraceSegment;
 import org.skywalking.apm.agent.core.dictionary.DictionaryUtil;
 import org.skywalking.apm.util.StringUtil;
 
+import java.io.Serializable;
+import java.util.List;
+
 /**
+ * 上下文传输载体
+ *
  * {@link ContextCarrier} is a data carrier of {@link TracingContext}.
  * It holds the snapshot (current state) of {@link TracingContext}.
  * <p>
  * Created by wusheng on 2017/2/17.
  */
 public class ContextCarrier implements Serializable {
+
     /**
      * {@link TraceSegment#traceSegmentId}
      */

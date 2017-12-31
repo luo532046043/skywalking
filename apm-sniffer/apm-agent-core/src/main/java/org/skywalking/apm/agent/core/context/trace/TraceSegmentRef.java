@@ -27,7 +27,7 @@ import org.skywalking.apm.network.proto.RefType;
 import org.skywalking.apm.network.proto.TraceSegmentReference;
 
 /**
- * TraceSegment 引用
+ * TraceSegment 指向
  *
  * {@link TraceSegmentRef} is like a pointer, which ref to another {@link TraceSegment},
  * use {@link #spanId} point to the exact span of the ref {@link TraceSegment}.
@@ -35,26 +35,58 @@ import org.skywalking.apm.network.proto.TraceSegmentReference;
  * Created by wusheng on 2017/2/17.
  */
 public class TraceSegmentRef {
+
+    /**
+     * 指向类型
+     */
     private SegmentRefType type;
 
+    /**
+     * TraceSegment 编号
+     */
     private ID traceSegmentId;
 
+    /**
+     * Span 编号
+     */
     private int spanId = -1;
 
+    /**
+     * 节点编号
+     */
     private int peerId = DictionaryUtil.nullValue();
 
+    /**
+     * 节点地址
+     */
     private String peerHost;
 
+    /**
+     * 入口应用实例编号。如：在一个分布式链路 A->B->C 中，此字段为 A 应用的实例 ID。
+     */
     private int entryApplicationInstanceId = DictionaryUtil.nullValue();
-
+    /**
+     * 父级应用实例编号。如：在一个RPC调用中，HEAD中是客户端的应用实例 ID。
+     */
     private int parentApplicationInstanceId = DictionaryUtil.nullValue();
 
+    /**
+     * 入口操作名
+     */
     private String entryOperationName;
 
+    /**
+     * 入口操作编号
+     */
     private int entryOperationId = DictionaryUtil.nullValue();
 
+    /**
+     * 父操作名
+     */
     private String parentOperationName;
-
+    /**
+     * 父操作编号
+     */
     private int parentOperationId = DictionaryUtil.nullValue();
 
     /**
@@ -172,7 +204,14 @@ public class TraceSegmentRef {
     }
 
     public enum SegmentRefType {
+        /**
+         * 跨进程
+         */
         CROSS_PROCESS,
+        /**
+         * 跨线程
+         */
         CROSS_THREAD
     }
+
 }
