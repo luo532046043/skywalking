@@ -18,11 +18,6 @@
 
 package org.skywalking.apm.agent.core.sampling;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.skywalking.apm.agent.core.boot.BootService;
 import org.skywalking.apm.agent.core.boot.DefaultNamedThreadFactory;
 import org.skywalking.apm.agent.core.conf.Config;
@@ -30,7 +25,15 @@ import org.skywalking.apm.agent.core.context.trace.TraceSegment;
 import org.skywalking.apm.agent.core.logging.api.ILog;
 import org.skywalking.apm.agent.core.logging.api.LogManager;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
+ * 抽样服务
+ *
  * The <code>SamplingService</code> take charge of how to sample the {@link TraceSegment}. Every {@link TraceSegment}s
  * have been traced, but, considering CPU cost of serialization/deserialization, and network bandwidth, the agent do NOT
  * send all of them to collector, if SAMPLING is on.
@@ -42,8 +45,17 @@ import org.skywalking.apm.agent.core.logging.api.LogManager;
 public class SamplingService implements BootService {
     private static final ILog logger = LogManager.getLogger(SamplingService.class);
 
+    /**
+     * 是否开启
+     */
     private volatile boolean on = false;
+    /**
+     * 抽样计数器
+     */
     private volatile AtomicInteger samplingFactorHolder;
+    /**
+     * 定时任务
+     */
     private volatile ScheduledFuture<?> scheduledFuture;
 
     @Override
@@ -53,6 +65,7 @@ public class SamplingService implements BootService {
 
     @Override
     public void boot() throws Throwable {
+        // 若原有定时任务存在，先进行关闭
         if (scheduledFuture != null) {
             /**
              * If {@link #boot()} invokes twice, mostly in test cases,
@@ -62,9 +75,10 @@ public class SamplingService implements BootService {
         }
         if (Config.Agent.SAMPLE_N_PER_3_SECS > 0) {
             on = true;
+            // 重置
             this.resetSamplingFactor();
-            ScheduledExecutorService service = Executors
-                .newSingleThreadScheduledExecutor(new DefaultNamedThreadFactory("SamplingService"));
+            // 创建定时任务，定时重置
+            ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor(new DefaultNamedThreadFactory("SamplingService"));
             scheduledFuture = service.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {

@@ -328,7 +328,7 @@ public class TracingContext implements AbstractTracerContext {
                     new PossibleFound.FoundAndObtain() {
                         @Override
                         public Object doProcess(final int peerId) {
-                            // 超过 Span 数量上限，创建 NoopSpan 对象
+                            // 超过 Span 数量上限，创建 NoopExitSpan 对象
                             if (isLimitMechanismWorking()) {
                                 return new NoopExitSpan(peerId);
                             }
@@ -352,7 +352,7 @@ public class TracingContext implements AbstractTracerContext {
                     new PossibleFound.NotFoundAndObtain() {
                         @Override
                         public Object doProcess() {
-                            // 超过 Span 数量上限，创建 NoopSpan 对象
+                            // 超过 Span 数量上限，创建 NoopExitSpan 对象
                             if (isLimitMechanismWorking()) {
                                 return new NoopExitSpan(remotePeer);
                             }
@@ -401,20 +401,27 @@ public class TracingContext implements AbstractTracerContext {
      */
     @Override
     public void stopSpan(AbstractSpan span) {
+        // 获得当前活跃的 AbstractSpan 对象
         AbstractSpan lastSpan = peek();
         if (lastSpan == span) {
+            // AbstractTracingSpan 子类
             if (lastSpan instanceof AbstractTracingSpan) {
                 AbstractTracingSpan toFinishSpan = (AbstractTracingSpan)lastSpan;
+                // 完成 Span
                 if (toFinishSpan.finish(segment)) {
+                    // 移除出 `activeSpanStack`
                     pop();
                 }
+            // NoopSpan 子类
             } else {
+                // 移除出 `activeSpanStack`
                 pop();
             }
         } else {
             throw new IllegalStateException("Stopping the unexpected span = " + span);
         }
 
+        // 当所有活跃的 Span 都被结束后，当前线程的 TraceSegment 完成
         if (activeSpanStack.isEmpty()) {
             this.finish();
         }
@@ -425,7 +432,9 @@ public class TracingContext implements AbstractTracerContext {
      * TracingContext.ListenerManager}
      */
     private void finish() {
+        // 完成 TraceSegment
         TraceSegment finishedSegment = segment.finish(isLimitMechanismWorking());
+        //
         /**
          * Recheck the segment if the segment contains only one span.
          * Because in the runtime, can't sure this segment is part of distributed trace.
@@ -437,6 +446,7 @@ public class TracingContext implements AbstractTracerContext {
                 finishedSegment.setIgnore(true);
             }
         }
+        // 通知监听器，一次 TraceSegment 完成
         TracingContext.ListenerManager.notifyFinish(finishedSegment);
     }
 
