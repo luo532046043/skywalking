@@ -18,24 +18,16 @@
 
 package org.skywalking.apm.agent.core.context;
 
-import java.util.LinkedList;
-import java.util.List;
 import org.skywalking.apm.agent.core.boot.ServiceManager;
 import org.skywalking.apm.agent.core.conf.Config;
-import org.skywalking.apm.agent.core.context.trace.AbstractSpan;
-import org.skywalking.apm.agent.core.context.trace.AbstractTracingSpan;
-import org.skywalking.apm.agent.core.context.trace.EntrySpan;
-import org.skywalking.apm.agent.core.context.trace.ExitSpan;
-import org.skywalking.apm.agent.core.context.trace.LocalSpan;
-import org.skywalking.apm.agent.core.context.trace.NoopExitSpan;
-import org.skywalking.apm.agent.core.context.trace.NoopSpan;
-import org.skywalking.apm.agent.core.context.trace.TraceSegment;
-import org.skywalking.apm.agent.core.context.trace.TraceSegmentRef;
-import org.skywalking.apm.agent.core.context.trace.WithPeerInfo;
+import org.skywalking.apm.agent.core.context.trace.*;
 import org.skywalking.apm.agent.core.dictionary.DictionaryManager;
 import org.skywalking.apm.agent.core.dictionary.DictionaryUtil;
 import org.skywalking.apm.agent.core.dictionary.PossibleFound;
 import org.skywalking.apm.agent.core.sampling.SamplingService;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * The <code>TracingContext</code> represents a core tracing logic controller. It build the final {@link
@@ -228,14 +220,18 @@ public class TracingContext implements AbstractTracerContext {
      */
     @Override
     public AbstractSpan createEntrySpan(final String operationName) {
+        // 超过 Span 数量上限，创建 NoopSpan 对象
         if (isLimitMechanismWorking()) {
             NoopSpan span = new NoopSpan();
             return push(span);
         }
         AbstractSpan entrySpan;
+        // 获得当前活跃的 AbstractSpan 对象
         final AbstractSpan parentSpan = peek();
         final int parentSpanId = parentSpan == null ? -1 : parentSpan.getSpanId();
+        // 父 Span 对象不存在，创建 EntrySpan 对象
         if (parentSpan == null) {
+            // 创建 EntrySpan 对象
             entrySpan = (AbstractTracingSpan)DictionaryManager.findOperationNameCodeSection()
                 .findOnly(segment.getApplicationId(), operationName)
                 .doInCondition(new PossibleFound.FoundAndObtain() {
@@ -247,8 +243,11 @@ public class TracingContext implements AbstractTracerContext {
                         return new EntrySpan(spanIdGenerator++, parentSpanId, operationName);
                     }
                 });
+            // 开启 EntrySpan
             entrySpan.start();
+            // 添加到 activeSpanStack
             return push(entrySpan);
+        // 父 EntrySpan 对象存在，重新开启 EntrySpan
         } else if (parentSpan.isEntry()) {
             entrySpan = (AbstractTracingSpan)DictionaryManager.findOperationNameCodeSection()
                 .findOnly(segment.getApplicationId(), operationName)
@@ -261,6 +260,7 @@ public class TracingContext implements AbstractTracerContext {
                         return parentSpan.setOperationName(operationName);
                     }
                 });
+            // 重新开启 EntrySpan
             return entrySpan.start();
         } else {
             throw new IllegalStateException("The Entry Span can't be the child of Non-Entry Span");
