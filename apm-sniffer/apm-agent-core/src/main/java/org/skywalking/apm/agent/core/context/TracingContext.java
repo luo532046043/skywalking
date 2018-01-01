@@ -243,11 +243,11 @@ public class TracingContext implements AbstractTracerContext {
                         return new EntrySpan(spanIdGenerator++, parentSpanId, operationName);
                     }
                 });
-            // 开启 EntrySpan
+            // 开始 EntrySpan
             entrySpan.start();
             // 添加到 activeSpanStack
             return push(entrySpan);
-        // 父 EntrySpan 对象存在，重新开启 EntrySpan
+        // 父 EntrySpan 对象存在，重新开始 EntrySpan
         } else if (parentSpan.isEntry()) {
             entrySpan = (AbstractTracingSpan)DictionaryManager.findOperationNameCodeSection()
                 .findOnly(segment.getApplicationId(), operationName)
@@ -260,7 +260,7 @@ public class TracingContext implements AbstractTracerContext {
                         return parentSpan.setOperationName(operationName);
                     }
                 });
-            // 重新开启 EntrySpan
+            // 重新开始 EntrySpan
             return entrySpan.start();
         } else {
             throw new IllegalStateException("The Entry Span can't be the child of Non-Entry Span");
@@ -276,12 +276,15 @@ public class TracingContext implements AbstractTracerContext {
      */
     @Override
     public AbstractSpan createLocalSpan(final String operationName) {
+        // 超过 Span 数量上限，创建 NoopSpan 对象
         if (isLimitMechanismWorking()) {
             NoopSpan span = new NoopSpan();
             return push(span);
         }
+        // 获得当前活跃的 AbstractSpan 对象
         AbstractSpan parentSpan = peek();
         final int parentSpanId = parentSpan == null ? -1 : parentSpan.getSpanId();
+        // 创建 LocalSpan 对象
         AbstractTracingSpan span = (AbstractTracingSpan)DictionaryManager.findOperationNameCodeSection()
             .findOrPrepare4Register(segment.getApplicationId(), operationName)
             .doInCondition(new PossibleFound.FoundAndObtain() {
@@ -295,7 +298,9 @@ public class TracingContext implements AbstractTracerContext {
                     return new LocalSpan(spanIdGenerator++, parentSpanId, operationName);
                 }
             });
+        // 开始 LocalSpan
         span.start();
+        // 添加到 activeSpanStack
         return push(span);
     }
 
