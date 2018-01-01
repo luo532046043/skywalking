@@ -315,22 +315,26 @@ public class TracingContext implements AbstractTracerContext {
     @Override
     public AbstractSpan createExitSpan(final String operationName, final String remotePeer) {
         AbstractSpan exitSpan;
+        // 获得当前活跃的 AbstractSpan 对象
         AbstractSpan parentSpan = peek();
+        // ExitSpan 对象存在
         if (parentSpan != null && parentSpan.isExit()) {
             exitSpan = parentSpan;
         } else {
+            // 创建 ExitSpan
             final int parentSpanId = parentSpan == null ? -1 : parentSpan.getSpanId();
             exitSpan = (AbstractSpan)DictionaryManager.findApplicationCodeSection()
-                .find(remotePeer).doInCondition(
+                .find(remotePeer).doInCondition( // remotePeer =》 peerId
                     new PossibleFound.FoundAndObtain() {
                         @Override
                         public Object doProcess(final int peerId) {
+                            // 超过 Span 数量上限，创建 NoopSpan 对象
                             if (isLimitMechanismWorking()) {
                                 return new NoopExitSpan(peerId);
                             }
 
                             return DictionaryManager.findOperationNameCodeSection()
-                                .findOnly(segment.getApplicationId(), operationName)
+                                .findOnly(segment.getApplicationId(), operationName) // operationName =》 operationId
                                 .doInCondition(
                                     new PossibleFound.FoundAndObtain() {
                                         @Override
@@ -348,12 +352,13 @@ public class TracingContext implements AbstractTracerContext {
                     new PossibleFound.NotFoundAndObtain() {
                         @Override
                         public Object doProcess() {
+                            // 超过 Span 数量上限，创建 NoopSpan 对象
                             if (isLimitMechanismWorking()) {
                                 return new NoopExitSpan(remotePeer);
                             }
 
                             return DictionaryManager.findOperationNameCodeSection()
-                                .findOnly(segment.getApplicationId(), operationName)
+                                .findOnly(segment.getApplicationId(), operationName) // operationName =》 operationId
                                 .doInCondition(
                                     new PossibleFound.FoundAndObtain() {
                                         @Override
@@ -368,8 +373,10 @@ public class TracingContext implements AbstractTracerContext {
                                     });
                         }
                     });
+            // 添加到 activeSpanStack
             push(exitSpan);
         }
+        // 开始 ExitSpan
         exitSpan.start();
         return exitSpan;
     }
