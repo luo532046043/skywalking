@@ -21,6 +21,7 @@ package org.skywalking.apm.agent.core.context;
 /**
  * @author wusheng
  */
+@Deprecated // add by 芋艿，实际并未使用
 public class TraceContextCarrierItem extends CarrierItem {
     private static final String HEAD_NAME = "Trace-Context";
 

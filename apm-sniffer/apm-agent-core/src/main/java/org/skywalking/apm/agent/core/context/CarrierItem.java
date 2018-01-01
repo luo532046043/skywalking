@@ -21,11 +21,23 @@ package org.skywalking.apm.agent.core.context;
 import java.util.Iterator;
 
 /**
+ * Carrier 项
+ *
  * @author wusheng
  */
 public class CarrierItem implements Iterator<CarrierItem> {
+
+    /**
+     * 键
+     */
     private String headKey;
+    /**
+     * 值
+     */
     private String headValue;
+    /**
+     * 下一个
+     */
     private CarrierItem next;
 
     public CarrierItem(String headKey, String headValue) {
@@ -66,4 +78,5 @@ public class CarrierItem implements Iterator<CarrierItem> {
     public void remove() {
 
     }
+
 }
