@@ -24,6 +24,8 @@ import org.skywalking.apm.agent.core.context.trace.ExitSpan;
 import org.skywalking.apm.agent.core.context.trace.LocalSpan;
 
 /**
+ * 链路追踪上下文接口
+ *
  * The <code>AbstractTracerContext</code> represents the tracer context manager.
  *
  * @author wusheng
