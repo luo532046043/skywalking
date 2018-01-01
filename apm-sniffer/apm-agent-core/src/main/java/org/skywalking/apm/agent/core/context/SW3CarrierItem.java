@@ -34,4 +34,5 @@ public class SW3CarrierItem extends CarrierItem {
     public void setHeadValue(String headValue) {
         carrier.deserialize(headValue);
     }
+
 }

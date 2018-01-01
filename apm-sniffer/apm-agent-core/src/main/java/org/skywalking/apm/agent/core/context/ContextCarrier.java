@@ -61,23 +61,37 @@ public class ContextCarrier implements Serializable {
 
     /**
      * peer(ipv4/ipv6/hostname + port) of the server, from client side.
+     *
+     * 节点地址
+     *
+     * 当字符串不以#号开头，代表节点编号，格式为 `${peerId}` ，例如 `123`
      */
     private String peerHost;
 
     /**
      * Operation/Service name of the first one in this distributed trace.
      * This name may be compressed to an integer.
+     *
+     * 入口操作名
+     *
+     * 当字符串以#号开头，代表入口操作编号，格式为 `#${entryOperationId}` ，例如 `#123`
      */
     private String entryOperationName;
 
     /**
      * Operation/Service name of the parent one in this distributed trace.
      * This name may be compressed to an integer.
+     *
+     * 父操作名
+     *
+     * 当字符串以#号开头，代表入口操作编号，格式为 `#${entryOperationId}` ，例如 `#123`
      */
     private String parentOperationName;
 
     /**
      * {@link DistributedTraceId}, also known as TraceId
+     *
+     * 分布式链路追踪编号
      */
     private DistributedTraceId primaryDistributedTraceId;
 

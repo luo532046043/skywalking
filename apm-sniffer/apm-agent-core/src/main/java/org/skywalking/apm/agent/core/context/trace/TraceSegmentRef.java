@@ -100,18 +100,21 @@ public class TraceSegmentRef {
         this.spanId = carrier.getSpanId();
         this.parentApplicationInstanceId = carrier.getParentApplicationInstanceId();
         this.entryApplicationInstanceId = carrier.getEntryApplicationInstanceId();
+        // peerId / peerHost
         String host = carrier.getPeerHost();
         if (host.charAt(0) == '#') {
             this.peerHost = host.substring(1);
         } else {
             this.peerId = Integer.parseInt(host);
         }
+        // entryOperationName / entryOperationId
         String entryOperationName = carrier.getEntryOperationName();
         if (entryOperationName.charAt(0) == '#') {
             this.entryOperationName = entryOperationName.substring(1);
         } else {
             this.entryOperationId = Integer.parseInt(entryOperationName);
         }
+        // parentOperationName / parentOperationId
         String parentOperationName = carrier.getParentOperationName();
         if (parentOperationName.charAt(0) == '#') {
             this.parentOperationName = parentOperationName.substring(1);
@@ -126,12 +129,14 @@ public class TraceSegmentRef {
         this.spanId = snapshot.getSpanId();
         this.parentApplicationInstanceId = RemoteDownstreamConfig.Agent.APPLICATION_INSTANCE_ID;
         this.entryApplicationInstanceId = snapshot.getEntryApplicationInstanceId();
+        // entryOperationName / entryOperationId
         String entryOperationName = snapshot.getEntryOperationName();
         if (entryOperationName.charAt(0) == '#') {
             this.entryOperationName = entryOperationName.substring(1);
         } else {
             this.entryOperationId = Integer.parseInt(entryOperationName);
         }
+        // parentOperationName / parentOperationId
         String parentOperationName = snapshot.getParentOperationName();
         if (parentOperationName.charAt(0) == '#') {
             this.parentOperationName = parentOperationName.substring(1);
