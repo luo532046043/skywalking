@@ -129,12 +129,14 @@ public class ContextManager implements TracingContextListener, BootService, Igno
             // 获得 AbstractTracerContext
             context = getOrCreate(operationName, false);
         }
-        // 创建 EntrySpan
+        // 创建 EntrySpan 对象
         return context.createEntrySpan(operationName);
     }
 
     public static AbstractSpan createLocalSpan(String operationName) {
+        // 获得 AbstractTracerContext
         AbstractTracerContext context = getOrCreate(operationName, false);
+        // 创建 LocalSpan 对象
         return context.createLocalSpan(operationName);
     }
 
@@ -142,14 +144,19 @@ public class ContextManager implements TracingContextListener, BootService, Igno
         if (carrier == null) {
             throw new IllegalArgumentException("ContextCarrier can't be null.");
         }
+        // 获得 AbstractTracerContext
         AbstractTracerContext context = getOrCreate(operationName, false);
+        // 创建 ExitSpan 对象
         AbstractSpan span = context.createExitSpan(operationName, remotePeer);
+        // 将 Context 注入到 ContextCarrier
         context.inject(carrier);
         return span;
     }
 
     public static AbstractSpan createExitSpan(String operationName, String remotePeer) {
+        // 获得 AbstractTracerContext   
         AbstractTracerContext context = getOrCreate(operationName, false);
+        // 创建 ExitSpan 对象
         AbstractSpan span = context.createExitSpan(operationName, remotePeer);
         return span;
     }
