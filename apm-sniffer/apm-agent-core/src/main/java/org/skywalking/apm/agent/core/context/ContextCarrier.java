@@ -74,7 +74,7 @@ public class ContextCarrier implements Serializable {
      *
      * 入口操作名
      *
-     * 当字符串以#号开头，代表入口操作编号，格式为 `#${entryOperationId}` ，例如 `#123`
+     * 当字符串不以#号开头，代表入口操作编号，格式为 `#${entryOperationId}` ，例如 `123`
      */
     private String entryOperationName;
 
@@ -84,14 +84,14 @@ public class ContextCarrier implements Serializable {
      *
      * 父操作名
      *
-     * 当字符串以#号开头，代表入口操作编号，格式为 `#${entryOperationId}` ，例如 `#123`
+     * 当字符串不以#号开头，代表入口操作编号，格式为 `#${entryOperationId}` ，例如 `123`
      */
     private String parentOperationName;
 
     /**
      * {@link DistributedTraceId}, also known as TraceId
      *
-     * 分布式链路追踪编号
+     * 分布式链路追踪全局编号
      */
     private DistributedTraceId primaryDistributedTraceId;
 

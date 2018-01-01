@@ -96,24 +96,26 @@ public class TracingContext implements AbstractTracerContext {
 
         carrier.setTraceSegmentId(this.segment.getTraceSegmentId());
         carrier.setSpanId(span.getSpanId());
-
         carrier.setParentApplicationInstanceId(segment.getApplicationInstanceId());
 
+        // peerId / peerHost
         if (DictionaryUtil.isNull(peerId)) {
-            carrier.setPeerHost(peer);
+            carrier.setPeerHost(peer); // 内部会添加 `#` 号
         } else {
             carrier.setPeerId(peerId);
         }
+
+        // 计算 entryApplicationInstanceId
         List<TraceSegmentRef> refs = this.segment.getRefs();
         int operationId;
         String operationName;
         int entryApplicationInstanceId;
-        if (refs != null && refs.size() > 0) {
+        if (refs != null && refs.size() > 0) { // 有父 TraceSegment ，以父为准
             TraceSegmentRef ref = refs.get(0);
             operationId = ref.getEntryOperationId();
             operationName = ref.getEntryOperationName();
             entryApplicationInstanceId = ref.getEntryApplicationInstanceId();
-        } else {
+        } else { // 无父 TraceSegment，以自己未准
             AbstractSpan firstSpan = first();
             operationId = firstSpan.getOperationId();
             operationName = firstSpan.getOperationName();
@@ -121,15 +123,17 @@ public class TracingContext implements AbstractTracerContext {
         }
         carrier.setEntryApplicationInstanceId(entryApplicationInstanceId);
 
+        // entryOperationName / entryOperationId
         if (operationId == DictionaryUtil.nullValue()) {
-            carrier.setEntryOperationName(operationName);
+            carrier.setEntryOperationName(operationName); // 内部会添加 `#` 号
         } else {
             carrier.setEntryOperationId(operationId);
         }
 
+        // parentOperationName / parentOperationId
         int parentOperationId = first().getOperationId();
         if (parentOperationId == DictionaryUtil.nullValue()) {
-            carrier.setParentOperationName(first().getOperationName());
+            carrier.setParentOperationName(first().getOperationName()); // 内部会添加 `#` 号
         } else {
             carrier.setParentOperationId(parentOperationId);
         }
