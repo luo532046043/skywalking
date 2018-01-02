@@ -19,9 +19,15 @@
 package org.skywalking.apm.agent.core.remote;
 
 /**
+ * gRPC 数据流服务状态
+ *
  * @author wusheng
  */
 public class GRPCStreamServiceStatus {
+
+    /**
+     * 是否完成
+     */
     private volatile boolean status;
 
     public GRPCStreamServiceStatus(boolean status) {
@@ -32,6 +38,9 @@ public class GRPCStreamServiceStatus {
         return status;
     }
 
+    /**
+     * 标记完成
+     */
     public void finished() {
         this.status = true;
     }
@@ -45,6 +54,7 @@ public class GRPCStreamServiceStatus {
             if (time > maxTimeout) {
                 break;
             }
+            // 沉睡 5 毫秒
             try2Sleep(5);
             time += 5;
         }
