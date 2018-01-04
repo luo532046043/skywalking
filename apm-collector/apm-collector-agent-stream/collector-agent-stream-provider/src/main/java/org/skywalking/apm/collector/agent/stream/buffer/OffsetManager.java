@@ -76,7 +76,7 @@ public enum OffsetManager {
             // 创建成功，意味着不存在 Buffer 文件夹
             if (dataPath.mkdirs()) {
                 createOffsetFile(); // 创建 Offset 文件
-            // 创建失败，意味着存在 Buffer 文件件
+            // 创建失败，意味着存在 Offset 文件件
             } else {
                 // 获得所有 Offset 文件
                 File[] offsetFiles = dataPath.listFiles(new PrefixFileNameFilter());
