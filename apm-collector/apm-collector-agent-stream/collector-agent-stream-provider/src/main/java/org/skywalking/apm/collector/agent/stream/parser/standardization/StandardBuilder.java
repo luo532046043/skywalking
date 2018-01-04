@@ -19,8 +19,15 @@
 package org.skywalking.apm.collector.agent.stream.parser.standardization;
 
 /**
+ * 标准化 Builder
+ *
  * @author peng-yongsheng
  */
 public interface StandardBuilder {
+
+    /**
+     * 转换成 Builder
+     */
     void toBuilder();
+
 }

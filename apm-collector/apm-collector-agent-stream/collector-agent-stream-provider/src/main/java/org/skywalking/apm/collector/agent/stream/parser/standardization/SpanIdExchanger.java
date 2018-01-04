@@ -27,6 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Span 编号兑换器
+ *
  * @author peng-yongsheng
  */
 public class SpanIdExchanger implements IdExchanger<SpanDecorator> {
@@ -50,25 +52,26 @@ public class SpanIdExchanger implements IdExchanger<SpanDecorator> {
     }
 
     @Override public boolean exchange(SpanDecorator standardBuilder, int applicationId) {
+        // 节点 address 兑换成 addressId ，实际上是 applicationCode 兑换成 applicationId
         if (standardBuilder.getPeerId() == 0 && StringUtils.isNotEmpty(standardBuilder.getPeer())) {
             int peerId = applicationIDService.getOrCreate(standardBuilder.getPeer());
-            if (peerId == 0) {
+            if (peerId == 0) { // 失败
                 logger.debug("peer: {} in application: {} exchange failed", standardBuilder.getPeer(), applicationId);
                 return false;
-            } else {
+            } else { // 成功
                 standardBuilder.toBuilder();
                 standardBuilder.setPeerId(peerId);
                 standardBuilder.setPeer(Const.EMPTY_STRING);
             }
         }
 
+        // operationName 兑换成 operationId
         if (standardBuilder.getOperationNameId() == 0 && StringUtils.isNotEmpty(standardBuilder.getOperationName())) {
             int operationNameId = serviceNameService.getOrCreate(applicationId, standardBuilder.getOperationName());
-
-            if (operationNameId == 0) {
+            if (operationNameId == 0) { // 失败
                 logger.debug("service name: {} from application id: {} exchange failed", standardBuilder.getOperationName(), applicationId);
                 return false;
-            } else {
+            } else { // 成功
                 standardBuilder.toBuilder();
                 standardBuilder.setOperationNameId(operationNameId);
                 standardBuilder.setOperationName(Const.EMPTY_STRING);

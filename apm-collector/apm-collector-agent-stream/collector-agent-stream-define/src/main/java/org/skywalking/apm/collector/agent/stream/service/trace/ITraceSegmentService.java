@@ -22,8 +22,12 @@ import org.skywalking.apm.collector.core.module.Service;
 import org.skywalking.apm.network.proto.UpstreamSegment;
 
 /**
+ * TraceSegment 服务接口
+ *
  * @author peng-yongsheng
  */
 public interface ITraceSegmentService extends Service {
+
     void send(UpstreamSegment segment);
+
 }

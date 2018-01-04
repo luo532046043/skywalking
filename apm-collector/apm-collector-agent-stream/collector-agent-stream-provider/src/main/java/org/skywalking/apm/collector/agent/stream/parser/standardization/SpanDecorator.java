@@ -23,6 +23,8 @@ import org.skywalking.apm.network.proto.SpanObject;
 import org.skywalking.apm.network.proto.SpanType;
 
 /**
+ * Span 装饰着
+ *
  * @author peng-yongsheng
  */
 public class SpanDecorator implements StandardBuilder {

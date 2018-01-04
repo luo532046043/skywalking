@@ -22,6 +22,8 @@ import org.skywalking.apm.collector.core.data.EndOfBatchQueueMessage;
 import org.skywalking.apm.network.proto.UpstreamSegment;
 
 /**
+ * TraceSegment 标准化
+ *
  * @author peng-yongsheng
  */
 public class SegmentStandardization extends EndOfBatchQueueMessage {

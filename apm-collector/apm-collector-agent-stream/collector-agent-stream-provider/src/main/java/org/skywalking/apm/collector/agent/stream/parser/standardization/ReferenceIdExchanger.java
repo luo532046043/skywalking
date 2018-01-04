@@ -29,6 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * TraceSegmentRef 编号兑换器
+ *
  * @author peng-yongsheng
  */
 public class ReferenceIdExchanger implements IdExchanger<ReferenceDecorator> {
@@ -54,38 +56,39 @@ public class ReferenceIdExchanger implements IdExchanger<ReferenceDecorator> {
     }
 
     @Override public boolean exchange(ReferenceDecorator standardBuilder, int applicationId) {
+        // 入口 ServiceName 兑换成 ServiceId
         if (standardBuilder.getEntryServiceId() == 0 && StringUtils.isNotEmpty(standardBuilder.getEntryServiceName())) {
             int entryServiceId = serviceNameService.getOrCreate(instanceCacheService.get(standardBuilder.getEntryApplicationInstanceId()), standardBuilder.getEntryServiceName());
-
-            if (entryServiceId == 0) {
+            if (entryServiceId == 0) { // 失败
                 if (logger.isDebugEnabled()) {
                     int entryApplicationId = instanceCacheService.get(standardBuilder.getEntryApplicationInstanceId());
                     logger.debug("entry service name: {} from application id: {} exchange failed", standardBuilder.getEntryServiceName(), entryApplicationId);
                 }
                 return false;
-            } else {
+            } else { // 成功
                 standardBuilder.toBuilder();
                 standardBuilder.setEntryServiceId(entryServiceId);
                 standardBuilder.setEntryServiceName(Const.EMPTY_STRING);
             }
         }
 
+        // 父 ServiceName 兑换成 ServiceId
         if (standardBuilder.getParentServiceId() == 0 && StringUtils.isNotEmpty(standardBuilder.getParentServiceName())) {
             int parentServiceId = serviceNameService.getOrCreate(instanceCacheService.get(standardBuilder.getParentApplicationInstanceId()), standardBuilder.getParentServiceName());
-
-            if (parentServiceId == 0) {
+            if (parentServiceId == 0) { // 失败
                 if (logger.isDebugEnabled()) {
                     int parentApplicationId = instanceCacheService.get(standardBuilder.getParentApplicationInstanceId());
                     logger.debug("parent service name: {} from application id: {} exchange failed", standardBuilder.getParentServiceName(), parentApplicationId);
                 }
                 return false;
-            } else {
+            } else { // 成功
                 standardBuilder.toBuilder();
                 standardBuilder.setParentServiceId(parentServiceId);
                 standardBuilder.setParentServiceName(Const.EMPTY_STRING);
             }
         }
 
+        // 网络 address 兑换成 addressId ，实际上是 applicationCode 兑换成 applicationId
         if (standardBuilder.getNetworkAddressId() == 0 && StringUtils.isNotEmpty(standardBuilder.getNetworkAddress())) {
             int networkAddressId = applicationIDService.getOrCreate(standardBuilder.getNetworkAddress());
             if (networkAddressId == 0) {

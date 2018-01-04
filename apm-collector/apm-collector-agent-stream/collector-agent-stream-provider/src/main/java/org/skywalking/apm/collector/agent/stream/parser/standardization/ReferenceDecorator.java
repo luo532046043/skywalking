@@ -23,6 +23,8 @@ import org.skywalking.apm.network.proto.TraceSegmentReference;
 import org.skywalking.apm.network.proto.UniqueId;
 
 /**
+ * TraceSegmentRef 装饰者
+ *
  * @author peng-yongsheng
  */
 public class ReferenceDecorator implements StandardBuilder {

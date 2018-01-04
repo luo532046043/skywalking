@@ -18,9 +18,6 @@
 
 package org.skywalking.apm.collector.agent.stream.buffer;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import org.skywalking.apm.collector.core.module.ModuleManager;
 import org.skywalking.apm.collector.core.util.Const;
 import org.skywalking.apm.collector.core.util.StringUtils;
@@ -29,24 +26,43 @@ import org.skywalking.apm.network.proto.UpstreamSegment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 /**
+ * TraceSegment Buffer 管理器
+ *
  * @author peng-yongsheng
  */
 public enum SegmentBufferManager {
+
+    /**
+     * 单例
+     */
     INSTANCE;
 
     private final Logger logger = LoggerFactory.getLogger(SegmentBufferManager.class);
 
+    /**
+     * Data 文件的文件名前缀
+     */
     public static final String DATA_FILE_PREFIX = "data";
+
     private FileOutputStream outputStream;
 
     public synchronized void initialize(ModuleManager moduleManager) {
         logger.info("segment buffer initialize");
         try {
+            // 初始化 OffsetManager
             OffsetManager.INSTANCE.initialize();
+
+            // 创建成功，意味着不存在 Buffer 文件夹
             if (new File(BufferFileConfig.BUFFER_PATH).mkdirs()) {
+                // 创建 Data 文件
                 newDataFile();
             } else {
+                // 获得 Offset 正在写入的
                 String writeFileName = OffsetManager.INSTANCE.getWriteFileName();
                 if (StringUtils.isNotEmpty(writeFileName)) {
                     File dataFile = new File(BufferFileConfig.BUFFER_PATH + writeFileName);
@@ -59,19 +75,29 @@ public enum SegmentBufferManager {
                     newDataFile();
                 }
             }
+
+            // 初始化 SegmentBufferReader
             SegmentBufferReader.INSTANCE.initialize(moduleManager);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }
     }
 
+    /**
+     * 将 TraceSegment 写入 Data 文件( 包括 flush )
+     *
+     * @param segment TraceSegment
+     */
     public synchronized void writeBuffer(UpstreamSegment segment) {
         try {
+            // 将 TraceSegment 写入 Data 文件( 包括 flush )
             segment.writeDelimitedTo(outputStream);
             long position = outputStream.getChannel().position();
+            // 超过单文件上限，创建新文件
             if (position > BufferFileConfig.BUFFER_SEGMENT_MAX_FILE_SIZE) {
                 newDataFile();
             } else {
+            // 未超过文件上限，设置 Offset 写入的偏移
                 OffsetManager.INSTANCE.setWriteOffset(position);
             }
         } catch (IOException e) {
@@ -79,17 +105,27 @@ public enum SegmentBufferManager {
         }
     }
 
+    /**
+     * 创建新的 Data 文件
+     *
+     * @throws IOException 当 IO 发生异常时
+     */
     private void newDataFile() throws IOException {
         logger.debug("create new segment buffer file");
+        // 创建新的 Data 文件
         String timeBucket = String.valueOf(TimeBucketUtils.INSTANCE.getSecondTimeBucket(System.currentTimeMillis()));
         String writeFileName = DATA_FILE_PREFIX + "_" + timeBucket + "." + Const.FILE_SUFFIX;
         File dataFile = new File(BufferFileConfig.BUFFER_PATH + writeFileName);
         dataFile.createNewFile();
+        // 设置 Offset 写入的文件名和偏移
         OffsetManager.INSTANCE.setWriteOffset(writeFileName, 0);
         try {
+            // 关闭老的 Data 文件的 outputStream
             if (outputStream != null) {
                 outputStream.close();
             }
+
+            // 创建新的 Data 文件的 outputStream
             outputStream = new FileOutputStream(dataFile);
             outputStream.getChannel().position(0);
         } catch (IOException e) {
@@ -97,6 +133,9 @@ public enum SegmentBufferManager {
         }
     }
 
+    /**
+     * flush 方法为空，因为 {@link #writeBuffer(UpstreamSegment)} 已经 flush
+     */
     public synchronized void flush() {
     }
 }

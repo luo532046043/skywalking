@@ -21,24 +21,42 @@ package org.skywalking.apm.collector.agent.stream.buffer;
 import java.util.Properties;
 
 /**
+ * Buffer 文件配置
+ *
  * @author peng-yongsheng
  */
 public class BufferFileConfig {
+
     static int BUFFER_OFFSET_MAX_FILE_SIZE = 10 * 1024 * 1024;
     static int BUFFER_SEGMENT_MAX_FILE_SIZE = 10 * 1024 * 1024;
+
+    /**
+     * Buffer 文件夹路径默认值
+     */
     static String BUFFER_PATH = "../buffer/";
 
+    /**
+     * Buffer 文件夹路径配置键
+     */
     private static final String BUFFER_PATH_KEY = "buffer_file_path";
+    /**
+     * Buffer Offset 单文件最大大小
+     */
     private static final String BUFFER_OFFSET_MAX_FILE_SIZE_KEY = "buffer_offset_max_file_size";
+    /**
+     * Buffer Data 单文件最大大小
+     */
     private static final String BUFFER_SEGMENT_MAX_FILE_SIZE_KEY = "buffer_segment_max_file_size";
 
     public static class Parser {
 
         public void parse(Properties config) {
+            // 解析 Buffer 文件夹路径
             if (config.containsKey(BUFFER_PATH_KEY)) {
                 BUFFER_PATH = config.getProperty(BUFFER_PATH_KEY);
             }
 
+            // 解析 Buffer Offset 单文件最大大小
             if (config.containsKey(BUFFER_OFFSET_MAX_FILE_SIZE_KEY)) {
                 String sizeStr = config.getProperty(BUFFER_OFFSET_MAX_FILE_SIZE_KEY).toUpperCase();
                 if (sizeStr.endsWith("K")) {
@@ -60,6 +78,7 @@ public class BufferFileConfig {
                 BUFFER_OFFSET_MAX_FILE_SIZE = 10 * 1024 * 1024;
             }
 
+            // 解析 Buffer Data 单文件最大大小
             if (config.containsKey(BUFFER_SEGMENT_MAX_FILE_SIZE_KEY)) {
                 String sizeStr = config.getProperty(BUFFER_SEGMENT_MAX_FILE_SIZE_KEY).toUpperCase();
                 if (sizeStr.endsWith("K")) {

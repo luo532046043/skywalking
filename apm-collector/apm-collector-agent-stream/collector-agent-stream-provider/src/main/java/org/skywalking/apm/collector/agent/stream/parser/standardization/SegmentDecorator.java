@@ -22,9 +22,17 @@ import org.skywalking.apm.network.proto.TraceSegmentObject;
 import org.skywalking.apm.network.proto.UniqueId;
 
 /**
+ * TraceSegment 装饰着
+ *
  * @author peng-yongsheng
  */
 public class SegmentDecorator implements StandardBuilder {
+
+    /**
+     * 是否是原始对象
+     * 若是，使用 {@link #segmentObject}
+     * 若否，使用 {@link #segmentBuilder}
+     */
     private boolean isOrigin = true;
     private final TraceSegmentObject segmentObject;
     private TraceSegmentObject.Builder segmentBuilder;

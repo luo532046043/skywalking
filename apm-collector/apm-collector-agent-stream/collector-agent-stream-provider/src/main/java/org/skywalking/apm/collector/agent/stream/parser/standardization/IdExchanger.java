@@ -19,8 +19,19 @@
 package org.skywalking.apm.collector.agent.stream.parser.standardization;
 
 /**
+ * 编号兑换器
+ *
  * @author peng-yongsheng
  */
 public interface IdExchanger<T extends StandardBuilder> {
+
+    /**
+     * 兑换 standardBuilder 里的属性，并返回是否兑换成功
+     *
+     * @param standardBuilder standardBuilder
+     * @param applicationId 应用编号
+     * @return 兑换是否成功
+     */
     boolean exchange(T standardBuilder, int applicationId);
+
 }

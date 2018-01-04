@@ -19,12 +19,21 @@
 package org.skywalking.apm.collector.agent.stream.buffer;
 
 /**
+ * 偏移
+ *
  * @author peng-yongsheng
  */
 public class Offset {
 
     private static final String SPLIT_CHARACTER = ",";
+
+    /**
+     * 读取偏移
+     */
     private ReadOffset readOffset;
+    /**
+     * 写入偏移
+     */
     private WriteOffset writeOffset;
 
     public Offset() {
@@ -32,11 +41,21 @@ public class Offset {
         writeOffset = new WriteOffset();
     }
 
+    /**
+     * 序列化读写偏移( readOffset , writeOffset )成字符串，格式为 ${读取文件名},${读取文件偏移量},${写入文件名},${写入文件偏移量}
+     *
+     * @return 字符串
+     */
     public String serialize() {
         return readOffset.getReadFileName() + SPLIT_CHARACTER + String.valueOf(readOffset.getReadFileOffset())
             + SPLIT_CHARACTER + writeOffset.getWriteFileName() + SPLIT_CHARACTER + String.valueOf(writeOffset.getWriteFileOffset());
     }
 
+    /**
+     * 反序列化字符串，设置读写偏移( readOffset , writeOffset )
+     *
+     * @param value 字符串
+     */
     public void deserialize(String value) {
         String[] values = value.split(SPLIT_CHARACTER);
         if (values.length == 4) {
@@ -55,8 +74,18 @@ public class Offset {
         return writeOffset;
     }
 
+    /**
+     * 读取偏移类
+     */
     public static class ReadOffset {
+
+        /**
+         * 读取文件名
+         */
         private String readFileName;
+        /**
+         * 读取文件偏移量
+         */
         private long readFileOffset = 0;
 
         public String getReadFileName() {
@@ -76,8 +105,18 @@ public class Offset {
         }
     }
 
+    /**
+     * 写入偏移类
+     */
     public static class WriteOffset {
+
+        /**
+         * 写入文件名
+         */
         private String writeFileName;
+        /**
+         * 写入文件偏移量
+         */
         private long writeFileOffset = 0;
 
         public String getWriteFileName() {
@@ -96,4 +135,5 @@ public class Offset {
             this.writeFileOffset = writeFileOffset;
         }
     }
+
 }

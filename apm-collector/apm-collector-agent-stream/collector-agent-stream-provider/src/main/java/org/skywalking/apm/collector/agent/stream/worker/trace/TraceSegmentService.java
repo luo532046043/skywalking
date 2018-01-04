@@ -24,6 +24,8 @@ import org.skywalking.apm.collector.core.module.ModuleManager;
 import org.skywalking.apm.network.proto.UpstreamSegment;
 
 /**
+ * TraceSegment 服务实现类
+ *
  * @author peng-yongsheng
  */
 public class TraceSegmentService implements ITraceSegmentService {

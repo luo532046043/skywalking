@@ -18,8 +18,6 @@
 
 package org.skywalking.apm.collector.agent.stream.parser.standardization;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import org.skywalking.apm.collector.agent.stream.buffer.SegmentBufferManager;
 import org.skywalking.apm.collector.core.module.ModuleManager;
 import org.skywalking.apm.collector.queue.service.QueueCreatorService;
@@ -29,7 +27,12 @@ import org.skywalking.apm.collector.stream.worker.base.WorkerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 /**
+ * TraceSegment 标准化 Worker
+ *
  * @author peng-yongsheng
  */
 public class SegmentStandardizationWorker extends AbstractLocalAsyncWorker<SegmentStandardization, SegmentStandardization> {
