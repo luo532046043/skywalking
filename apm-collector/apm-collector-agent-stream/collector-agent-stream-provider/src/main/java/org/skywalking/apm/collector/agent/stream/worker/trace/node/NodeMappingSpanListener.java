@@ -18,8 +18,6 @@
 
 package org.skywalking.apm.collector.agent.stream.worker.trace.node;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.skywalking.apm.collector.agent.stream.graph.TraceStreamGraph;
 import org.skywalking.apm.collector.agent.stream.parser.FirstSpanListener;
 import org.skywalking.apm.collector.agent.stream.parser.RefsListener;
@@ -33,7 +31,12 @@ import org.skywalking.apm.collector.storage.table.node.NodeMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
+ * NodeMapping 的 SpanListener
+ *
  * @author peng-yongsheng
  */
 public class NodeMappingSpanListener implements RefsListener, FirstSpanListener {
@@ -41,16 +44,21 @@ public class NodeMappingSpanListener implements RefsListener, FirstSpanListener 
     private final Logger logger = LoggerFactory.getLogger(NodeMappingSpanListener.class);
 
     private List<NodeMapping> nodeMappings = new ArrayList<>();
+    /**
+     * 时间
+     */
     private long timeBucket;
 
     @Override public void parseRef(ReferenceDecorator referenceDecorator, int applicationId, int instanceId,
         String segmentId) {
+        // 创建 NodeMapping
         logger.debug("node mapping listener parse reference");
         NodeMapping nodeMapping = new NodeMapping(Const.EMPTY_STRING);
         nodeMapping.setApplicationId(applicationId);
         nodeMapping.setAddressId(referenceDecorator.getNetworkAddressId());
         String id = String.valueOf(applicationId) + Const.ID_SPLIT + String.valueOf(nodeMapping.getAddressId());
         nodeMapping.setId(id);
+        // 添加到 `nodeMappings`
         nodeMappings.add(nodeMapping);
     }
 
@@ -65,7 +73,7 @@ public class NodeMappingSpanListener implements RefsListener, FirstSpanListener 
         Graph<NodeMapping> graph = GraphManager.INSTANCE.createIfAbsent(TraceStreamGraph.NODE_MAPPING_GRAPH_ID, NodeMapping.class);
 
         for (NodeMapping nodeMapping : nodeMappings) {
-            nodeMapping.setId(timeBucket + Const.ID_SPLIT + nodeMapping.getId());
+            nodeMapping.setId(timeBucket + Const.ID_SPLIT + nodeMapping.getId()); // 设置编号
             nodeMapping.setTimeBucket(timeBucket);
             logger.debug("push to node mapping aggregation worker, id: {}", nodeMapping.getId());
             graph.start(nodeMapping);

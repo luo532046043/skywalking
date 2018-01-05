@@ -24,7 +24,16 @@ import org.skywalking.apm.collector.core.data.CommonTable;
  * @author peng-yongsheng
  */
 public class NodeMappingTable extends CommonTable {
+
     public static final String TABLE = "node_mapping";
+
+    /**
+     * 服务消费者应用编号
+     */
     public static final String COLUMN_APPLICATION_ID = "application_id";
+    /**
+     * 服务提供者编号
+     */
     public static final String COLUMN_ADDRESS_ID = "address_id";
+
 }
