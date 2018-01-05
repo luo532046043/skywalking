@@ -28,7 +28,7 @@ public class SegmentTable extends CommonTable {
     public static final String TABLE = "segment";
 
     /**
-     * 数据，二进制格式。
+     * 数据，二进制数组。
      */
     public static final String COLUMN_DATA_BINARY = "data_binary";
 }

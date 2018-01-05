@@ -115,9 +115,9 @@ public class ServiceReferenceSpanListener implements FirstSpanListener, EntrySpa
             if (referenceServices.size() > 0) { // 有 TraceSegmentRef
                 referenceServices.forEach(reference -> {
                     ServiceReference serviceReference = new ServiceReference(Const.EMPTY_STRING);
-                    int entryServiceId = reference.getEntryServiceId();
-                    int frontServiceId = reference.getParentServiceId();
-                    int behindServiceId = serviceId;
+                    int entryServiceId = reference.getEntryServiceId(); // 入口
+                    int frontServiceId = reference.getParentServiceId(); // 父
+                    int behindServiceId = serviceId; // 自己
                     calculateCost(serviceReference, startTime, endTime, isError);
 
                     logger.debug("has reference, entryServiceId: {}", entryServiceId);
@@ -127,9 +127,9 @@ public class ServiceReferenceSpanListener implements FirstSpanListener, EntrySpa
                 });
             } else { // 无 TraceSegmentRef
                 ServiceReference serviceReference = new ServiceReference(Const.EMPTY_STRING);
-                int entryServiceId = serviceId;
-                int frontServiceId = Const.NONE_SERVICE_ID;
-                int behindServiceId = serviceId;
+                int entryServiceId = serviceId; // 自己
+                int frontServiceId = Const.NONE_SERVICE_ID; // 【空】
+                int behindServiceId = serviceId; // 自己
                 calculateCost(serviceReference, startTime, endTime, isError);
 
                 // 发送给 AggregationWorker
