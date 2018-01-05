@@ -21,7 +21,7 @@ package org.skywalking.apm.collector.storage.table.noderef;
 import org.skywalking.apm.collector.core.data.CommonTable;
 
 /**
- * 节点调用 Table
+ * 节点调用统计 Table
  *
  * @author peng-yongsheng
  */

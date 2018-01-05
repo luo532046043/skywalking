@@ -24,6 +24,8 @@ import org.skywalking.apm.collector.core.data.operator.AddOperation;
 import org.skywalking.apm.collector.core.data.operator.NonOperation;
 
 /**
+ * 节点调用统计
+ *
  * @author peng-yongsheng
  */
 public class NodeReference extends Data {

@@ -18,8 +18,6 @@
 
 package org.skywalking.apm.collector.agent.stream.worker.trace.serviceref;
 
-import java.util.LinkedList;
-import java.util.List;
 import org.skywalking.apm.collector.agent.stream.graph.TraceStreamGraph;
 import org.skywalking.apm.collector.agent.stream.parser.EntrySpanListener;
 import org.skywalking.apm.collector.agent.stream.parser.FirstSpanListener;
@@ -34,7 +32,12 @@ import org.skywalking.apm.collector.storage.table.serviceref.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
+ * ServiceReference 的 SpanListener
+ *
  * @author peng-yongsheng
  */
 public class ServiceReferenceSpanListener implements FirstSpanListener, EntrySpanListener, RefsListener {
@@ -42,17 +45,35 @@ public class ServiceReferenceSpanListener implements FirstSpanListener, EntrySpa
     private final Logger logger = LoggerFactory.getLogger(ServiceReferenceSpanListener.class);
 
     private List<ReferenceDecorator> referenceServices = new LinkedList<>();
+    /**
+     * 入口操作编号
+     */
     private int serviceId = 0;
+    /**
+     * 开始时间
+     */
     private long startTime = 0;
+    /**
+     * 结束时间
+     */
     private long endTime = 0;
+    /**
+     * 是否有错误
+     */
     private boolean isError = false;
+    /**
+     * 时间
+     */
     private long timeBucket;
+    /**
+     * 是否有 SpanEntry
+     */
     private boolean hasEntry = false;
 
     @Override
     public void parseFirst(SpanDecorator spanDecorator, int applicationId, int instanceId,
         String segmentId) {
-        timeBucket = TimeBucketUtils.INSTANCE.getMinuteTimeBucket(spanDecorator.getStartTime());
+        timeBucket = TimeBucketUtils.INSTANCE.getMinuteTimeBucket(spanDecorator.getStartTime()); // 分钟
     }
 
     @Override public void parseRef(ReferenceDecorator referenceDecorator, int applicationId, int applicationInstanceId,
@@ -90,8 +111,8 @@ public class ServiceReferenceSpanListener implements FirstSpanListener, EntrySpa
 
     @Override public void build() {
         logger.debug("service reference listener build");
-        if (hasEntry) {
-            if (referenceServices.size() > 0) {
+        if (hasEntry) { // 有 SpanEntry 才构建
+            if (referenceServices.size() > 0) { // 有 TraceSegmentRef
                 referenceServices.forEach(reference -> {
                     ServiceReference serviceReference = new ServiceReference(Const.EMPTY_STRING);
                     int entryServiceId = reference.getEntryServiceId();
@@ -100,15 +121,18 @@ public class ServiceReferenceSpanListener implements FirstSpanListener, EntrySpa
                     calculateCost(serviceReference, startTime, endTime, isError);
 
                     logger.debug("has reference, entryServiceId: {}", entryServiceId);
+
+                    // 发送给 AggregationWorker
                     sendToAggregationWorker(serviceReference, entryServiceId, frontServiceId, behindServiceId);
                 });
-            } else {
+            } else { // 无 TraceSegmentRef
                 ServiceReference serviceReference = new ServiceReference(Const.EMPTY_STRING);
                 int entryServiceId = serviceId;
                 int frontServiceId = Const.NONE_SERVICE_ID;
                 int behindServiceId = serviceId;
-
                 calculateCost(serviceReference, startTime, endTime, isError);
+
+                // 发送给 AggregationWorker
                 sendToAggregationWorker(serviceReference, entryServiceId, frontServiceId, behindServiceId);
             }
         }
@@ -116,6 +140,7 @@ public class ServiceReferenceSpanListener implements FirstSpanListener, EntrySpa
 
     private void sendToAggregationWorker(ServiceReference serviceReference, int entryServiceId, int frontServiceId,
         int behindServiceId) {
+        // 设置 `id` ，`frontServiceId` ，`behindServiceId` ，`timeBucket`
         StringBuilder idBuilder = new StringBuilder();
         idBuilder.append(timeBucket).append(Const.ID_SPLIT);
 
@@ -128,10 +153,11 @@ public class ServiceReferenceSpanListener implements FirstSpanListener, EntrySpa
         idBuilder.append(behindServiceId);
         serviceReference.setBehindServiceId(behindServiceId);
 
-        serviceReference.setId(idBuilder.toString());
+        serviceReference.setId(idBuilder.toString()); // 编号，`${timeBucket}_${frontServiceId}_${behindServiceId}`
         serviceReference.setTimeBucket(timeBucket);
         logger.debug("push to service reference aggregation worker, id: {}", serviceReference.getId());
 
+        // 流式处理
         Graph<ServiceReference> graph = GraphManager.INSTANCE.createIfAbsent(TraceStreamGraph.SERVICE_REFERENCE_GRAPH_ID, ServiceReference.class);
         graph.start(serviceReference);
     }
