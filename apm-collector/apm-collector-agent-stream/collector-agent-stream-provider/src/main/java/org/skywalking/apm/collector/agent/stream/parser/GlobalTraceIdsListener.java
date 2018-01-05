@@ -24,5 +24,7 @@ import org.skywalking.apm.network.proto.UniqueId;
  * @author peng-yongsheng
  */
 public interface GlobalTraceIdsListener extends SpanListener {
+
     void parseGlobalTraceId(UniqueId uniqueId);
+
 }

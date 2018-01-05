@@ -21,8 +21,12 @@ package org.skywalking.apm.collector.agent.stream.parser;
 import org.skywalking.apm.collector.agent.stream.parser.standardization.SpanDecorator;
 
 /**
+ * ExitSpan 监听器
+ *
  * @author peng-yongsheng
  */
 public interface ExitSpanListener extends SpanListener {
+
     void parseExit(SpanDecorator spanDecorator, int applicationId, int instanceId, String segmentId);
+
 }

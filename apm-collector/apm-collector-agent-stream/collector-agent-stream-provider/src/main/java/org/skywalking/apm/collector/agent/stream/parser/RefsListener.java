@@ -21,8 +21,12 @@ package org.skywalking.apm.collector.agent.stream.parser;
 import org.skywalking.apm.collector.agent.stream.parser.standardization.ReferenceDecorator;
 
 /**
+ * TraceSegmentRef 监听器
+ *
  * @author peng-yongsheng
  */
 public interface RefsListener extends SpanListener {
+
     void parseRef(ReferenceDecorator referenceDecorator, int applicationId, int instanceId, String segmentId);
+
 }

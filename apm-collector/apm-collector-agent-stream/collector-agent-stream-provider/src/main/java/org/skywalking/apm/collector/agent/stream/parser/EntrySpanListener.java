@@ -21,8 +21,12 @@ package org.skywalking.apm.collector.agent.stream.parser;
 import org.skywalking.apm.collector.agent.stream.parser.standardization.SpanDecorator;
 
 /**
+ * EntrySpan 监听器
+ *
  * @author peng-yongsheng
  */
 public interface EntrySpanListener extends SpanListener {
+
     void parseEntry(SpanDecorator spanDecorator, int applicationId, int instanceId, String segmentId);
+
 }

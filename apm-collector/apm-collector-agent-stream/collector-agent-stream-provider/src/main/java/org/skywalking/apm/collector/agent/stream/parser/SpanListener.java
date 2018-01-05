@@ -19,8 +19,12 @@
 package org.skywalking.apm.collector.agent.stream.parser;
 
 /**
+ * Span 监听器
+ *
  * @author peng-yongsheng
  */
 public interface SpanListener {
+
     void build();
+
 }
