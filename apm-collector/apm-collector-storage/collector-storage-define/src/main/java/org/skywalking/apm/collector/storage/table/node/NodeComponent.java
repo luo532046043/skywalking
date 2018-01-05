@@ -24,6 +24,8 @@ import org.skywalking.apm.collector.core.data.operator.CoverOperation;
 import org.skywalking.apm.collector.core.data.operator.NonOperation;
 
 /**
+ * 节点组件
+ *
  * @author peng-yongsheng
  */
 public class NodeComponent extends Data {

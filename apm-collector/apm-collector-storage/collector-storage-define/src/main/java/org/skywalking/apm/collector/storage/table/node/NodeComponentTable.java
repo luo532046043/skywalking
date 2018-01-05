@@ -24,7 +24,16 @@ import org.skywalking.apm.collector.core.data.CommonTable;
  * @author peng-yongsheng
  */
 public class NodeComponentTable extends CommonTable {
+
     public static final String TABLE = "node_component";
+
+    /**
+     * 组件编号
+     */
     public static final String COLUMN_COMPONENT_ID = "component_id";
+    /**
+     * 对等节点编号
+     */
     public static final String COLUMN_PEER_ID = "peer_id";
+
 }

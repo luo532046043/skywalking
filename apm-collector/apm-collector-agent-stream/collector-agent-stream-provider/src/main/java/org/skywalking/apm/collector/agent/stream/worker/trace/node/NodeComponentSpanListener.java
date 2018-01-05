@@ -18,8 +18,6 @@
 
 package org.skywalking.apm.collector.agent.stream.worker.trace.node;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.skywalking.apm.collector.agent.stream.graph.TraceStreamGraph;
 import org.skywalking.apm.collector.agent.stream.parser.EntrySpanListener;
 import org.skywalking.apm.collector.agent.stream.parser.ExitSpanListener;
@@ -33,7 +31,12 @@ import org.skywalking.apm.collector.storage.table.node.NodeComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
+ * NodeComponent 的 SpanListener
+ *
  * @author peng-yongsheng
  */
 public class NodeComponentSpanListener implements EntrySpanListener, ExitSpanListener, FirstSpanListener {
@@ -41,37 +44,40 @@ public class NodeComponentSpanListener implements EntrySpanListener, ExitSpanLis
     private final Logger logger = LoggerFactory.getLogger(NodeComponentSpanListener.class);
 
     private List<NodeComponent> nodeComponents = new ArrayList<>();
+    /**
+     * 时间
+     */
     private long timeBucket;
 
     @Override
     public void parseExit(SpanDecorator spanDecorator, int applicationId, int instanceId, String segmentId) {
+        // 创建 NodeComponent 对象
         NodeComponent nodeComponent = new NodeComponent(Const.EMPTY_STRING);
         nodeComponent.setComponentId(spanDecorator.getComponentId());
         nodeComponent.setPeerId(spanDecorator.getPeerId());
-
         String id = String.valueOf(nodeComponent.getComponentId()) + Const.ID_SPLIT + nodeComponent.getPeerId();
-
         nodeComponent.setId(id);
+        // 添加到 `nodeComponents`
         nodeComponents.add(nodeComponent);
     }
 
     @Override
     public void parseEntry(SpanDecorator spanDecorator, int applicationId, int instanceId,
         String segmentId) {
+        // 创建 NodeComponent 对象
         NodeComponent nodeComponent = new NodeComponent(Const.EMPTY_STRING);
         nodeComponent.setComponentId(spanDecorator.getComponentId());
         nodeComponent.setPeerId(applicationId);
-
         String id = String.valueOf(nodeComponent.getComponentId()) + Const.ID_SPLIT + String.valueOf(applicationId);
         nodeComponent.setId(id);
-
+        // 添加到 `nodeComponents`
         nodeComponents.add(nodeComponent);
     }
 
     @Override
     public void parseFirst(SpanDecorator spanDecorator, int applicationId, int instanceId,
         String segmentId) {
-        timeBucket = TimeBucketUtils.INSTANCE.getMinuteTimeBucket(spanDecorator.getStartTime());
+        timeBucket = TimeBucketUtils.INSTANCE.getMinuteTimeBucket(spanDecorator.getStartTime()); // 分钟
     }
 
     @Override public void build() {

@@ -98,7 +98,7 @@ public class TraceStreamGraph {
     }
 
     @SuppressWarnings("unchecked")
-    public void createInstPerformanceGraph() {
+    public void createInstPerformanceGraph() { //
         QueueCreatorService<InstPerformance> queueCreatorService = moduleManager.find(QueueModule.NAME).getService(QueueCreatorService.class);
 
         Graph<InstPerformance> graph = GraphManager.INSTANCE.createIfAbsent(INST_PERFORMANCE_GRAPH_ID, InstPerformance.class);
@@ -169,7 +169,7 @@ public class TraceStreamGraph {
     }
 
     @SuppressWarnings("unchecked")
-    public void createSegmentCostGraph() {
+    public void createSegmentCostGraph() { //
         QueueCreatorService<SegmentCost> queueCreatorService = moduleManager.find(QueueModule.NAME).getService(QueueCreatorService.class);
 
         Graph<SegmentCost> graph = GraphManager.INSTANCE.createIfAbsent(SEGMENT_COST_GRAPH_ID, SegmentCost.class);
