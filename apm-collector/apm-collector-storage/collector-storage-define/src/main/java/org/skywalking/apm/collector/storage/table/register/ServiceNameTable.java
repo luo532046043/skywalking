@@ -30,7 +30,7 @@ public class ServiceNameTable extends CommonTable {
     public static final String TABLE = "service_name";
 
     /**
-     * 服务名
+     * 操作名
      */
     public static final String COLUMN_SERVICE_NAME = "service_name";
     /**

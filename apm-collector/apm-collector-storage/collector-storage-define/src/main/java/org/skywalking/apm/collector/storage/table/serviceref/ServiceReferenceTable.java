@@ -24,6 +24,7 @@ import org.skywalking.apm.collector.core.data.CommonTable;
  * @author peng-yongsheng
  */
 public class ServiceReferenceTable extends CommonTable {
+
     public static final String TABLE = "service_reference";
     public static final String COLUMN_ENTRY_SERVICE_ID = "entry_service_id";
     public static final String COLUMN_FRONT_SERVICE_ID = "front_service_id";
@@ -35,4 +36,5 @@ public class ServiceReferenceTable extends CommonTable {
     public static final String COLUMN_SUMMARY = "summary";
     public static final String COLUMN_COST_SUMMARY = "cost_summary";
     public static final String COLUMN_ERROR = "error";
+
 }

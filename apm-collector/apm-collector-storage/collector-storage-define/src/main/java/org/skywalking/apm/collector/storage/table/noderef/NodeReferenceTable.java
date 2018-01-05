@@ -50,7 +50,7 @@ public class NodeReferenceTable extends CommonTable {
      */
     public static final String COLUMN_S5_LTE = "s5_lte";
     /**
-     * (3000, 5000ms] 的次数
+     * (5000ms, 无穷] 的次数
      */
     public static final String COLUMN_S5_GT = "s5_gt";
     /**

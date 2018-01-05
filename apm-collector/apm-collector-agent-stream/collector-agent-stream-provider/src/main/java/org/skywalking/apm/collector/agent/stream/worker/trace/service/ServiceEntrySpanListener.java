@@ -36,6 +36,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * ServiceEntry 的 SpanListener
+ *
  * @author peng-yongsheng
  */
 public class ServiceEntrySpanListener implements RefsListener, FirstSpanListener, EntrySpanListener {
@@ -43,10 +45,25 @@ public class ServiceEntrySpanListener implements RefsListener, FirstSpanListener
     private final Logger logger = LoggerFactory.getLogger(ServiceEntrySpanListener.class);
 
     private long timeBucket;
+    /**
+     * 是否有 TraceSegmentRef
+     */
     private boolean hasReference = false;
+    /**
+     * 应用编号
+     */
     private int applicationId;
+    /**
+     * 操作编号
+     */
     private int entryServiceId;
+    /**
+     * 操作名
+     */
     private String entryServiceName;
+    /**
+     * 是否有 EntrySpan
+     */
     private boolean hasEntry = false;
     private final ServiceNameCacheService serviceNameCacheService;
 
@@ -77,6 +94,7 @@ public class ServiceEntrySpanListener implements RefsListener, FirstSpanListener
     @Override public void build() {
         logger.debug("entry service listener build");
         if (!hasReference && hasEntry) {
+            // 创建 ServiceEntry
             ServiceEntry serviceEntry = new ServiceEntry(applicationId + Const.ID_SPLIT + entryServiceId);
             serviceEntry.setApplicationId(applicationId);
             serviceEntry.setEntryServiceId(entryServiceId);
@@ -84,6 +102,7 @@ public class ServiceEntrySpanListener implements RefsListener, FirstSpanListener
             serviceEntry.setRegisterTime(timeBucket);
             serviceEntry.setNewestTime(timeBucket);
 
+            // 流式处理
             logger.debug("push to service entry aggregation worker, id: {}", serviceEntry.getId());
             Graph<ServiceEntry> graph = GraphManager.INSTANCE.createIfAbsent(TraceStreamGraph.SERVICE_ENTRY_GRAPH_ID, ServiceEntry.class);
             graph.start(serviceEntry);

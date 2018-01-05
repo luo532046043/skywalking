@@ -21,15 +21,33 @@ package org.skywalking.apm.collector.storage.table.service;
 import org.skywalking.apm.collector.core.data.CommonTable;
 
 /**
+ * 入口操作表
+ *
  * @author peng-yongsheng
  */
 public class ServiceEntryTable extends CommonTable {
 
     public static final String TABLE = "service_entry";
 
+    /**
+     * 应用编号
+     */
     public static final String COLUMN_APPLICATION_ID = "application_id";
+    /**
+     * 操作编号
+     */
     public static final String COLUMN_ENTRY_SERVICE_ID = "entry_service_id";
+    /**
+     * 操作名
+     */
     public static final String COLUMN_ENTRY_SERVICE_NAME = "entry_service_name";
+    /**
+     * 注册时间
+     */
     public static final String COLUMN_REGISTER_TIME = "register_time";
+    /**
+     * 最后调用时间
+     */
     public static final String COLUMN_NEWEST_TIME = "newest_time";
+
 }
