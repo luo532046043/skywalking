@@ -25,6 +25,8 @@ import org.skywalking.apm.collector.core.data.operator.CoverOperation;
 import org.skywalking.apm.collector.core.data.operator.NonOperation;
 
 /**
+ * 应用实例性能，记录应用实例每秒的请求总次数，请求总时长
+ *
  * @author peng-yongsheng
  */
 public class InstPerformance extends Data {

@@ -40,6 +40,9 @@ public class InstPerformancePersistenceWorker extends PersistenceWorker<InstPerf
         return 118;
     }
 
+    /**
+     * @return 需要合并，因为 calls 、cost_total 需要累加
+     */
     @Override protected boolean needMergeDBData() {
         return true;
     }

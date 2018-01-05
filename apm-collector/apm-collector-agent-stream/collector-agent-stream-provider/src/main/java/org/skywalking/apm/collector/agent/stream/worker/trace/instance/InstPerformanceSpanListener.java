@@ -31,15 +31,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * InstPerformance 的 SpanListener
+ *
  * @author peng-yongsheng
  */
 public class InstPerformanceSpanListener implements EntrySpanListener, FirstSpanListener {
 
     private final Logger logger = LoggerFactory.getLogger(InstPerformanceSpanListener.class);
 
+    /**
+     * 应用编号
+     */
     private int applicationId;
+    /**
+     * 应用实例编号
+     */
     private int instanceId;
+    /**
+     * 消耗时长
+     */
     private long cost;
+    /**
+     * 时间
+     */
     private long timeBucket;
 
     @Override
@@ -52,11 +66,12 @@ public class InstPerformanceSpanListener implements EntrySpanListener, FirstSpan
         String segmentId) {
         this.applicationId = applicationId;
         this.instanceId = instanceId;
-        this.cost = spanDecorator.getEndTime() - spanDecorator.getStartTime();
+        this.cost = spanDecorator.getEndTime() - spanDecorator.getStartTime(); // 第一个 Span ，计算消耗时长
         timeBucket = TimeBucketUtils.INSTANCE.getSecondTimeBucket(spanDecorator.getStartTime());
     }
 
     @Override public void build() {
+        // 创建 InstPerformance 对象
         InstPerformance instPerformance = new InstPerformance(timeBucket + Const.ID_SPLIT + instanceId);
         instPerformance.setApplicationId(applicationId);
         instPerformance.setInstanceId(instanceId);
@@ -64,7 +79,9 @@ public class InstPerformanceSpanListener implements EntrySpanListener, FirstSpan
         instPerformance.setCostTotal(cost);
         instPerformance.setTimeBucket(timeBucket);
 
+        // 流式计算
         Graph<InstPerformance> graph = GraphManager.INSTANCE.createIfAbsent(TraceStreamGraph.INST_PERFORMANCE_GRAPH_ID, InstPerformance.class);
         graph.start(instPerformance);
     }
+
 }

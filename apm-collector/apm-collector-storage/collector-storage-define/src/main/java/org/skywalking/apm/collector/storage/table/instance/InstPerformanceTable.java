@@ -24,9 +24,24 @@ import org.skywalking.apm.collector.core.data.CommonTable;
  * @author peng-yongsheng
  */
 public class InstPerformanceTable extends CommonTable {
+
     public static final String TABLE = "instance_performance";
+
+    /**
+     * 应用编号
+     */
     public static final String COLUMN_APPLICATION_ID = "application_id";
+    /**
+     * 应用实例编号
+     */
     public static final String COLUMN_INSTANCE_ID = "instance_id";
+    /**
+     * 调用总次数
+     */
     public static final String COLUMN_CALLS = "calls";
+    /**
+     * 消耗总时长
+     */
     public static final String COLUMN_COST_TOTAL = "cost_total";
+
 }
