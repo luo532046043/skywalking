@@ -21,16 +21,44 @@ package org.skywalking.apm.collector.storage.table.noderef;
 import org.skywalking.apm.collector.core.data.CommonTable;
 
 /**
+ * 节点调用 Table
+ *
  * @author peng-yongsheng
  */
 public class NodeReferenceTable extends CommonTable {
+
     public static final String TABLE = "node_reference";
+
+    /**
+     * 服务消费者应用编号
+     */
     public static final String COLUMN_FRONT_APPLICATION_ID = "front_application_id";
+    /**
+     * 服务提供者应用编号
+     */
     public static final String COLUMN_BEHIND_APPLICATION_ID = "behind_application_id";
+    /**
+     * (0, 1000ms] 的次数
+     */
     public static final String COLUMN_S1_LTE = "s1_lte";
+    /**
+     * (1000, 3000ms] 的次数
+     */
     public static final String COLUMN_S3_LTE = "s3_lte";
+    /**
+     * (3000, 5000ms] 的次数
+     */
     public static final String COLUMN_S5_LTE = "s5_lte";
+    /**
+     * (3000, 5000ms] 的次数
+     */
     public static final String COLUMN_S5_GT = "s5_gt";
+    /**
+     * 总共的次数
+     */
     public static final String COLUMN_SUMMARY = "summary";
+    /**
+     * 错误的次数
+     */
     public static final String COLUMN_ERROR = "error";
 }

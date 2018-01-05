@@ -18,8 +18,6 @@
 
 package org.skywalking.apm.collector.agent.stream.worker.trace.noderef;
 
-import java.util.LinkedList;
-import java.util.List;
 import org.skywalking.apm.collector.agent.stream.graph.TraceStreamGraph;
 import org.skywalking.apm.collector.agent.stream.parser.EntrySpanListener;
 import org.skywalking.apm.collector.agent.stream.parser.ExitSpanListener;
@@ -38,7 +36,12 @@ import org.skywalking.apm.collector.storage.table.noderef.NodeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
+ * NodeReference 的 SpanListener
+ *
  * @author peng-yongsheng
  */
 public class NodeReferenceSpanListener implements EntrySpanListener, ExitSpanListener, RefsListener {
@@ -57,52 +60,54 @@ public class NodeReferenceSpanListener implements EntrySpanListener, ExitSpanLis
 
     @Override
     public void parseExit(SpanDecorator spanDecorator, int applicationId, int instanceId, String segmentId) {
+        // 创建 NodeReference 对象
         NodeReference nodeReference = new NodeReference(Const.EMPTY_STRING);
         nodeReference.setFrontApplicationId(applicationId);
         nodeReference.setBehindApplicationId(spanDecorator.getPeerId());
         nodeReference.setTimeBucket(TimeBucketUtils.INSTANCE.getMinuteTimeBucket(spanDecorator.getStartTime()));
-
         StringBuilder idBuilder = new StringBuilder();
         idBuilder.append(nodeReference.getTimeBucket()).append(Const.ID_SPLIT).append(applicationId)
-            .append(Const.ID_SPLIT).append(spanDecorator.getPeerId());
-
+            .append(Const.ID_SPLIT).append(spanDecorator.getPeerId()); // 编号，${timeBucket}_${frontApplicationId}_${behindApplicationId}
         nodeReference.setId(idBuilder.toString());
+        // 添加到 `nodeReferences`
         nodeReferences.add(buildNodeRefSum(nodeReference, spanDecorator.getStartTime(), spanDecorator.getEndTime(), spanDecorator.getIsError()));
     }
 
     @Override
     public void parseEntry(SpanDecorator spanDecorator, int applicationId, int instanceId,
         String segmentId) {
-        if (CollectionUtils.isNotEmpty(references)) {
+        if (CollectionUtils.isNotEmpty(references)) { // 配合 `#parseRef(...)` 方法
             references.forEach(nodeReference -> {
+                // 创建 NodeReference 对象
                 nodeReference.setTimeBucket(TimeBucketUtils.INSTANCE.getMinuteTimeBucket(spanDecorator.getStartTime()));
                 String idBuilder = String.valueOf(nodeReference.getTimeBucket()) + Const.ID_SPLIT + nodeReference.getFrontApplicationId() +
-                    Const.ID_SPLIT + nodeReference.getBehindApplicationId();
-
+                    Const.ID_SPLIT + nodeReference.getBehindApplicationId(); // 编号，${timeBucket}_${frontApplicationId}_${behindApplicationId}
                 nodeReference.setId(idBuilder);
+                // 添加到 `nodeReferences`
                 nodeReferences.add(buildNodeRefSum(nodeReference, spanDecorator.getStartTime(), spanDecorator.getEndTime(), spanDecorator.getIsError()));
             });
         } else {
+            // 创建 NodeReference 对象
             NodeReference nodeReference = new NodeReference(Const.EMPTY_STRING);
             nodeReference.setFrontApplicationId(Const.USER_ID);
             nodeReference.setBehindApplicationId(applicationId);
             nodeReference.setTimeBucket(TimeBucketUtils.INSTANCE.getMinuteTimeBucket(spanDecorator.getStartTime()));
-
             String idBuilder = String.valueOf(nodeReference.getTimeBucket()) + Const.ID_SPLIT + nodeReference.getFrontApplicationId() +
-                Const.ID_SPLIT + nodeReference.getBehindApplicationId();
-
+                Const.ID_SPLIT + nodeReference.getBehindApplicationId(); // 编号，${timeBucket}_${frontApplicationId}_${behindApplicationId}
             nodeReference.setId(idBuilder);
+            // 添加到 `nodeReferences`
             nodeReferences.add(buildNodeRefSum(nodeReference, spanDecorator.getStartTime(), spanDecorator.getEndTime(), spanDecorator.getIsError()));
         }
     }
 
     @Override public void parseRef(ReferenceDecorator referenceDecorator, int applicationId, int instanceId,
         String segmentId) {
+        // 创建 NodeReference 对象
         int parentApplicationId = instanceCacheService.get(referenceDecorator.getParentApplicationInstanceId());
-
         NodeReference referenceSum = new NodeReference(Const.EMPTY_STRING);
         referenceSum.setFrontApplicationId(parentApplicationId);
         referenceSum.setBehindApplicationId(applicationId);
+        // 添加到 `references`
         references.add(referenceSum);
     }
 
@@ -131,4 +136,5 @@ public class NodeReferenceSpanListener implements EntrySpanListener, ExitSpanLis
         reference.setSummary(1);
         return reference;
     }
+
 }
