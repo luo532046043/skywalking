@@ -84,7 +84,7 @@ public class NodeComponentSpanListener implements EntrySpanListener, ExitSpanLis
         Graph<NodeComponent> graph = GraphManager.INSTANCE.createIfAbsent(TraceStreamGraph.NODE_COMPONENT_GRAPH_ID, NodeComponent.class);
 
         nodeComponents.forEach(nodeComponent -> {
-            nodeComponent.setId(timeBucket + Const.ID_SPLIT + nodeComponent.getId());
+            nodeComponent.setId(timeBucket + Const.ID_SPLIT + nodeComponent.getId()); // 设置编号
             nodeComponent.setTimeBucket(timeBucket);
             graph.start(nodeComponent);
         });
