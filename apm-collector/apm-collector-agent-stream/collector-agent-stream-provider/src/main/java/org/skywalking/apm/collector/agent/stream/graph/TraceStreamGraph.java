@@ -82,7 +82,7 @@ public class TraceStreamGraph {
     }
 
     @SuppressWarnings("unchecked")
-    public void createSegmentStandardizationGraph() {
+    public void createSegmentStandardizationGraph() { //
         QueueCreatorService<SegmentStandardization> queueCreatorService = moduleManager.find(QueueModule.NAME).getService(QueueCreatorService.class);
 
         Graph<SegmentStandardization> graph = GraphManager.INSTANCE.createIfAbsent(SEGMENT_STANDARDIZATION_GRAPH_ID, SegmentStandardization.class);
@@ -90,7 +90,7 @@ public class TraceStreamGraph {
     }
 
     @SuppressWarnings("unchecked")
-    public void createGlobalTraceGraph() {
+    public void createGlobalTraceGraph() { //
         QueueCreatorService<GlobalTrace> queueCreatorService = moduleManager.find(QueueModule.NAME).getService(QueueCreatorService.class);
 
         Graph<GlobalTrace> graph = GraphManager.INSTANCE.createIfAbsent(GLOBAL_TRACE_GRAPH_ID, GlobalTrace.class);

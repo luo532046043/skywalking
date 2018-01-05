@@ -24,6 +24,8 @@ import org.skywalking.apm.collector.core.data.operator.CoverOperation;
 import org.skywalking.apm.collector.core.data.operator.NonOperation;
 
 /**
+ * 全局链路追踪，记录一次分布式链路追踪，包括的 TraceSegment 编号。
+ *
  * @author peng-yongsheng
  */
 public class GlobalTrace extends Data {

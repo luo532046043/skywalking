@@ -18,8 +18,6 @@
 
 package org.skywalking.apm.collector.agent.stream.worker.trace.global;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.skywalking.apm.collector.agent.stream.graph.TraceStreamGraph;
 import org.skywalking.apm.collector.agent.stream.parser.FirstSpanListener;
 import org.skywalking.apm.collector.agent.stream.parser.GlobalTraceIdsListener;
@@ -33,15 +31,29 @@ import org.skywalking.apm.network.proto.UniqueId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
+ * GlobalTrace 的 SpanListener
+ *
  * @author peng-yongsheng
  */
 public class GlobalTraceSpanListener implements FirstSpanListener, GlobalTraceIdsListener {
 
     private final Logger logger = LoggerFactory.getLogger(GlobalTraceSpanListener.class);
 
+    /**
+     * 全局链路追踪编号数组
+     */
     private List<String> globalTraceIds = new ArrayList<>();
+    /**
+     * TraceSegment 链路编号
+     */
     private String segmentId;
+    /**
+     * 时间
+     */
     private long timeBucket;
 
     @Override
@@ -52,6 +64,7 @@ public class GlobalTraceSpanListener implements FirstSpanListener, GlobalTraceId
     }
 
     @Override public void parseGlobalTraceId(UniqueId uniqueId) {
+        // 拼接 全局链路追踪编号
         StringBuilder globalTraceIdBuilder = new StringBuilder();
         for (int i = 0; i < uniqueId.getIdPartsList().size(); i++) {
             if (i == 0) {
@@ -60,13 +73,16 @@ public class GlobalTraceSpanListener implements FirstSpanListener, GlobalTraceId
                 globalTraceIdBuilder.append(".").append(uniqueId.getIdPartsList().get(i));
             }
         }
+        // 添加到 `globalTraceIds`
         globalTraceIds.add(globalTraceIdBuilder.toString());
     }
 
     @Override public void build() {
         logger.debug("global trace listener build");
 
+        // 获得 Graph 对象
         Graph<GlobalTrace> graph = GraphManager.INSTANCE.createIfAbsent(TraceStreamGraph.GLOBAL_TRACE_GRAPH_ID, GlobalTrace.class);
+        // 循环 `globalTraceIds` ，创建 GlobalTrace 对象，逐个流式处理
         for (String globalTraceId : globalTraceIds) {
             GlobalTrace globalTrace = new GlobalTrace(segmentId + Const.ID_SPLIT + globalTraceId);
             globalTrace.setGlobalTraceId(globalTraceId);
