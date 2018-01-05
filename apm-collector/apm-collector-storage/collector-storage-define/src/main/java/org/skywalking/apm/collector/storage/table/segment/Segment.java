@@ -24,6 +24,8 @@ import org.skywalking.apm.collector.core.data.operator.CoverOperation;
 import org.skywalking.apm.collector.core.data.operator.NonOperation;
 
 /**
+ * TraceSegment
+ *
  * @author peng-yongsheng
  */
 public class Segment extends Data {

@@ -24,6 +24,11 @@ import org.skywalking.apm.collector.core.data.CommonTable;
  * @author peng-yongsheng
  */
 public class SegmentTable extends CommonTable {
+
     public static final String TABLE = "segment";
+
+    /**
+     * 数据，二进制格式。
+     */
     public static final String COLUMN_DATA_BINARY = "data_binary";
 }
