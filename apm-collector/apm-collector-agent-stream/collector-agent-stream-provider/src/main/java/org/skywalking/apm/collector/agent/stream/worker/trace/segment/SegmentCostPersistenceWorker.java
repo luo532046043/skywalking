@@ -40,6 +40,7 @@ public class SegmentCostPersistenceWorker extends PersistenceWorker<SegmentCost,
         return 110;
     }
 
+    // 无需合并
     @Override protected boolean needMergeDBData() {
         return false;
     }

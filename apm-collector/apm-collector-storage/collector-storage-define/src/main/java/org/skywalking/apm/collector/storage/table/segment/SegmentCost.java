@@ -24,6 +24,8 @@ import org.skywalking.apm.collector.core.data.operator.CoverOperation;
 import org.skywalking.apm.collector.core.data.operator.NonOperation;
 
 /**
+ * TraceSegment 花费时长，记录 TraceSegment 开始时间，结束时间，花费时长等等
+ *
  * @author peng-yongsheng
  */
 public class SegmentCost extends Data {

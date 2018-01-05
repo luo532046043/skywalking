@@ -81,7 +81,7 @@ public class ServiceNameCacheGuavaService implements ServiceNameCacheService {
 
     public String getSplitServiceName(String serviceName) {
         if (StringUtils.isNotEmpty(serviceName)) {
-            String[] serviceNames = serviceName.split(Const.ID_SPLIT); // ApplicationId_ServiceName
+            String[] serviceNames = serviceName.split(Const.ID_SPLIT, 2); // ApplicationId_ServiceName
             if (serviceNames.length == 2) {
                 return serviceNames[1];
             } else {

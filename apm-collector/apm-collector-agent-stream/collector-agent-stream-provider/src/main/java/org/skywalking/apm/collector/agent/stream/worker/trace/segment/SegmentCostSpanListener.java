@@ -18,8 +18,6 @@
 
 package org.skywalking.apm.collector.agent.stream.worker.trace.segment;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.skywalking.apm.collector.agent.stream.graph.TraceStreamGraph;
 import org.skywalking.apm.collector.agent.stream.parser.EntrySpanListener;
 import org.skywalking.apm.collector.agent.stream.parser.ExitSpanListener;
@@ -37,7 +35,12 @@ import org.skywalking.apm.collector.storage.table.segment.SegmentCost;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
+ * SegmentCost 的 SpanListener
+ *
  * @author peng-yongsheng
  */
 public class SegmentCostSpanListener implements EntrySpanListener, ExitSpanListener, LocalSpanListener, FirstSpanListener {
@@ -46,7 +49,13 @@ public class SegmentCostSpanListener implements EntrySpanListener, ExitSpanListe
 
     private final List<SegmentCost> segmentCosts;
     private final ServiceNameCacheService serviceNameCacheService;
+    /**
+     * 是否发生错误
+     */
     private boolean isError = false;
+    /**
+     * 时间
+     */
     private long timeBucket;
 
     public SegmentCostSpanListener(ModuleManager moduleManager) {
@@ -57,7 +66,7 @@ public class SegmentCostSpanListener implements EntrySpanListener, ExitSpanListe
     @Override
     public void parseFirst(SpanDecorator spanDecorator, int applicationId, int instanceId,
         String segmentId) {
-        timeBucket = TimeBucketUtils.INSTANCE.getMinuteTimeBucket(spanDecorator.getStartTime());
+        timeBucket = TimeBucketUtils.INSTANCE.getMinuteTimeBucket(spanDecorator.getStartTime()); // 分钟
 
         SegmentCost segmentCost = new SegmentCost(Const.EMPTY_STRING);
         segmentCost.setSegmentId(segmentId);
@@ -66,6 +75,7 @@ public class SegmentCostSpanListener implements EntrySpanListener, ExitSpanListe
         segmentCost.setStartTime(spanDecorator.getStartTime());
         segmentCost.setEndTime(spanDecorator.getEndTime());
         segmentCost.setId(segmentId);
+        // 获得操作名。一般情况下，
         if (spanDecorator.getOperationNameId() == 0) {
             segmentCost.setServiceName(spanDecorator.getOperationName());
         } else {

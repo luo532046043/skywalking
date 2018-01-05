@@ -24,12 +24,36 @@ import org.skywalking.apm.collector.core.data.CommonTable;
  * @author peng-yongsheng
  */
 public class SegmentCostTable extends CommonTable {
+
     public static final String TABLE = "segment_cost";
+
+    /**
+     * TraceSegment 编号
+     */
     public static final String COLUMN_SEGMENT_ID = "segment_id";
+    /**
+     * 应用编号
+     */
     public static final String COLUMN_APPLICATION_ID = "application_id";
+    /**
+     * 开始时间
+     */
     public static final String COLUMN_START_TIME = "start_time";
+    /**
+     * 结束时间
+     */
     public static final String COLUMN_END_TIME = "end_time";
+    /**
+     * 操作名
+     */
     public static final String COLUMN_SERVICE_NAME = "service_name";
+    /**
+     * 花费时长
+     */
     public static final String COLUMN_COST = "cost";
+    /**
+     * 是否发生错误
+     */
     public static final String COLUMN_IS_ERROR = "is_error";
+
 }
