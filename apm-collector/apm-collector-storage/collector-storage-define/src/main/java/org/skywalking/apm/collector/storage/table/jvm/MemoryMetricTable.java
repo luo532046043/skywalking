@@ -24,11 +24,30 @@ import org.skywalking.apm.collector.core.data.CommonTable;
  * @author peng-yongsheng
  */
 public class MemoryMetricTable extends CommonTable {
+
     public static final String TABLE = "memory_metric";
+    /**
+     * 应用实例编号
+     */
     public static final String COLUMN_INSTANCE_ID = "instance_id";
+    /**
+     * 是否堆内内存
+     */
     public static final String COLUMN_IS_HEAP = "is_heap";
+    /**
+     * 初始化的内存数量
+     */
     public static final String COLUMN_INIT = "init";
+    /**
+     * 最大的内存数量
+     */
     public static final String COLUMN_MAX = "max";
+    /**
+     * 已使用的内存数量
+     */
     public static final String COLUMN_USED = "used";
+    /**
+     * 可以使用的内存数量
+     */
     public static final String COLUMN_COMMITTED = "committed";
 }
