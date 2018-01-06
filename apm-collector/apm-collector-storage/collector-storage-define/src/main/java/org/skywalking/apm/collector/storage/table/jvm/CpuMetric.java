@@ -25,6 +25,8 @@ import org.skywalking.apm.collector.core.data.operator.CoverOperation;
 import org.skywalking.apm.collector.core.data.operator.NonOperation;
 
 /**
+ * CPU 指标
+ *
  * @author peng-yongsheng
  */
 public class CpuMetric extends Data {

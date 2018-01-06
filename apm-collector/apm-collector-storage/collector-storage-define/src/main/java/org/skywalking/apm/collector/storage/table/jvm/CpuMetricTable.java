@@ -27,6 +27,13 @@ public class CpuMetricTable extends CommonTable {
 
     public static final String TABLE = "cpu_metric";
 
+    /**
+     * 实例编号
+     */
     public static final String COLUMN_INSTANCE_ID = "instance_id";
+    /**
+     * CPU 占用率
+     */
     public static final String COLUMN_USAGE_PERCENT = "usage_percent";
+
 }
