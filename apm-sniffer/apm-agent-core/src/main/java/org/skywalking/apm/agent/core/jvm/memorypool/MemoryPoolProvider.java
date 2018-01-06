@@ -18,10 +18,11 @@
 
 package org.skywalking.apm.agent.core.jvm.memorypool;
 
+import org.skywalking.apm.network.proto.MemoryPool;
+
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryPoolMXBean;
 import java.util.List;
-import org.skywalking.apm.network.proto.MemoryPool;
 
 /**
  * @author wusheng
@@ -33,6 +34,7 @@ public enum MemoryPoolProvider {
     private List<MemoryPoolMXBean> beans;
 
     MemoryPoolProvider() {
+        // 创建 JVM GC 方式对应的 MemoryPoolMetricAccessor 对象
         beans = ManagementFactory.getMemoryPoolMXBeans();
         for (MemoryPoolMXBean bean : beans) {
             String name = bean.getName();
@@ -52,16 +54,16 @@ public enum MemoryPoolProvider {
     }
 
     private MemoryPoolMetricAccessor findByBeanName(String name) {
-        if (name.indexOf("PS") > -1) {
+        if (name.indexOf("PS") > -1) { // ParallelCollector
             //Parallel (Old) collector ( -XX:+UseParallelOldGC )
             return new ParallelCollectorModule(beans);
-        } else if (name.indexOf("CMS") > -1) {
+        } else if (name.indexOf("CMS") > -1) { // CMSCollector
             // CMS collector ( -XX:+UseConcMarkSweepGC )
             return new CMSCollectorModule(beans);
-        } else if (name.indexOf("G1") > -1) {
+        } else if (name.indexOf("G1") > -1) { // G1Collector
             // G1 collector ( -XX:+UseG1GC )
             return new G1CollectorModule(beans);
-        } else if (name.equals("Survivor Space")) {
+        } else if (name.equals("Survivor Space")) { // SerialCollector
             // Serial collector ( -XX:+UseSerialGC )
             return new SerialCollectorModule(beans);
         } else {
