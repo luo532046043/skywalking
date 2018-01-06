@@ -18,22 +18,26 @@
 
 package org.skywalking.apm.agent.core.jvm.gc;
 
+import org.skywalking.apm.network.proto.GC;
+
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.util.List;
-import org.skywalking.apm.network.proto.GC;
 
 /**
  * @author wusheng
  */
 public enum GCProvider {
+
     INSTANCE;
 
     private GCMetricAccessor metricAccessor;
     private List<GarbageCollectorMXBean> beans;
 
     GCProvider() {
+        // 获得 GarbageCollectorMXBean 数组。
         beans = ManagementFactory.getGarbageCollectorMXBeans();
+        // 找到 GC 算法，创建对应的 GCMetricAccessor 对象。
         for (GarbageCollectorMXBean bean : beans) {
             String name = bean.getName();
             GCMetricAccessor accessor = findByBeanName(name);
@@ -42,7 +46,7 @@ public enum GCProvider {
                 break;
             }
         }
-
+        // 找不到 GC 算法，创建 UnknowGC 对象。
         if (metricAccessor == null) {
             this.metricAccessor = new UnknowGC();
         }

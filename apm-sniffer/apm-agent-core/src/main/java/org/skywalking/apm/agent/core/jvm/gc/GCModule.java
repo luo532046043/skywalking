@@ -18,11 +18,12 @@
 
 package org.skywalking.apm.agent.core.jvm.gc;
 
+import org.skywalking.apm.network.proto.GC;
+import org.skywalking.apm.network.proto.GCPhrase;
+
 import java.lang.management.GarbageCollectorMXBean;
 import java.util.LinkedList;
 import java.util.List;
-import org.skywalking.apm.network.proto.GC;
-import org.skywalking.apm.network.proto.GCPhrase;
 
 /**
  * @author wusheng
@@ -37,7 +38,9 @@ public abstract class GCModule implements GCMetricAccessor {
     @Override
     public List<GC> getGCList() {
         List<GC> gcList = new LinkedList<GC>();
+        //
         for (GarbageCollectorMXBean bean : beans) {
+            // 获得
             String name = bean.getName();
             GCPhrase phrase;
             if (name.equals(getNewGCName())) {
@@ -48,10 +51,11 @@ public abstract class GCModule implements GCMetricAccessor {
                 continue;
             }
 
+            // 创建 GC 对象
             gcList.add(
                 GC.newBuilder().setPhrase(phrase)
-                    .setCount(bean.getCollectionCount())
-                    .setTime(bean.getCollectionTime())
+                    .setCount(bean.getCollectionCount()) // 回收总次数
+                    .setTime(bean.getCollectionTime()) // 消耗总时间
                     .build()
             );
         }
