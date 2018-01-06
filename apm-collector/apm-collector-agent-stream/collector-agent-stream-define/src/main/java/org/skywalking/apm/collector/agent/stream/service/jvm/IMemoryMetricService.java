@@ -24,5 +24,7 @@ import org.skywalking.apm.collector.core.module.Service;
  * @author peng-yongsheng
  */
 public interface IMemoryMetricService extends Service {
+
     void send(int instanceId, long timeBucket, boolean isHeap, long init, long max, long used, long commited);
+
 }

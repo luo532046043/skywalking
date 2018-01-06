@@ -1,4 +1,4 @@
-/*
+/*cpu_metric
  * Copyright 2017, OpenSkywalking Organization All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +25,7 @@ import java.lang.management.ManagementFactory;
  * @author wusheng
  */
 public class SunCpuAccessor extends CPUMetricAccessor {
+
     private final OperatingSystemMXBean osMBean;
 
     public SunCpuAccessor(int cpuCoreNum) {
@@ -37,4 +38,5 @@ public class SunCpuAccessor extends CPUMetricAccessor {
     protected long getCpuTime() {
         return osMBean.getProcessCpuTime();
     }
+
 }

@@ -24,5 +24,7 @@ import org.skywalking.apm.collector.core.module.Service;
  * @author peng-yongsheng
  */
 public interface ICpuMetricService extends Service {
+
     void send(int instanceId, long timeBucket, double usagePercent);
+
 }

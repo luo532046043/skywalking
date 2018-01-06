@@ -27,11 +27,15 @@ import org.skywalking.apm.network.proto.CPU;
  * @author wusheng
  */
 public enum CPUProvider {
+
     INSTANCE;
+
     private CPUMetricAccessor cpuMetricAccessor;
 
     CPUProvider() {
+        // 获得 CPU 数量
         int processorNum = ProcessorUtil.getNumberOfProcessors();
+        // 获得 CPU 指标访问器
         try {
             this.cpuMetricAccessor =
                 (CPUMetricAccessor)CPUProvider.class.getClassLoader().loadClass("org.skywalking.apm.agent.core.jvm.cpu.SunCpuAccessor")
@@ -46,4 +50,5 @@ public enum CPUProvider {
     public CPU getCpuMetric() {
         return cpuMetricAccessor.getCPUMetric();
     }
+
 }

@@ -21,11 +21,23 @@ package org.skywalking.apm.agent.core.jvm.cpu;
 import org.skywalking.apm.network.proto.CPU;
 
 /**
+ * CPU 指标访问器
+ *
  * @author wusheng
  */
 public abstract class CPUMetricAccessor {
+
+    /**
+     * 获得进程占用 CPU 时长，单位：纳秒
+     */
     private long lastCPUTimeNs;
+    /**
+     * 最后取样时间，单位：纳秒
+     */
     private long lastSampleTimeNs;
+    /**
+     * CPU 数量
+     */
     private final int cpuCoreNum;
 
     public CPUMetricAccessor(int cpuCoreNum) {
@@ -37,6 +49,9 @@ public abstract class CPUMetricAccessor {
         this.lastSampleTimeNs = System.nanoTime();
     }
 
+    /**
+     * @return CPU 时间
+     */
     protected abstract long getCpuTime();
 
     public CPU getCPUMetric() {
@@ -44,7 +59,9 @@ public abstract class CPUMetricAccessor {
         long cpuCost = cpuTime - lastCPUTimeNs;
         long now = System.nanoTime();
 
+        // CPU 占用率 = CPU 占用时间 / ( 过去时间 * CPU 数量 )
         CPU.Builder cpuBuilder = CPU.newBuilder();
         return cpuBuilder.setUsagePercent(cpuCost * 1.0d / ((now - lastSampleTimeNs) * cpuCoreNum)).build();
     }
+
 }
