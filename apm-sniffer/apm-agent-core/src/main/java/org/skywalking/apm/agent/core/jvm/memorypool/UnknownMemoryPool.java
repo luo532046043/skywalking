@@ -18,15 +18,17 @@
 
 package org.skywalking.apm.agent.core.jvm.memorypool;
 
-import java.util.LinkedList;
-import java.util.List;
 import org.skywalking.apm.network.proto.MemoryPool;
 import org.skywalking.apm.network.proto.PoolType;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author wusheng
  */
 public class UnknownMemoryPool implements MemoryPoolMetricAccessor {
+
     @Override
     public List<MemoryPool> getMemoryPoolMetricList() {
         List<MemoryPool> poolList = new LinkedList<MemoryPool>();
@@ -38,4 +40,5 @@ public class UnknownMemoryPool implements MemoryPoolMetricAccessor {
         poolList.add(MemoryPool.newBuilder().setType(PoolType.METASPACE_USAGE).build());
         return new LinkedList<MemoryPool>();
     }
+
 }

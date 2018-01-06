@@ -18,17 +18,19 @@
 
 package org.skywalking.apm.agent.core.jvm.memorypool;
 
+import org.skywalking.apm.network.proto.MemoryPool;
+import org.skywalking.apm.network.proto.PoolType;
+
 import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.MemoryUsage;
 import java.util.LinkedList;
 import java.util.List;
-import org.skywalking.apm.network.proto.MemoryPool;
-import org.skywalking.apm.network.proto.PoolType;
 
 /**
  * @author wusheng
  */
 public abstract class MemoryPoolModule implements MemoryPoolMetricAccessor {
+
     private List<MemoryPoolMXBean> beans;
 
     public MemoryPoolModule(List<MemoryPoolMXBean> beans) {
@@ -38,8 +40,10 @@ public abstract class MemoryPoolModule implements MemoryPoolMetricAccessor {
     @Override
     public List<MemoryPool> getMemoryPoolMetricList() {
         List<MemoryPool> poolList = new LinkedList<MemoryPool>();
+        // 循环每个内存区域，收集每个 MemoryPool 指标
         for (MemoryPoolMXBean bean : beans) {
             String name = bean.getName();
+            // 获得内存区域类型
             PoolType type;
             if (contains(getCodeCacheNames(), name)) {
                 type = PoolType.CODE_CACHE_USAGE;
@@ -57,6 +61,7 @@ public abstract class MemoryPoolModule implements MemoryPoolMetricAccessor {
                 continue;
             }
 
+            // 创建 MemoryUsage 对象
             MemoryUsage usage = bean.getUsage();
             poolList.add(MemoryPool.newBuilder().setType(type)
                 .setInit(usage.getInit())
