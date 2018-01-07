@@ -97,14 +97,28 @@ public class InstanceEsUIDAO extends EsDAO implements IInstanceUIDAO {
         return heartBeatTime;
     }
 
+    /**
+     * 以应用编号为聚合，获得应用实例数量数组
+     *
+     * [{
+     *   applicationId: // 应用编号
+     *   instanceCount: // 应用实例数量
+     * }]
+     *
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return 应用实例数量数组
+     */
     @Override public JsonArray getApplications(long startTime, long endTime) {
         logger.debug("application list get, start time: {}, end time: {}", startTime, endTime);
         SearchRequestBuilder searchRequestBuilder = getClient().prepareSearch(InstanceTable.TABLE);
         searchRequestBuilder.setTypes(InstanceTable.TABLE_TYPE);
         searchRequestBuilder.setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
-        searchRequestBuilder.setQuery(QueryBuilders.rangeQuery(InstanceTable.COLUMN_HEARTBEAT_TIME).gte(startTime));
+        searchRequestBuilder.setQuery(QueryBuilders.rangeQuery(InstanceTable.COLUMN_HEARTBEAT_TIME).gte(startTime)); // 心跳时间
         searchRequestBuilder.setSize(0);
+        // 以 application_id 聚合
         searchRequestBuilder.addAggregation(AggregationBuilders.terms(InstanceTable.COLUMN_APPLICATION_ID).field(InstanceTable.COLUMN_APPLICATION_ID).size(100)
+            // 累加
             .subAggregation(AggregationBuilders.count(InstanceTable.COLUMN_INSTANCE_ID).field(InstanceTable.COLUMN_INSTANCE_ID)));
 
         SearchResponse searchResponse = searchRequestBuilder.execute().actionGet();

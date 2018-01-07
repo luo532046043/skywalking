@@ -40,8 +40,10 @@ public class ApplicationService {
     }
 
     public JsonArray getApplications(long startTime, long endTime) {
+        // 以应用编号为聚合，获得应用实例数量数组
         JsonArray applications = instanceDAO.getApplications(startTime, endTime);
 
+        // 设置应用编码
         applications.forEach(jsonElement -> {
             JsonObject application = jsonElement.getAsJsonObject();
             int applicationId = application.get("applicationId").getAsInt();

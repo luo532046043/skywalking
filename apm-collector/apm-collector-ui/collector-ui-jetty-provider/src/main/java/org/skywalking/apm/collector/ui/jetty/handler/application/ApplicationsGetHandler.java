@@ -19,7 +19,6 @@
 package org.skywalking.apm.collector.ui.jetty.handler.application;
 
 import com.google.gson.JsonElement;
-import javax.servlet.http.HttpServletRequest;
 import org.skywalking.apm.collector.core.module.ModuleManager;
 import org.skywalking.apm.collector.server.jetty.ArgumentsParseException;
 import org.skywalking.apm.collector.server.jetty.JettyHandler;
@@ -27,7 +26,11 @@ import org.skywalking.apm.collector.ui.service.ApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
+ * 获得应用列表逻辑处理器
+ *
  * @author peng-yongsheng
  */
 public class ApplicationsGetHandler extends JettyHandler {
@@ -53,6 +56,7 @@ public class ApplicationsGetHandler extends JettyHandler {
         String endTimeStr = req.getParameter("endTime");
         logger.debug("applications get start time: {}, end time: {}", startTimeStr, endTimeStr);
 
+        // 解析 开始时间参数
         long startTime;
         try {
             startTime = Long.parseLong(startTimeStr);
@@ -60,6 +64,7 @@ public class ApplicationsGetHandler extends JettyHandler {
             throw new ArgumentsParseException("start time must be long");
         }
 
+        // 解析 结束时间参数
         long endTime;
         try {
             endTime = Long.parseLong(endTimeStr);
@@ -67,6 +72,7 @@ public class ApplicationsGetHandler extends JettyHandler {
             throw new ArgumentsParseException("end time must be long");
         }
 
+        // 以应用编号为聚合，获得应用实例数量数组
         return applicationService.getApplications(startTime, endTime);
     }
 
