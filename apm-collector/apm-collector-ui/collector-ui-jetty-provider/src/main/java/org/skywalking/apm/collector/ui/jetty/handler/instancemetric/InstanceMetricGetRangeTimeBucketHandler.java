@@ -31,6 +31,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
+ * 获得应用实例指定时间范围内的 Metric 信息
+ *
  * @author peng-yongsheng
  */
 public class InstanceMetricGetRangeTimeBucketHandler extends JettyHandler {
