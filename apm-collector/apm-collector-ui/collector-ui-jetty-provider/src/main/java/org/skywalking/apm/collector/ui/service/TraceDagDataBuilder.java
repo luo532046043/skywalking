@@ -57,7 +57,7 @@ public class TraceDagDataBuilder {
      */
     private Map<String, String> mappingMap = new HashMap<>();
     /**
-     * 应用名与组件名的映射
+     * 应用编码与组件名的映射
      * {@link #changeNodeComp2Map(JsonArray)} 使用 NodeComponent 数组
      */
     private Map<String, String> nodeCompMap = new HashMap<>();
@@ -190,7 +190,7 @@ public class TraceDagDataBuilder {
             String front = applicationCacheService.get(frontApplicationId);
             String behind = applicationCacheService.get(behindApplicationId);
 
-            String id = front + Const.ID_SPLIT + behind;
+            String id = front + Const.ID_SPLIT + behind; // ${frontApplicationId}_${behindApplicationId}
             nodeRefJsonObj.addProperty("front", front);
             nodeRefJsonObj.addProperty("behind", behind);
             mergedRef.put(id, nodeRefJsonObj);

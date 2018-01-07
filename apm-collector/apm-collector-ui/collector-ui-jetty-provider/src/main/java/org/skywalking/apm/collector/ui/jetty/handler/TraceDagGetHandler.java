@@ -29,6 +29,8 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 
 /**
+ * 获得应用拓扑图数据逻辑处理器
+ *
  * @author peng-yongsheng
  */
 public class TraceDagGetHandler extends JettyHandler {
