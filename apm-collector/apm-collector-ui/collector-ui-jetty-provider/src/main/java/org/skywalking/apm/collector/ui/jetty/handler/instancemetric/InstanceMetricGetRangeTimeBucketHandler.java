@@ -19,15 +19,16 @@
 package org.skywalking.apm.collector.ui.jetty.handler.instancemetric;
 
 import com.google.gson.JsonElement;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import javax.servlet.http.HttpServletRequest;
 import org.skywalking.apm.collector.core.module.ModuleManager;
 import org.skywalking.apm.collector.server.jetty.ArgumentsParseException;
 import org.skywalking.apm.collector.server.jetty.JettyHandler;
 import org.skywalking.apm.collector.ui.service.InstanceJVMService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * @author peng-yongsheng
@@ -54,6 +55,7 @@ public class InstanceMetricGetRangeTimeBucketHandler extends JettyHandler {
 
         logger.debug("instance jvm metric get start timeBucket: {}, end timeBucket:{} , instance id: {}, metric types: {}", startTimeBucketStr, endTimeBucketStr, instanceIdStr, metricTypes);
 
+        // 解析 startTimeBucket
         long startTimeBucket;
         try {
             startTimeBucket = Long.parseLong(startTimeBucketStr);
@@ -61,6 +63,7 @@ public class InstanceMetricGetRangeTimeBucketHandler extends JettyHandler {
             throw new ArgumentsParseException("start timeBucket must be long");
         }
 
+        // 解析 endTimeBucket
         long endTimeBucket;
         try {
             endTimeBucket = Long.parseLong(endTimeBucketStr);
@@ -68,6 +71,7 @@ public class InstanceMetricGetRangeTimeBucketHandler extends JettyHandler {
             throw new ArgumentsParseException("end timeBucket must be long");
         }
 
+        // 解析 instanceId
         int instanceId;
         try {
             instanceId = Integer.parseInt(instanceIdStr);
@@ -79,6 +83,7 @@ public class InstanceMetricGetRangeTimeBucketHandler extends JettyHandler {
             throw new ArgumentsParseException("at least one metric type");
         }
 
+        // 解析 metricTypes 数组
         Set<String> metricTypeSet = new LinkedHashSet<>();
         for (String metricType : metricTypes) {
             metricTypeSet.add(metricType);

@@ -60,13 +60,15 @@ public class GCMetricEsUIDAO extends EsDAO implements IGCMetricUIDAO {
         searchRequestBuilder.setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
 
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
-        boolQuery.must().add(QueryBuilders.termQuery(GCMetricTable.COLUMN_INSTANCE_ID, instanceId));
-        boolQuery.must().add(QueryBuilders.termsQuery(GCMetricTable.COLUMN_TIME_BUCKET, timeBuckets));
+        boolQuery.must().add(QueryBuilders.termQuery(GCMetricTable.COLUMN_INSTANCE_ID, instanceId)); // 过滤 instanceId
+        boolQuery.must().add(QueryBuilders.termsQuery(GCMetricTable.COLUMN_TIME_BUCKET, timeBuckets)); // 时间
 
         searchRequestBuilder.setQuery(boolQuery);
         searchRequestBuilder.setSize(0);
         searchRequestBuilder.addAggregation(
+            // 基于 phrase 聚合
             AggregationBuilders.terms(GCMetricTable.COLUMN_PHRASE).field(GCMetricTable.COLUMN_PHRASE)
+                // 累加
                 .subAggregation(AggregationBuilders.sum(GCMetricTable.COLUMN_COUNT).field(GCMetricTable.COLUMN_COUNT)));
 
         SearchResponse searchResponse = searchRequestBuilder.execute().actionGet();

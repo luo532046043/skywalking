@@ -20,21 +20,17 @@ package org.skywalking.apm.collector.ui.service;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import java.util.Set;
 import org.skywalking.apm.collector.core.UnexpectedException;
 import org.skywalking.apm.collector.core.module.ModuleManager;
 import org.skywalking.apm.collector.core.util.ObjectUtils;
 import org.skywalking.apm.collector.storage.StorageModule;
-import org.skywalking.apm.collector.storage.dao.ICpuMetricUIDAO;
-import org.skywalking.apm.collector.storage.dao.IGCMetricUIDAO;
-import org.skywalking.apm.collector.storage.dao.IInstPerformanceUIDAO;
-import org.skywalking.apm.collector.storage.dao.IInstanceUIDAO;
-import org.skywalking.apm.collector.storage.dao.IMemoryMetricUIDAO;
-import org.skywalking.apm.collector.storage.dao.IMemoryPoolMetricUIDAO;
+import org.skywalking.apm.collector.storage.dao.*;
 import org.skywalking.apm.collector.storage.table.register.Instance;
 import org.skywalking.apm.network.proto.PoolType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Set;
 
 /**
  * @author peng-yongsheng
@@ -106,18 +102,22 @@ public class InstanceJVMService {
         long endTimeBucket) {
         JsonObject metrics = new JsonObject();
         for (String metricType : metricTypes) {
+            // ========== GCMetric ==========
             if (metricType.toLowerCase().equals(MetricType.cpu.name())) {
                 metrics.add(MetricType.cpu.name(), cpuMetricDAO.getMetric(instanceId, startTimeBucket, endTimeBucket));
             } else if (metricType.toLowerCase().equals(MetricType.gc.name())) {
                 metrics.add(MetricType.gc.name(), gcMetricDAO.getMetric(instanceId, startTimeBucket, endTimeBucket));
+            // ========== InstPerformanceMetric ==========
             } else if (metricType.toLowerCase().equals(MetricType.tps.name())) {
                 metrics.add(MetricType.tps.name(), instPerformanceDAO.getTpsMetric(instanceId, startTimeBucket, endTimeBucket));
             } else if (metricType.toLowerCase().equals(MetricType.resptime.name())) {
                 metrics.add(MetricType.resptime.name(), instPerformanceDAO.getRespTimeMetric(instanceId, startTimeBucket, endTimeBucket));
             } else if (metricType.toLowerCase().equals(MetricType.heapmemory.name())) {
+            // ========== MemoryMetric ==========
                 metrics.add(MetricType.heapmemory.name(), memoryMetricDAO.getMetric(instanceId, startTimeBucket, endTimeBucket, true));
             } else if (metricType.toLowerCase().equals(MetricType.nonheapmemory.name())) {
                 metrics.add(MetricType.nonheapmemory.name(), memoryMetricDAO.getMetric(instanceId, startTimeBucket, endTimeBucket, false));
+            // ========== MemoryPoolMetric ==========
             } else if (metricType.toLowerCase().equals(MetricType.permgen.name())) {
                 metrics.add(MetricType.permgen.name(), memoryPoolMetricDAO.getMetric(instanceId, startTimeBucket, endTimeBucket, PoolType.PERMGEN_USAGE_VALUE));
             } else if (metricType.toLowerCase().equals(MetricType.metaspace.name())) {
@@ -136,8 +136,12 @@ public class InstanceJVMService {
         return metrics;
     }
 
+    /**
+     * 指标类型
+     */
     public enum MetricType {
         cpu, gc, tps, resptime, heapmemory, nonheapmemory, permgen, metaspace, newgen,
         oldgen, survivor
     }
+
 }
