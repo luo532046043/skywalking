@@ -20,8 +20,6 @@ package org.skywalking.apm.collector.storage.es.dao;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import java.util.LinkedList;
-import java.util.List;
 import org.elasticsearch.action.get.GetRequestBuilder;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
@@ -46,6 +44,9 @@ import org.skywalking.apm.collector.storage.table.register.InstanceTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * @author peng-yongsheng
  */
@@ -58,6 +59,7 @@ public class InstanceEsUIDAO extends EsDAO implements IInstanceUIDAO {
     }
 
     @Override public Long lastHeartBeatTime() {
+        // 必须是五分钟内的心跳
         long fiveMinuteBefore = System.currentTimeMillis() - 5 * 60 * 1000;
         fiveMinuteBefore = TimeBucketUtils.INSTANCE.getSecondTimeBucket(fiveMinuteBefore);
         RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery(InstanceTable.COLUMN_HEARTBEAT_TIME).gt(fiveMinuteBefore);
@@ -79,9 +81,9 @@ public class InstanceEsUIDAO extends EsDAO implements IInstanceUIDAO {
         searchRequestBuilder.setTypes(InstanceTable.TABLE_TYPE);
         searchRequestBuilder.setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
         searchRequestBuilder.setQuery(queryBuilder);
-        searchRequestBuilder.setSize(1);
+        searchRequestBuilder.setSize(1); // 获取一条
         searchRequestBuilder.setFetchSource(InstanceTable.COLUMN_HEARTBEAT_TIME, null);
-        searchRequestBuilder.addSort(SortBuilders.fieldSort(InstanceTable.COLUMN_HEARTBEAT_TIME).sortMode(SortMode.MAX));
+        searchRequestBuilder.addSort(SortBuilders.fieldSort(InstanceTable.COLUMN_HEARTBEAT_TIME).sortMode(SortMode.MAX)); // 最大值
 
         SearchResponse searchResponse = searchRequestBuilder.execute().actionGet();
         SearchHit[] searchHits = searchResponse.getHits().getHits();
@@ -90,7 +92,7 @@ public class InstanceEsUIDAO extends EsDAO implements IInstanceUIDAO {
         for (SearchHit searchHit : searchHits) {
             heartBeatTime = (Long)searchHit.getSource().get(InstanceTable.COLUMN_HEARTBEAT_TIME);
             logger.debug("heartBeatTime: {}", heartBeatTime);
-            heartBeatTime = heartBeatTime - 5;
+            heartBeatTime = heartBeatTime - 5; // 减 5 秒
         }
         return heartBeatTime;
     }
