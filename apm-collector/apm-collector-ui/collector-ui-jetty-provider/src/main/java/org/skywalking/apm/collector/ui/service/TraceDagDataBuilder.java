@@ -20,9 +20,6 @@ package org.skywalking.apm.collector.ui.service;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import org.skywalking.apm.collector.cache.CacheModule;
 import org.skywalking.apm.collector.cache.service.ApplicationCacheService;
 import org.skywalking.apm.collector.core.module.ModuleManager;
@@ -31,21 +28,61 @@ import org.skywalking.apm.collector.core.util.Const;
 import org.skywalking.apm.collector.storage.table.node.NodeComponentTable;
 import org.skywalking.apm.collector.storage.table.node.NodeMappingTable;
 import org.skywalking.apm.collector.storage.table.noderef.NodeReferenceTable;
+import org.skywalking.apm.network.trace.component.Component;
 import org.skywalking.apm.network.trace.component.ComponentsDefine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
+ * 应用拓扑图构建起器
+ *
  * @author peng-yongsheng
  */
 public class TraceDagDataBuilder {
     private final Logger logger = LoggerFactory.getLogger(TraceDagDataBuilder.class);
 
+    /**
+     * 节点编号自增序列
+     * 配合 {@link #nodeIdMap} 变量
+     * 配合 {@link #findOrCreateNode(String)} 方法
+     */
     private Integer nodeId = -1;
+    /**
+     * 服务提供者网络地址( address )与服务提供者应用编码( applicationCode )的映射
+     * {@link #changeMapping2Map(JsonArray)} 使用 NodeMapping 数组
+     */
     private Map<String, String> mappingMap = new HashMap<>();
+    /**
+     * 应用名与组件名的映射
+     * {@link #changeNodeComp2Map(JsonArray)} 使用 NodeComponent 数组
+     */
     private Map<String, String> nodeCompMap = new HashMap<>();
+    /**
+     * 节点编号与应用编码的映射
+     * 此处的节点编码，是通过 {@link #nodeId} 自增生成的，不是数据库里的
+     */
     private Map<String, Integer> nodeIdMap = new HashMap<>();
+    /**
+     * 节点数组
+     * [{
+     *     id: // ${nodeId}, 通过 {@link #nodeId} 生成
+     *     peer: // 应用编码 {@link org.skywalking.apm.collector.storage.table.register.ApplicationTable#COLUMN_APPLICATION_CODE}
+     *     component: // 组件名 {@link Component#getName()}
+     * }]
+     */
     private JsonArray pointArray = new JsonArray();
+    /**
+     * 连线数组
+     * [{
+     *     from: // ${nodeId}, 通过 {@link #nodeId} 生成
+     *     to: // ${nodeId}, 通过 {@link #nodeId} 生成
+     *     sum: // 次数
+     * }]
+     */
     private JsonArray lineArray = new JsonArray();
     private final ApplicationCacheService applicationCacheService;
 
@@ -54,15 +91,22 @@ public class TraceDagDataBuilder {
     }
 
     public JsonObject build(JsonArray nodeCompArray, JsonArray nodesMappingArray, JsonArray resSumArray) {
+        // 构建 nodeCompMap
         changeNodeComp2Map(nodeCompArray);
+        // 构建 mappingMap
         changeMapping2Map(nodesMappingArray);
-
+        // 构建 mergedResSumMap
         Map<String, JsonObject> mergedResSumMap = getApplicationCode(resSumArray);
 
         mergedResSumMap.values().forEach(nodeRefJsonObj -> {
             String front = nodeRefJsonObj.get("front").getAsString();
             String behind = nodeRefJsonObj.get("behind").getAsString();
 
+            // 此处分成两种情况
+            // 1.【A 服务】调用【B 服务】，【A 服务】会基于 ExitSpan 记录一条 NodeReference ，【B 服务】会基于 EntrySpan 记录一条 NodeReference
+            //      两条是对等的，取其中一条即可
+            // 2.【A 服务】调用【MongoDB】，【A 服务】会基于 ExitSpan 记录一条 NodeReference ，【MongoDB】因为没有 SkyWalking Agent 记录 NodeReference ，
+            //      所以就一条，也不能存在取不取的问题
             if (hasMapping(behind)) {
                 return;
             }
@@ -76,6 +120,7 @@ public class TraceDagDataBuilder {
             logger.debug("line: {}", lineJsonObj);
         });
 
+        // 返回结果
         JsonObject dagJsonObj = new JsonObject();
         dagJsonObj.add("nodes", pointArray);
         dagJsonObj.add("nodeRefs", lineArray);
@@ -83,13 +128,14 @@ public class TraceDagDataBuilder {
     }
 
     private Integer findOrCreateNode(String peers) {
-        if (nodeIdMap.containsKey(peers) && !peers.equals(Const.USER_CODE)) {
+        if (nodeIdMap.containsKey(peers) && !peers.equals(Const.USER_CODE)) { // USER_CODE 特殊处理的原因，在于会有多个，例如 USER 请求【A 服务】【B 服务】
             return nodeIdMap.get(peers);
         } else {
             nodeId++;
             JsonObject nodeJsonObj = new JsonObject();
             nodeJsonObj.addProperty("id", nodeId);
             nodeJsonObj.addProperty("peer", peers);
+            // 组件名
             if (peers.equals(Const.USER_CODE)) {
                 nodeJsonObj.addProperty("component", Const.USER_CODE);
             } else {
@@ -97,6 +143,7 @@ public class TraceDagDataBuilder {
             }
             pointArray.add(nodeJsonObj);
 
+            //
             nodeIdMap.put(peers, nodeId);
             logger.debug("node: {}", nodeJsonObj);
         }
@@ -135,9 +182,11 @@ public class TraceDagDataBuilder {
         for (int i = 0; i < nodeReference.size(); i++) {
             JsonObject nodeRefJsonObj = nodeReference.get(i).getAsJsonObject();
 
+            // 应用编号
             int frontApplicationId = nodeRefJsonObj.get(ColumnNameUtils.INSTANCE.rename(NodeReferenceTable.COLUMN_FRONT_APPLICATION_ID)).getAsInt();
             int behindApplicationId = nodeRefJsonObj.get(ColumnNameUtils.INSTANCE.rename(NodeReferenceTable.COLUMN_BEHIND_APPLICATION_ID)).getAsInt();
 
+            // 应用编码
             String front = applicationCacheService.get(frontApplicationId);
             String behind = applicationCacheService.get(behindApplicationId);
 

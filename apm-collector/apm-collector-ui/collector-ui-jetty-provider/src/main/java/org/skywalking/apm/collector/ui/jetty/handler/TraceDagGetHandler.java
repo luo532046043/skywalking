@@ -19,13 +19,14 @@
 package org.skywalking.apm.collector.ui.jetty.handler;
 
 import com.google.gson.JsonElement;
-import javax.servlet.http.HttpServletRequest;
 import org.skywalking.apm.collector.core.module.ModuleManager;
 import org.skywalking.apm.collector.server.jetty.ArgumentsParseException;
 import org.skywalking.apm.collector.server.jetty.JettyHandler;
 import org.skywalking.apm.collector.ui.service.TraceDagService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author peng-yongsheng
@@ -53,6 +54,7 @@ public class TraceDagGetHandler extends JettyHandler {
         String endTimeStr = req.getParameter("endTime");
         logger.debug("startTime: {}, endTimeStr: {}", startTimeStr, endTimeStr);
 
+        // 解析 开始时间参数
         long startTime;
         try {
             startTime = Long.valueOf(req.getParameter("startTime"));
@@ -60,6 +62,7 @@ public class TraceDagGetHandler extends JettyHandler {
             throw new ArgumentsParseException("the request parameter startTime must be a long");
         }
 
+        // 解析 结束时间参数
         long endTime;
         try {
             endTime = Long.valueOf(req.getParameter("endTime"));

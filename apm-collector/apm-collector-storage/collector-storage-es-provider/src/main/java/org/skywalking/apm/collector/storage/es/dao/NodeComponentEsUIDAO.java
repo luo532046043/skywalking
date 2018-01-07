@@ -44,6 +44,18 @@ public class NodeComponentEsUIDAO extends EsDAO implements INodeComponentUIDAO {
         super(client);
     }
 
+    /**
+     * 获得节点组件数组
+     *
+     * [{
+     *     'component_id' : ,
+     *     'peer_id' : ,
+     * }]
+     *
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return 节点组件数组
+     */
     @Override public JsonArray load(long startTime, long endTime) {
         logger.debug("node component load, start time: {}, end time: {}", startTime, endTime);
         JsonArray nodeComponentArray = new JsonArray();
@@ -58,6 +70,7 @@ public class NodeComponentEsUIDAO extends EsDAO implements INodeComponentUIDAO {
         searchRequestBuilder.setQuery(QueryBuilders.rangeQuery(NodeComponentTable.COLUMN_TIME_BUCKET).gte(startTime).lte(endTime));
         searchRequestBuilder.setSize(0);
 
+        // 聚合，component_id + peer_id ，因为有重复，多条
         searchRequestBuilder.addAggregation(AggregationBuilders.terms(NodeComponentTable.COLUMN_COMPONENT_ID).field(NodeComponentTable.COLUMN_COMPONENT_ID).size(100)
             .subAggregation(AggregationBuilders.terms(NodeComponentTable.COLUMN_PEER_ID).field(NodeComponentTable.COLUMN_PEER_ID).size(100)));
 

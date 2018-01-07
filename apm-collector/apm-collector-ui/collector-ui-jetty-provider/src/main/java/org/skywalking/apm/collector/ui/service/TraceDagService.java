@@ -49,10 +49,13 @@ public class TraceDagService {
 
     public JsonObject load(long startTime, long endTime) {
         logger.debug("startTime: {}, endTime: {}", startTime, endTime);
+        // 获得 NodeComponent 数组
         JsonArray nodeComponentArray = nodeComponentDAO.load(startTime, endTime);
 
+        // 获得 NodeMapping 数组
         JsonArray nodeMappingArray = nodeMappingDAO.load(startTime, endTime);
 
+        // 获得 NodeReference 数组
         JsonArray nodeRefSumArray = nodeRefSumDAO.load(startTime, endTime);
 
         TraceDagDataBuilder builder = new TraceDagDataBuilder(moduleManager);

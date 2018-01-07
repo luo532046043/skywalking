@@ -47,6 +47,24 @@ public class NodeReferenceEsUIDAO extends EsDAO implements INodeReferenceUIDAO {
         super(client);
     }
 
+    /**
+     * 获得节调用数组
+     *
+     * [{
+     *     'front_application_id' : ,
+     *     'behind_application_id' : ,
+     *     's1_lte' : ,
+     *     's3_lte' : ,
+     *     's5_lte' : ,
+     *     's5_gt' : ,
+     *     'summary' : ,
+     *     'error' : ,
+     * }]
+     *
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return 节点调用数组
+     */
     @Override public JsonArray load(long startTime, long endTime) {
         SearchRequestBuilder searchRequestBuilder = getClient().prepareSearch(NodeReferenceTable.TABLE);
         searchRequestBuilder.setTypes(NodeReferenceTable.TABLE_TYPE);
@@ -54,7 +72,9 @@ public class NodeReferenceEsUIDAO extends EsDAO implements INodeReferenceUIDAO {
         searchRequestBuilder.setQuery(QueryBuilders.rangeQuery(NodeReferenceTable.COLUMN_TIME_BUCKET).gte(startTime).lte(endTime));
         searchRequestBuilder.setSize(0);
 
+        // front_application_id behind_application_id
         TermsAggregationBuilder aggregationBuilder = AggregationBuilders.terms(NodeReferenceTable.COLUMN_FRONT_APPLICATION_ID).field(NodeReferenceTable.COLUMN_FRONT_APPLICATION_ID).size(100);
+        // 相加
         aggregationBuilder.subAggregation(AggregationBuilders.terms(NodeReferenceTable.COLUMN_BEHIND_APPLICATION_ID).field(NodeReferenceTable.COLUMN_BEHIND_APPLICATION_ID).size(100)
             .subAggregation(AggregationBuilders.sum(NodeReferenceTable.COLUMN_S1_LTE).field(NodeReferenceTable.COLUMN_S1_LTE))
             .subAggregation(AggregationBuilders.sum(NodeReferenceTable.COLUMN_S3_LTE).field(NodeReferenceTable.COLUMN_S3_LTE))

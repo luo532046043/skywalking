@@ -44,6 +44,18 @@ public class NodeMappingEsUIDAO extends EsDAO implements INodeMappingUIDAO {
         super(client);
     }
 
+    /**
+     * 获得节点匹配数组
+     *
+     * [{
+     *     'application_id' : ,
+     *     'address_id' : ,
+     * }]
+     *
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return 节点匹配数组
+     */
     @Override public JsonArray load(long startTime, long endTime) {
         SearchRequestBuilder searchRequestBuilder = getClient().prepareSearch(NodeMappingTable.TABLE);
         searchRequestBuilder.setTypes(NodeMappingTable.TABLE_TYPE);
@@ -51,6 +63,7 @@ public class NodeMappingEsUIDAO extends EsDAO implements INodeMappingUIDAO {
         searchRequestBuilder.setQuery(QueryBuilders.rangeQuery(NodeMappingTable.COLUMN_TIME_BUCKET).gte(startTime).lte(endTime));
         searchRequestBuilder.setSize(0);
 
+        // 聚合，application_id + address_id ，因为有重复，多条
         searchRequestBuilder.addAggregation(
             AggregationBuilders.terms(NodeMappingTable.COLUMN_APPLICATION_ID).field(NodeMappingTable.COLUMN_APPLICATION_ID).size(100)
                 .subAggregation(AggregationBuilders.terms(NodeMappingTable.COLUMN_ADDRESS_ID).field(NodeMappingTable.COLUMN_ADDRESS_ID).size(100)));
@@ -73,4 +86,5 @@ public class NodeMappingEsUIDAO extends EsDAO implements INodeMappingUIDAO {
         logger.debug("node mapping data: {}", nodeMappingArray.toString());
         return nodeMappingArray;
     }
+
 }
