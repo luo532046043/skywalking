@@ -24,9 +24,24 @@ import org.skywalking.apm.collector.core.data.CommonTable;
  * @author peng-yongsheng
  */
 public class GCMetricTable extends CommonTable {
+
     public static final String TABLE = "gc_metric";
+
+    /**
+     * 应用实例编号
+     */
     public static final String COLUMN_INSTANCE_ID = "instance_id";
+    /**
+     * 生代（新生代 / 老生代）
+     */
     public static final String COLUMN_PHRASE = "phrase";
+    /**
+     * 总次数
+     */
     public static final String COLUMN_COUNT = "count";
+    /**
+     * 总时间
+     */
     public static final String COLUMN_TIME = "time";
+
 }

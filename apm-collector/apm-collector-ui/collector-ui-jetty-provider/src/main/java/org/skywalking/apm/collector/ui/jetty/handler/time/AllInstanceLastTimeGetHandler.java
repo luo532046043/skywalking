@@ -20,8 +20,6 @@ package org.skywalking.apm.collector.ui.jetty.handler.time;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import java.util.Calendar;
-import javax.servlet.http.HttpServletRequest;
 import org.skywalking.apm.collector.core.module.ModuleManager;
 import org.skywalking.apm.collector.core.util.TimeBucketUtils;
 import org.skywalking.apm.collector.server.jetty.ArgumentsParseException;
@@ -30,7 +28,12 @@ import org.skywalking.apm.collector.ui.service.TimeSynchronousService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Calendar;
+
 /**
+ * 获得应用实例最后心跳时间处理器
+ *
  * @author peng-yongsheng
  */
 public class AllInstanceLastTimeGetHandler extends JettyHandler {
@@ -48,17 +51,20 @@ public class AllInstanceLastTimeGetHandler extends JettyHandler {
     }
 
     @Override protected JsonElement doGet(HttpServletRequest req) throws ArgumentsParseException {
+        // 获得应用实例最后心跳时间
         Long timeBucket = service.allInstanceLastTime();
         logger.debug("all instance last time: {}", timeBucket);
-
         if (timeBucket == 0) {
             timeBucket = TimeBucketUtils.INSTANCE.getSecondTimeBucket(System.currentTimeMillis());
         }
+
+        // 减 5 秒，因为应用心跳是最频繁的，防止其他信息还没上传
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(TimeBucketUtils.INSTANCE.changeTimeBucket2TimeStamp(TimeBucketUtils.TimeBucketType.SECOND.name(), timeBucket));
         calendar.add(Calendar.SECOND, -5);
         timeBucket = calendar.getTimeInMillis();
 
+        // 返回数据
         JsonObject timeJson = new JsonObject();
         timeJson.addProperty("timeBucket", TimeBucketUtils.INSTANCE.getSecondTimeBucket(timeBucket));
         return timeJson;
