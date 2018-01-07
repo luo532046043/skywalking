@@ -58,7 +58,7 @@ public class InstPerformanceEsUIDAO extends EsDAO implements IInstPerformanceUID
 
         searchRequestBuilder.setQuery(boolQuery);
         searchRequestBuilder.setSize(0);
-        searchRequestBuilder.addSort(InstPerformanceTable.COLUMN_INSTANCE_ID, SortOrder.ASC);
+        searchRequestBuilder.addSort(InstPerformanceTable.COLUMN_INSTANCE_ID, SortOrder.ASC); // 升序
 
         searchRequestBuilder.addAggregation(AggregationBuilders.sum(InstPerformanceTable.COLUMN_CALLS).field(InstPerformanceTable.COLUMN_CALLS));
         searchRequestBuilder.addAggregation(AggregationBuilders.sum(InstPerformanceTable.COLUMN_COST_TOTAL).field(InstPerformanceTable.COLUMN_COST_TOTAL));

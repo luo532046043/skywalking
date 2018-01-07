@@ -21,13 +21,14 @@ package org.skywalking.apm.collector.ui.jetty.handler.instancehealth;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import javax.servlet.http.HttpServletRequest;
 import org.skywalking.apm.collector.core.module.ModuleManager;
 import org.skywalking.apm.collector.server.jetty.ArgumentsParseException;
 import org.skywalking.apm.collector.server.jetty.JettyHandler;
 import org.skywalking.apm.collector.ui.service.InstanceHealthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author peng-yongsheng
@@ -51,6 +52,7 @@ public class InstanceHealthGetHandler extends JettyHandler {
         String[] applicationIdsStr = req.getParameterValues("applicationIds");
         logger.debug("instance health get timeBucket: {}, applicationIdsStr: {}", timeBucketStr, applicationIdsStr);
 
+        // 解析 timeBucket
         long timeBucket;
         try {
             timeBucket = Long.parseLong(timeBucketStr);
@@ -58,6 +60,7 @@ public class InstanceHealthGetHandler extends JettyHandler {
             throw new ArgumentsParseException("timestamp must be long");
         }
 
+        // 解析 应用编号数组
         int[] applicationIds = new int[applicationIdsStr.length];
         for (int i = 0; i < applicationIdsStr.length; i++) {
             try {
@@ -67,12 +70,15 @@ public class InstanceHealthGetHandler extends JettyHandler {
             }
         }
 
+        // 返回字段设置
         JsonObject response = new JsonObject();
         response.addProperty("timeBucket", timeBucket);
         JsonArray appInstances = new JsonArray();
         response.add("appInstances", appInstances);
 
+        // 循环应用编号数组
         for (int applicationId : applicationIds) {
+            // 以应用编号为聚合，获得应用实例数组
             appInstances.add(service.getInstances(timeBucket, applicationId));
         }
         return response;
