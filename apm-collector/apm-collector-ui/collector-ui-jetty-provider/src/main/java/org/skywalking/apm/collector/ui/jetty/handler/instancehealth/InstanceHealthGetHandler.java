@@ -31,6 +31,8 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 
 /**
+ * 获得应用的应用实例健康相关信息数组
+ *
  * @author peng-yongsheng
  */
 public class InstanceHealthGetHandler extends JettyHandler {
