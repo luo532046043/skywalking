@@ -21,8 +21,6 @@ package org.skywalking.apm.collector.ui.service;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import java.util.Iterator;
-import java.util.Map;
 import org.skywalking.apm.collector.cache.CacheModule;
 import org.skywalking.apm.collector.cache.service.ApplicationCacheService;
 import org.skywalking.apm.collector.cache.service.ServiceNameCacheService;
@@ -35,6 +33,9 @@ import org.skywalking.apm.collector.storage.dao.IServiceEntryUIDAO;
 import org.skywalking.apm.collector.storage.dao.IServiceReferenceUIDAO;
 import org.skywalking.apm.collector.storage.table.service.ServiceEntryTable;
 import org.skywalking.apm.collector.storage.table.serviceref.ServiceReferenceTable;
+
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * @author peng-yongsheng
@@ -55,7 +56,10 @@ public class ServiceTreeService {
 
     public JsonObject loadEntryService(int applicationId, String entryServiceName, long startTime, long endTime,
         int from, int size) {
+        // 查询 ServiceEntry 分页数组
         JsonObject response = serviceEntryDAO.load(applicationId, entryServiceName, startTime, endTime, from, size);
+
+        // 设置 applicationCode
         JsonArray entryServices = response.get("array").getAsJsonArray();
         for (JsonElement element : entryServices) {
             JsonObject entryService = element.getAsJsonObject();

@@ -19,7 +19,6 @@
 package org.skywalking.apm.collector.ui.jetty.handler.servicetree;
 
 import com.google.gson.JsonElement;
-import javax.servlet.http.HttpServletRequest;
 import org.skywalking.apm.collector.core.module.ModuleManager;
 import org.skywalking.apm.collector.server.jetty.ArgumentsParseException;
 import org.skywalking.apm.collector.server.jetty.JettyHandler;
@@ -27,7 +26,11 @@ import org.skywalking.apm.collector.ui.service.ServiceTreeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
+ * 获得入口操作( EntryService )分页列表的逻辑处理器
+ *
  * @author peng-yongsheng
  */
 public class EntryServiceGetHandler extends JettyHandler {
@@ -59,6 +62,7 @@ public class EntryServiceGetHandler extends JettyHandler {
         String sizeStr = req.getParameter("size");
         logger.debug("service entry get applicationId: {}, entryServiceName: {}, startTime: {}, endTime: {}, from: {}, size: {}", applicationIdStr, entryServiceName, startTimeStr, endTimeStr, fromStr, sizeStr);
 
+        // 解析 applicationId 参数
         int applicationId;
         try {
             applicationId = Integer.parseInt(applicationIdStr);
@@ -66,13 +70,13 @@ public class EntryServiceGetHandler extends JettyHandler {
             throw new ArgumentsParseException("application id must be integer");
         }
 
+        // 解析 startTime 和 endTime 参数
         long startTime;
         try {
             startTime = Long.parseLong(startTimeStr);
         } catch (NumberFormatException e) {
             throw new ArgumentsParseException("start time must be long");
         }
-
         long endTime;
         try {
             endTime = Long.parseLong(endTimeStr);
@@ -80,13 +84,13 @@ public class EntryServiceGetHandler extends JettyHandler {
             throw new ArgumentsParseException("end time must be long");
         }
 
+        // 解析 from 和 size 参数
         int from;
         try {
             from = Integer.parseInt(fromStr);
         } catch (NumberFormatException e) {
             throw new ArgumentsParseException("from must be integer");
         }
-
         int size;
         try {
             size = Integer.parseInt(sizeStr);
@@ -94,6 +98,7 @@ public class EntryServiceGetHandler extends JettyHandler {
             throw new ArgumentsParseException("size must be integer");
         }
 
+        //
         return service.loadEntryService(applicationId, entryServiceName, startTime, endTime, from, size);
     }
 
