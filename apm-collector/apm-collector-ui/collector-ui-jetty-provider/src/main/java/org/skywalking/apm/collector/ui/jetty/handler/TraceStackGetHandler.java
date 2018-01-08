@@ -19,7 +19,6 @@
 package org.skywalking.apm.collector.ui.jetty.handler;
 
 import com.google.gson.JsonElement;
-import javax.servlet.http.HttpServletRequest;
 import org.skywalking.apm.collector.core.module.ModuleManager;
 import org.skywalking.apm.collector.server.jetty.ArgumentsParseException;
 import org.skywalking.apm.collector.server.jetty.JettyHandler;
@@ -27,7 +26,11 @@ import org.skywalking.apm.collector.ui.service.TraceStackService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
+ * 获取一次分布式链路追踪记录详情的逻辑处理器
+ *
  * @author peng-yongsheng
  */
 public class TraceStackGetHandler extends JettyHandler {
@@ -45,9 +48,11 @@ public class TraceStackGetHandler extends JettyHandler {
     }
 
     @Override protected JsonElement doGet(HttpServletRequest req) throws ArgumentsParseException {
+        // 解析 globalTraceId 参数
         String globalTraceId = req.getParameter("globalTraceId");
         logger.debug("globalTraceId: {}", globalTraceId);
 
+        // 获取一次分布式链路追踪记录详情的逻辑处理器
         return service.load(globalTraceId);
     }
 

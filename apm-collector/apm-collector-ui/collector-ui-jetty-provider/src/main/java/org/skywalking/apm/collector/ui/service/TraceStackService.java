@@ -20,8 +20,6 @@ package org.skywalking.apm.collector.ui.service;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import java.util.ArrayList;
-import java.util.List;
 import org.skywalking.apm.collector.cache.CacheModule;
 import org.skywalking.apm.collector.cache.service.ApplicationCacheService;
 import org.skywalking.apm.collector.cache.service.ServiceNameCacheService;
@@ -37,6 +35,9 @@ import org.skywalking.apm.network.proto.SpanObject;
 import org.skywalking.apm.network.proto.TraceSegmentObject;
 import org.skywalking.apm.network.proto.TraceSegmentReference;
 import org.skywalking.apm.network.proto.UniqueId;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author peng-yongsheng
@@ -56,12 +57,16 @@ public class TraceStackService {
     }
 
     public JsonArray load(String globalTraceId) {
-        List<Span> spans = new ArrayList<>();
+        // 查询 globalTraceId 的 TraceSegment 编号数组
         List<String> segmentIds = globalTraceDAO.getSegmentIds(globalTraceId);
+
+        // 获得 TraceSegment 数组，从而组装出 Span 数组
+        List<Span> spans = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(segmentIds)) {
             for (String segmentId : segmentIds) {
-                TraceSegmentObject segment = segmentDAO.load(segmentId);
+                TraceSegmentObject segment = segmentDAO.load(segmentId); // 获得 TraceSegment
                 if (ObjectUtils.isNotEmpty(segment)) {
+                    // 构建 TraceSegment 对应的 Span 数组
                     spans.addAll(buildSpanList(segmentId, segment));
                 }
             }
@@ -69,19 +74,29 @@ public class TraceStackService {
 
         List<Span> sortedSpans = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(spans)) {
+            // 获得所有根 Span 数组
             List<Span> rootSpans = findRoot(spans);
 
             if (CollectionUtils.isNotEmpty(rootSpans)) {
+                // 循环根 Span 数组，设置其子 Span 数组
                 rootSpans.forEach(span -> {
-                    List<Span> childrenSpan = new ArrayList<>();
+                    // 以 Span 为根节点
+                    List<Span> childrenSpan = new ArrayList<>(); // Tree
                     childrenSpan.add(span);
+
+                    // 寻找子 Span 数组
                     findChildren(spans, span, childrenSpan);
+
+                    // 添加到结果集
                     sortedSpans.addAll(childrenSpan);
                 });
             }
         }
+
+        // 压缩 startTime 字段
         minStartTime(sortedSpans);
 
+        // 转换成 JSON 数组
         return toJsonArray(sortedSpans);
     }
 
@@ -103,7 +118,15 @@ public class TraceStackService {
         return traceStackArray;
     }
 
+    /**
+     * 压缩 startTime 字段，减少 IO ，也方面前端时间轴展示
+     *
+     * 压缩方式为，startTime - minStarTime
+     *
+     * @param spans spans
+     */
     private void minStartTime(List<Span> spans) {
+        // 获得 minStartTime
         long minStartTime = Long.MAX_VALUE;
         for (Span span : spans) {
             if (span.getStartTime() < minStartTime) {
@@ -111,6 +134,7 @@ public class TraceStackService {
             }
         }
 
+        // 压缩
         for (Span span : spans) {
             span.setStartTime(span.getStartTime() - minStartTime);
         }
@@ -120,12 +144,15 @@ public class TraceStackService {
         List<Span> spans = new ArrayList<>();
         if (segment.getSpansCount() > 0) {
             for (SpanObject spanObject : segment.getSpansList()) {
+                // 自身 segmentSpanId
                 int spanId = spanObject.getSpanId();
-                int parentSpanId = spanObject.getParentSpanId();
                 String segmentSpanId = segmentId + Const.SEGMENT_SPAN_SPLIT + String.valueOf(spanId);
-                String segmentParentSpanId = segmentId + Const.SEGMENT_SPAN_SPLIT + String.valueOf(parentSpanId);
-                long startTime = spanObject.getStartTime();
 
+                // 父级 parentSpanId
+                int parentSpanId = spanObject.getParentSpanId();
+                String segmentParentSpanId = segmentId + Const.SEGMENT_SPAN_SPLIT + String.valueOf(parentSpanId);
+
+                // 操作名
                 String operationName = spanObject.getOperationName();
                 if (spanObject.getOperationNameId() != 0) {
                     String serviceName = serviceNameCacheService.get(spanObject.getOperationNameId());
@@ -135,18 +162,26 @@ public class TraceStackService {
                         operationName = Const.EMPTY_STRING;
                     }
                 }
+
+                // 应用编码
                 String applicationCode = applicationCacheService.get(segment.getApplicationId());
 
+                // 消耗时间
                 long cost = spanObject.getEndTime() - spanObject.getStartTime();
                 if (cost == 0) {
                     cost = 1;
                 }
 
+                // 开始时间
+                long startTime = spanObject.getStartTime();
+
+                // 第一个 Span ，并且有 TraceSegmentRef
                 if (parentSpanId == -1 && segment.getRefsCount() > 0) {
+                    // 循环 TraceSegmentRef 数组
                     for (TraceSegmentReference reference : segment.getRefsList()) {
+                        // 父级 parentSpanId
                         parentSpanId = reference.getParentSpanId();
                         UniqueId uniqueId = reference.getParentTraceSegmentId();
-
                         StringBuilder segmentIdBuilder = new StringBuilder();
                         for (int i = 0; i < uniqueId.getIdPartsList().size(); i++) {
                             if (i == 0) {
@@ -155,12 +190,13 @@ public class TraceStackService {
                                 segmentIdBuilder.append(".").append(String.valueOf(uniqueId.getIdPartsList().get(i)));
                             }
                         }
-
                         String parentSegmentId = segmentIdBuilder.toString();
                         segmentParentSpanId = parentSegmentId + Const.SEGMENT_SPAN_SPLIT + String.valueOf(parentSpanId);
 
+                        // 添加到 spans
                         spans.add(new Span(spanId, parentSpanId, segmentSpanId, segmentParentSpanId, startTime, operationName, applicationCode, cost));
                     }
+                // 添加到 spans
                 } else {
                     spans.add(new Span(spanId, parentSpanId, segmentSpanId, segmentParentSpanId, startTime, operationName, applicationCode, cost));
                 }
@@ -169,11 +205,18 @@ public class TraceStackService {
         return spans;
     }
 
+    /**
+     * 获得 Root Span 集合
+     *
+     * @param spans spans
+     * @return 集合
+     */
     private List<Span> findRoot(List<Span> spans) {
         List<Span> rootSpans = new ArrayList<>();
         spans.forEach(span -> {
             String segmentParentSpanId = span.getSegmentParentSpanId();
 
+            // 寻找父节点
             boolean hasParent = false;
             for (Span span1 : spans) {
                 if (segmentParentSpanId.equals(span1.getSegmentSpanId())) {
@@ -181,6 +224,7 @@ public class TraceStackService {
                 }
             }
 
+            // 无父节点，设置为根节点，并且添加到结果集
             if (!hasParent) {
                 span.setRoot(true);
                 rootSpans.add(span);
@@ -189,24 +233,65 @@ public class TraceStackService {
         return rootSpans;
     }
 
+    /**
+     * 获得 Child Span 集合
+     *
+     * @param spans 循环的 spans
+     * @param parentSpan 父 span
+     * @param childrenSpan child spans ( 结果 )
+     */
     private void findChildren(List<Span> spans, Span parentSpan, List<Span> childrenSpan) {
         spans.forEach(span -> {
             if (span.getSegmentParentSpanId().equals(parentSpan.getSegmentSpanId())) {
                 childrenSpan.add(span);
+
+                // 【递归】获得 Child Span 集合
                 findChildren(spans, span, childrenSpan);
             }
         });
     }
 
+    /**
+     * Span 类
+     */
     class Span {
+        /**
+         * 自己的 Span 编号
+         */
         private int spanId;
+        /**
+         * 父级的 Span 编号
+         */
         private int parentSpanId;
+        /**
+         * 自己的 SegmentId + SpanId
+         */
         private String segmentSpanId;
+        /**
+         * 父级的 SegmentId + SpanId
+         */
         private String segmentParentSpanId;
+        /**
+         * 开始时间
+         *
+         * 传输到 UI 层时，会被 {@link #minStartTime(List)} 压缩
+         */
         private long startTime;
+        /**
+         * 操作名
+         */
         private String operationName;
+        /**
+         * 应用编码
+         */
         private String applicationCode;
+        /**
+         * 消耗时间
+         */
         private long cost;
+        /**
+         * 是否根节点
+         */
         private boolean isRoot = false;
 
         Span(int spanId, int parentSpanId, String segmentSpanId, String segmentParentSpanId, long startTime,

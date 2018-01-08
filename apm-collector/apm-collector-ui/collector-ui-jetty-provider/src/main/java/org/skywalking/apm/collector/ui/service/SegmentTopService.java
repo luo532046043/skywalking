@@ -61,10 +61,10 @@ public class SegmentTopService {
             segmentIds = globalTraceDAO.getSegmentIds(globalTraceId);
         }
 
-        // 查询 TraceSegment 数组
+        // 查询 SegmentCost 数组
         JsonObject loadTopJsonObj = segmentCostDAO.loadTop(startTime, endTime, minCost, maxCost, operationName, error, applicationId, segmentIds, limit, from, sort);
 
-        // 循环 TraceSegment 数组，获得每个 TraceSegment 对应的 `global_trace_id` 属性，并设置返回
+        // 循环 SegmentCost 数组，获得每个 SegmentCost 对应的 `global_trace_id` 属性，并设置返回
         JsonArray loadTopJsonArray = loadTopJsonObj.get("data").getAsJsonArray();
         for (JsonElement loadTopElement : loadTopJsonArray) {
             JsonObject jsonObject = loadTopElement.getAsJsonObject();
