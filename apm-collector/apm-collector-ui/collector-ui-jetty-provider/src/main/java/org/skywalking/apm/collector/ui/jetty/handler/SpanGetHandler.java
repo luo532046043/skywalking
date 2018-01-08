@@ -19,13 +19,14 @@
 package org.skywalking.apm.collector.ui.jetty.handler;
 
 import com.google.gson.JsonElement;
-import javax.servlet.http.HttpServletRequest;
 import org.skywalking.apm.collector.core.module.ModuleManager;
 import org.skywalking.apm.collector.server.jetty.ArgumentsParseException;
 import org.skywalking.apm.collector.server.jetty.JettyHandler;
 import org.skywalking.apm.collector.ui.service.SpanService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author peng-yongsheng
@@ -45,10 +46,12 @@ public class SpanGetHandler extends JettyHandler {
     }
 
     @Override protected JsonElement doGet(HttpServletRequest req) throws ArgumentsParseException {
+        // 解析 segmentId
         String segmentId = req.getParameter("segmentId");
+
+        // 解析 spanId
         String spanIdStr = req.getParameter("spanId");
         logger.debug("segmentSpanId: {}, spanIdStr: {}", segmentId, spanIdStr);
-
         int spanId;
         try {
             spanId = Integer.parseInt(spanIdStr);
@@ -56,6 +59,7 @@ public class SpanGetHandler extends JettyHandler {
             throw new ArgumentsParseException("span id must be integer");
         }
 
+        // 加载 Span
         return service.load(segmentId, spanId);
     }
 

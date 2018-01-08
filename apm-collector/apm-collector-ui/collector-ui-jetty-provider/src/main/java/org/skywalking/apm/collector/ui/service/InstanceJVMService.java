@@ -98,6 +98,20 @@ public class InstanceJVMService {
         return metrics;
     }
 
+    /**
+     * 获得应用实例指定时间范围内的 Metric 信息
+     * [{
+     *     {metricType}: {
+     *         // 不同 metricType 有不同返回
+     *         // 每秒会有一个统计
+     *     }
+     * }]
+     * @param instanceId 应用实例编号
+     * @param metricTypes {@link MetricType}
+     * @param startTimeBucket 开始时间
+     * @param endTimeBucket 结束时间
+     * @return Metric 信息
+     */
     public JsonObject getInstanceJvmMetrics(int instanceId, Set<String> metricTypes, long startTimeBucket,
         long endTimeBucket) {
         JsonObject metrics = new JsonObject();

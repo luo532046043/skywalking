@@ -20,7 +20,6 @@ package org.skywalking.apm.collector.ui.service;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import java.util.List;
 import org.skywalking.apm.collector.cache.CacheModule;
 import org.skywalking.apm.collector.cache.service.ApplicationCacheService;
 import org.skywalking.apm.collector.cache.service.ServiceNameCacheService;
@@ -34,6 +33,8 @@ import org.skywalking.apm.network.proto.LogMessage;
 import org.skywalking.apm.network.proto.SpanObject;
 import org.skywalking.apm.network.proto.TraceSegmentObject;
 import org.skywalking.apm.network.trace.component.ComponentsDefine;
+
+import java.util.List;
 
 /**
  * @author peng-yongsheng
@@ -51,12 +52,14 @@ public class SpanService {
     }
 
     public JsonObject load(String segmentId, int spanId) {
+        // 加载 TraceSegment
         TraceSegmentObject segmentObject = segmentDAO.load(segmentId);
 
         JsonObject spanJson = new JsonObject();
         List<SpanObject> spans = segmentObject.getSpansList();
         for (SpanObject spanObject : spans) {
             if (spanId == spanObject.getSpanId()) {
+                // 操作名
                 String operationName = spanObject.getOperationName();
                 if (spanObject.getOperationNameId() != 0) {
                     String serviceName = serviceNameCacheService.get(spanObject.getOperationNameId());
@@ -65,9 +68,12 @@ public class SpanService {
                     }
                 }
                 spanJson.addProperty("operationName", operationName);
+
+                // 开始时间与结束时间
                 spanJson.addProperty("startTime", spanObject.getStartTime());
                 spanJson.addProperty("endTime", spanObject.getEndTime());
 
+                // loggers
                 JsonArray logsArray = new JsonArray();
                 List<LogMessage> logs = spanObject.getLogsList();
                 for (LogMessage logMessage : logs) {
@@ -88,11 +94,13 @@ public class SpanService {
 
                 JsonArray tagsArray = new JsonArray();
 
+                // 【tags】span type ，Entry / Local / Exit 三种
                 JsonObject spanTypeJson = new JsonObject();
                 spanTypeJson.addProperty("key", "span type");
                 spanTypeJson.addProperty("value", spanObject.getSpanType().name());
                 tagsArray.add(spanTypeJson);
 
+                // 【tags】component
                 JsonObject componentJson = new JsonObject();
                 componentJson.addProperty("key", "component");
                 if (spanObject.getComponentId() == 0) {
@@ -102,6 +110,7 @@ public class SpanService {
                 }
                 tagsArray.add(componentJson);
 
+                // 【tags】peer 服务地址，例如：mongodb 的服务地址
                 JsonObject peerJson = new JsonObject();
                 peerJson.addProperty("key", "peer");
                 if (spanObject.getPeerId() == 0) {
@@ -111,6 +120,7 @@ public class SpanService {
                 }
                 tagsArray.add(peerJson);
 
+                // 【tags】Span 的标签键值对
                 for (KeyWithStringValue tagValue : spanObject.getTagsList()) {
                     JsonObject tagJson = new JsonObject();
                     tagJson.addProperty("key", tagValue.getKey());
@@ -118,6 +128,7 @@ public class SpanService {
                     tagsArray.add(tagJson);
                 }
 
+                // 【tags】isError ，是否发生错误
                 JsonObject isErrorJson = new JsonObject();
                 isErrorJson.addProperty("key", "is error");
                 isErrorJson.addProperty("value", spanObject.getIsError());
