@@ -19,7 +19,6 @@
 package org.skywalking.apm.collector.ui.jetty.handler.servicetree;
 
 import com.google.gson.JsonElement;
-import javax.servlet.http.HttpServletRequest;
 import org.skywalking.apm.collector.core.module.ModuleManager;
 import org.skywalking.apm.collector.server.jetty.ArgumentsParseException;
 import org.skywalking.apm.collector.server.jetty.JettyHandler;
@@ -27,7 +26,11 @@ import org.skywalking.apm.collector.ui.service.ServiceTreeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
+ * 获得指定操作的关联操作调用统计树列表的逻辑处理器
+ *
  * @author peng-yongsheng
  */
 public class ServiceTreeGetByIdHandler extends JettyHandler {
@@ -54,6 +57,7 @@ public class ServiceTreeGetByIdHandler extends JettyHandler {
         String endTimeStr = req.getParameter("endTime");
         logger.debug("service entry get entryServiceId: {}, startTime: {}, endTime: {}", entryServiceIdStr, startTimeStr, endTimeStr);
 
+        // 解析 entryServiceId 参数
         int entryServiceId;
         try {
             entryServiceId = Integer.parseInt(entryServiceIdStr);
@@ -61,13 +65,13 @@ public class ServiceTreeGetByIdHandler extends JettyHandler {
             throw new ArgumentsParseException("entry service id must be integer");
         }
 
+        // 解析 startTime 和 endTime 参数
         long startTime;
         try {
             startTime = Long.parseLong(startTimeStr);
         } catch (NumberFormatException e) {
             throw new ArgumentsParseException("start time must be long");
         }
-
         long endTime;
         try {
             endTime = Long.parseLong(endTimeStr);

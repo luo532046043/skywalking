@@ -19,8 +19,6 @@
 package org.skywalking.apm.collector.storage.es.dao;
 
 import com.google.gson.JsonObject;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
@@ -38,6 +36,9 @@ import org.skywalking.apm.collector.storage.table.serviceref.ServiceReferenceTab
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * @author peng-yongsheng
  */
@@ -49,6 +50,27 @@ public class ServiceReferenceEsUIDAO extends EsDAO implements IServiceReferenceU
         super(client);
     }
 
+    /**
+     * 获得 ServiceReference 的映射
+     *
+     * key ：${frontServiceId}_${behindServiceId}
+     * value: {
+     *     frontServiceId: //
+     *     behindServiceId: //
+     *     s1Lte: //
+     *     s3Lte: //
+     *     s5Lte: //
+     *     s5Gt: //
+     *     error: //
+     *     summary: //
+     *     costSummary: //
+     * }
+     *
+     * @param entryServiceId 操作编号
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return 映射
+     */
     @Override
     public Map<String, JsonObject> load(int entryServiceId, long startTime, long endTime) {
         SearchRequestBuilder searchRequestBuilder = getClient().prepareSearch(ServiceReferenceTable.TABLE);

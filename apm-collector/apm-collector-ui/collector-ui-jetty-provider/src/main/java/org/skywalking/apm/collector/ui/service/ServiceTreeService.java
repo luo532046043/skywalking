@@ -72,7 +72,10 @@ public class ServiceTreeService {
     }
 
     public JsonArray loadServiceTree(int entryServiceId, long startTime, long endTime) {
+        //  获得 ServiceReference 的映射
         Map<String, JsonObject> serviceReferenceMap = serviceReferenceDAO.load(entryServiceId, startTime, endTime);
+
+        // 设置 操作名
         serviceReferenceMap.values().forEach(serviceReference -> {
             int frontServiceId = serviceReference.get(ColumnNameUtils.INSTANCE.rename(ServiceReferenceTable.COLUMN_FRONT_SERVICE_ID)).getAsInt();
             int behindServiceId = serviceReference.get(ColumnNameUtils.INSTANCE.rename(ServiceReferenceTable.COLUMN_BEHIND_SERVICE_ID)).getAsInt();
@@ -81,17 +84,25 @@ public class ServiceTreeService {
             serviceReference.addProperty("frontServiceName", frontServiceName);
             serviceReference.addProperty("behindServiceName", behindServiceName);
         });
+
+        // 创建树结构
         return buildTreeData(serviceReferenceMap);
     }
 
     private JsonArray buildTreeData(Map<String, JsonObject> serviceReferenceMap) {
         JsonArray serviceReferenceArray = new JsonArray();
+
+        // 获得根 ServiceReference
         JsonObject rootServiceReference = findRoot(serviceReferenceMap);
+
+
         if (ObjectUtils.isNotEmpty(rootServiceReference)) {
+            // 从 serviceReferenceMap 移除根节点( rootServiceReference )
             serviceReferenceArray.add(rootServiceReference);
             String id = rootServiceReference.get(ColumnNameUtils.INSTANCE.rename(ServiceReferenceTable.COLUMN_FRONT_SERVICE_ID)) + Const.ID_SPLIT + rootServiceReference.get(ColumnNameUtils.INSTANCE.rename(ServiceReferenceTable.COLUMN_BEHIND_SERVICE_ID));
             serviceReferenceMap.remove(id);
 
+            // 递归，获得树
             int rootServiceId = rootServiceReference.get(ColumnNameUtils.INSTANCE.rename(ServiceReferenceTable.COLUMN_BEHIND_SERVICE_ID)).getAsInt();
             sortAsTree(rootServiceId, serviceReferenceArray, serviceReferenceMap);
         }
@@ -99,18 +110,32 @@ public class ServiceTreeService {
         return serviceReferenceArray;
     }
 
+    /**
+     * 获得根 ServiceReference
+     *
+     * frontServiceId 为 1 ( Const.NONE_SERVICE_ID )
+     *
+     * @param serviceReferenceMap ServiceReference 的映射
+     * @return 根 ServiceReference
+     */
     private JsonObject findRoot(Map<String, JsonObject> serviceReferenceMap) {
         for (JsonObject serviceReference : serviceReferenceMap.values()) {
             int frontServiceId = serviceReference.get(ColumnNameUtils.INSTANCE.rename(ServiceReferenceTable.COLUMN_FRONT_SERVICE_ID)).getAsInt();
-            if (frontServiceId == 1) {
+            if (frontServiceId == 1) { // Const.NONE_SERVICE_ID
                 return serviceReference;
             }
         }
         return null;
     }
 
-    private void sortAsTree(int serviceId, JsonArray serviceReferenceArray,
-        Map<String, JsonObject> serviceReferenceMap) {
+    /**
+     * 递归，获得树
+     *
+     * @param serviceId 父操作编号
+     * @param serviceReferenceArray 结果集
+     * @param serviceReferenceMap ServiceReference 的映射
+     */
+    private void sortAsTree(int serviceId, JsonArray serviceReferenceArray, Map<String, JsonObject> serviceReferenceMap) {
         Iterator<JsonObject> iterator = serviceReferenceMap.values().iterator();
         while (iterator.hasNext()) {
             JsonObject serviceReference = iterator.next();
@@ -118,12 +143,14 @@ public class ServiceTreeService {
             if (serviceId == frontServiceId) {
                 serviceReferenceArray.add(serviceReference);
 
+                // 递归，获得树
                 int behindServiceId = serviceReference.get(ColumnNameUtils.INSTANCE.rename(ServiceReferenceTable.COLUMN_BEHIND_SERVICE_ID)).getAsInt();
                 sortAsTree(behindServiceId, serviceReferenceArray, serviceReferenceMap);
             }
         }
     }
 
+    @Deprecated // add by 芋艿，并未调用
     private void merge(Map<String, JsonObject> serviceReferenceMap, JsonObject serviceReference) {
         String id = serviceReference.get(ColumnNameUtils.INSTANCE.rename(ServiceReferenceTable.COLUMN_FRONT_SERVICE_ID)) + Const.ID_SPLIT + serviceReference.get(ColumnNameUtils.INSTANCE.rename(ServiceReferenceTable.COLUMN_BEHIND_SERVICE_ID));
 
