@@ -81,7 +81,7 @@ public class TraceStackService {
                 // 循环根 Span 数组，设置其子 Span 数组
                 rootSpans.forEach(span -> {
                     // 以 Span 为根节点
-                    List<Span> childrenSpan = new ArrayList<>(); // Tree
+                    List<Span> childrenSpan = new ArrayList<>(); // [parentSpanA, childSpanA1, childSpanA2 ... parentSpanB, childSpanB1]
                     childrenSpan.add(span);
 
                     // 寻找子 Span 数组
