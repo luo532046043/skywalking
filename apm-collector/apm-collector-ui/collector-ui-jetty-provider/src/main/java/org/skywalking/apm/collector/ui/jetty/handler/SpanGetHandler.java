@@ -29,6 +29,8 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 
 /**
+ * 获得 TraceSegment 单个 Span 详细的逻辑处理器
+ *
  * @author peng-yongsheng
  */
 public class SpanGetHandler extends JettyHandler {
