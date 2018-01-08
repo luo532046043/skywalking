@@ -20,7 +20,6 @@ package org.skywalking.apm.collector.storage.es.dao;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import java.util.List;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
@@ -37,6 +36,8 @@ import org.skywalking.apm.collector.storage.dao.ISegmentCostUIDAO;
 import org.skywalking.apm.collector.storage.es.base.dao.EsDAO;
 import org.skywalking.apm.collector.storage.table.segment.SegmentCostTable;
 
+import java.util.List;
+
 /**
  * @author peng-yongsheng
  */
@@ -48,7 +49,7 @@ public class SegmentCostEsUIDAO extends EsDAO implements ISegmentCostUIDAO {
 
     @Override public JsonObject loadTop(long startTime, long endTime, long minCost, long maxCost, String operationName,
         Error error, int applicationId, List<String> segmentIds, int limit, int from, Sort sort) {
-        SearchRequestBuilder searchRequestBuilder = getClient().prepareSearch(SegmentCostTable.TABLE);
+        SearchRequestBuilder searchRequestBuilder = getClient().prepareSearch(SegmentCostTable.TABLE); // SegmentCostTable，注意！！！
         searchRequestBuilder.setTypes(SegmentCostTable.TABLE_TYPE);
         searchRequestBuilder.setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
@@ -81,9 +82,9 @@ public class SegmentCostEsUIDAO extends EsDAO implements ISegmentCostUIDAO {
             boolQueryBuilder.must().add(QueryBuilders.termQuery(SegmentCostTable.COLUMN_APPLICATION_ID, applicationId));
         }
 
-        if (Sort.Cost.equals(sort)) {
+        if (Sort.Cost.equals(sort)) { // 倒序 cost
             searchRequestBuilder.addSort(SegmentCostTable.COLUMN_COST, SortOrder.DESC);
-        } else if (Sort.Time.equals(sort)) {
+        } else if (Sort.Time.equals(sort)) { // 倒序 start_time
             searchRequestBuilder.addSort(SegmentCostTable.COLUMN_START_TIME, SortOrder.DESC);
         }
         searchRequestBuilder.setSize(limit);

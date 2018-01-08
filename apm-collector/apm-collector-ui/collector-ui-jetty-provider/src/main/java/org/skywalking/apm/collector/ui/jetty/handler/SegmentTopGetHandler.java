@@ -19,7 +19,6 @@
 package org.skywalking.apm.collector.ui.jetty.handler;
 
 import com.google.gson.JsonElement;
-import javax.servlet.http.HttpServletRequest;
 import org.skywalking.apm.collector.core.module.ModuleManager;
 import org.skywalking.apm.collector.core.util.StringUtils;
 import org.skywalking.apm.collector.server.jetty.ArgumentsParseException;
@@ -29,7 +28,11 @@ import org.skywalking.apm.collector.ui.service.SegmentTopService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
+ * 获得 TraceSegment 分页列表的逻辑处理器
+ *
  * @author peng-yongsheng
  */
 public class SegmentTopGetHandler extends JettyHandler {
@@ -55,13 +58,13 @@ public class SegmentTopGetHandler extends JettyHandler {
             logger.debug("startTime: {}, endTime: {}, from: {}", req.getParameter("startTime"), req.getParameter("endTime"), req.getParameter("from"));
         }
 
+        // 解析 startTime 和 endTime 参数
         long startTime;
         try {
             startTime = Long.valueOf(req.getParameter("startTime"));
         } catch (NumberFormatException e) {
             throw new ArgumentsParseException("the request parameter startTime must be a long");
         }
-
         long endTime;
         try {
             endTime = Long.valueOf(req.getParameter("endTime"));
@@ -69,13 +72,13 @@ public class SegmentTopGetHandler extends JettyHandler {
             throw new ArgumentsParseException("the request parameter endTime must be a long");
         }
 
+        // 解析 from 和 limit 分页参数
         int from;
         try {
             from = Integer.valueOf(req.getParameter("from"));
         } catch (NumberFormatException e) {
             throw new ArgumentsParseException("the request parameter from must be an integer");
         }
-
         int limit;
         try {
             limit = Integer.valueOf(req.getParameter("limit"));
@@ -83,6 +86,7 @@ public class SegmentTopGetHandler extends JettyHandler {
             throw new ArgumentsParseException("the request parameter from must be an integer");
         }
 
+        // 解析 minCost 和 maxCost 参数
         int minCost = -1;
         if (req.getParameterMap().containsKey("minCost")) {
             minCost = Integer.valueOf(req.getParameter("minCost"));
@@ -92,16 +96,19 @@ public class SegmentTopGetHandler extends JettyHandler {
             maxCost = Integer.valueOf(req.getParameter("maxCost"));
         }
 
+        // 解析 globalTraceId 参数
         String globalTraceId = null;
         if (req.getParameterMap().containsKey("globalTraceId")) {
             globalTraceId = req.getParameter("globalTraceId");
         }
 
+        // 解析 operationName 参数
         String operationName = null;
         if (req.getParameterMap().containsKey("operationName")) {
             operationName = req.getParameter("operationName");
         }
 
+        // 解析 applicationId 参数
         int applicationId;
         try {
             applicationId = Integer.valueOf(req.getParameter("applicationId"));
@@ -109,6 +116,7 @@ public class SegmentTopGetHandler extends JettyHandler {
             throw new ArgumentsParseException("the request parameter applicationId must be a int");
         }
 
+        // 解析 error 参数，是否发生错误 NONE(ALL) / TRUE / FALSE
         ISegmentCostUIDAO.Error error;
         String errorStr = req.getParameter("error");
         if (StringUtils.isNotEmpty(errorStr)) {
@@ -123,6 +131,7 @@ public class SegmentTopGetHandler extends JettyHandler {
             error = ISegmentCostUIDAO.Error.All;
         }
 
+        // 解析 sort 排序参数，Duration / Time
         ISegmentCostUIDAO.Sort sort = ISegmentCostUIDAO.Sort.Cost;
         if (req.getParameterMap().containsKey("sort")) {
             String sortStr = req.getParameter("sort");
