@@ -74,7 +74,7 @@ public class TomcatInvokeInterceptor implements InstanceMethodsAroundInterceptor
         // 设置组件
         span.setComponent(ComponentsDefine.TOMCAT);
 
-        // 组件分层
+        // 设置组件分层
         SpanLayer.asHttp(span);
     }
 
