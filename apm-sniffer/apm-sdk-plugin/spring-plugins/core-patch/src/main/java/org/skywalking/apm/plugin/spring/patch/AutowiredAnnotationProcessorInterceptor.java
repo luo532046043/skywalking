@@ -18,6 +18,11 @@
 
 package org.skywalking.apm.plugin.spring.patch;
 
+import org.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedInstance;
+import org.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceConstructorInterceptor;
+import org.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceMethodsAroundInterceptor;
+import org.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -25,10 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import org.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedInstance;
-import org.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceConstructorInterceptor;
-import org.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceMethodsAroundInterceptor;
-import org.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
 
 /**
  * {@link AutowiredAnnotationProcessorInterceptor} return the correct constructor when the bean class is enhanced by
@@ -48,9 +49,11 @@ public class AutowiredAnnotationProcessorInterceptor implements InstanceMethodsA
     public Object afterMethod(EnhancedInstance objInst, Method method, Object[] allArguments, Class<?>[] argumentsTypes,
         Object ret) throws Throwable {
         Class<?> beanClass = (Class<?>)allArguments[0];
-        if (EnhancedInstance.class.isAssignableFrom(beanClass)) {
-            Map<Class<?>, Constructor<?>[]> candidateConstructorsCache = (Map<Class<?>, Constructor<?>[]>)objInst.getSkyWalkingDynamicField();
 
+        // 如果实现了 EnhancedInstance 接口
+        if (EnhancedInstance.class.isAssignableFrom(beanClass)) {
+            // 优先从缓存中获得构造方法
+            Map<Class<?>, Constructor<?>[]> candidateConstructorsCache = (Map<Class<?>, Constructor<?>[]>)objInst.getSkyWalkingDynamicField();
             Constructor<?>[] candidateConstructors = candidateConstructorsCache.get(beanClass);
             if (candidateConstructors == null) {
                 Constructor<?>[] returnCandidateConstructors = (Constructor<?>[])ret;
@@ -58,12 +61,14 @@ public class AutowiredAnnotationProcessorInterceptor implements InstanceMethodsA
                 /**
                  * The return for the method {@link org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor#determineCandidateConstructors(Class, String)
                  * contains three cases:
-                 * 1. Constructors with annotation {@link org.springframework.beans.factory.annotation.Autowired}.
-                 * 2. The bean class only has one constructor with parameters.
-                 * 3. The bean has constructor without parameters.
+                 * 1. Constructors with annotation {@link org.springframework.beans.factory.annotation.Autowired}. 带有 @Autowired 参数的构造方法
+                 * 2. The bean class only has one constructor with parameters. 仅有一个带参数的构造方法
+                 * 3. The bean has constructor without parameters. 不带参数的构造方法
                  *
                  * because of the manipulate mechanism generates another private constructor in the enhance class, all the class that constrcutor enhance by skywalking
                  * cannot go to case two, and it will go to case three. case one is not affected in the current manipulate mechanism situation.
+                 *
+                 * 因为 SkyWalking 增强机制会生成一个私有构造方法，导致所有被增强的类原先满足第二种情况的，Spring 选择了第三种情况，导致报构造方法不存在。
                  *
                  * The interceptor fill out the private constructor when the class is enhanced by skywalking, and check if the remainder constructors size is equals one,
                  * if yes, return the constructor. or return constructor without parameters.
@@ -71,6 +76,7 @@ public class AutowiredAnnotationProcessorInterceptor implements InstanceMethodsA
                  * @see org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor#determineCandidateConstructors(Class, String)
                  */
                 if (returnCandidateConstructors == null) {
+                    // 获得构造方法集合，排除私有构造方法
                     Constructor<?>[] rawConstructor = beanClass.getDeclaredConstructors();
                     List<Constructor<?>> candidateRawConstructors = new ArrayList<Constructor<?>>();
                     for (Constructor<?> constructor : rawConstructor) {
@@ -79,9 +85,11 @@ public class AutowiredAnnotationProcessorInterceptor implements InstanceMethodsA
                         }
                     }
 
+                    // 让第二种情况，依然走第二种
                     if (candidateRawConstructors.size() == 1 && candidateRawConstructors.get(0).getParameterTypes().length > 0) {
                         candidateConstructors = new Constructor<?>[] {candidateRawConstructors.get(0)};
                     } else {
+                    // 选择第一个构造方法
                         candidateConstructors = new Constructor<?>[0];
                     }
 
@@ -103,7 +111,9 @@ public class AutowiredAnnotationProcessorInterceptor implements InstanceMethodsA
     }
 
     @Override public void onConstruct(EnhancedInstance objInst, Object[] allArguments) {
+        // 类与构造方法的映射集合
         Map<Class<?>, Constructor<?>[]> candidateConstructorsCache = new ConcurrentHashMap<Class<?>, Constructor<?>[]>(20);
+        // 设置到私有变量
         objInst.setSkyWalkingDynamicField(candidateConstructorsCache);
     }
 }
