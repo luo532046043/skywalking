@@ -33,8 +33,10 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Trace {
+
     /**
      * @return operation name, the default value is blank string.
      */
     String operationName() default "";
+
 }

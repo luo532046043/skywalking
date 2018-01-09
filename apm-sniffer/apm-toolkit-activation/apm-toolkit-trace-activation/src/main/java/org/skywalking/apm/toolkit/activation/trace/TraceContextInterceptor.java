@@ -18,12 +18,13 @@
 
 package org.skywalking.apm.toolkit.activation.trace;
 
-import java.lang.reflect.Method;
 import org.skywalking.apm.agent.core.context.ContextManager;
-import org.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
-import org.skywalking.apm.agent.core.plugin.interceptor.enhance.StaticMethodsAroundInterceptor;
 import org.skywalking.apm.agent.core.logging.api.ILog;
 import org.skywalking.apm.agent.core.logging.api.LogManager;
+import org.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
+import org.skywalking.apm.agent.core.plugin.interceptor.enhance.StaticMethodsAroundInterceptor;
+
+import java.lang.reflect.Method;
 
 public class TraceContextInterceptor implements StaticMethodsAroundInterceptor {
 
@@ -37,6 +38,7 @@ public class TraceContextInterceptor implements StaticMethodsAroundInterceptor {
     @Override
     public Object afterMethod(Class clazz, Method method, Object[] allArguments, Class<?>[] parameterTypes,
         Object ret) {
+        // 使用全局链路追踪比那好，而不是原有结果
         return ContextManager.getGlobalTraceId();
     }
 
@@ -45,4 +47,5 @@ public class TraceContextInterceptor implements StaticMethodsAroundInterceptor {
         Throwable t) {
         logger.error("Failed to getDefault trace Id.", t);
     }
+
 }

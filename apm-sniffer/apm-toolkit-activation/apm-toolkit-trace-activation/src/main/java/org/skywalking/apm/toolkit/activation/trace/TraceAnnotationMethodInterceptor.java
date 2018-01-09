@@ -18,12 +18,13 @@
 
 package org.skywalking.apm.toolkit.activation.trace;
 
-import java.lang.reflect.Method;
 import org.skywalking.apm.agent.core.context.ContextManager;
 import org.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedInstance;
 import org.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceMethodsAroundInterceptor;
 import org.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
 import org.skywalking.apm.toolkit.trace.Trace;
+
+import java.lang.reflect.Method;
 
 /**
  * {@link TraceAnnotationMethodInterceptor} create a local span and set the operation name which fetch from
@@ -33,18 +34,27 @@ import org.skywalking.apm.toolkit.trace.Trace;
  * @author zhangxin
  */
 public class TraceAnnotationMethodInterceptor implements InstanceMethodsAroundInterceptor {
+
     @Override
     public void beforeMethod(EnhancedInstance objInst, Method method, Object[] allArguments, Class<?>[] argumentsTypes,
         MethodInterceptResult result) throws Throwable {
+        // 获得操作名
         Trace trace = method.getAnnotation(Trace.class);
         String operationName = trace.operationName();
         if (operationName.length() == 0) {
             operationName = generateOperationName(method);
         }
 
+        // 创建 LocalSpan 对象
         ContextManager.createLocalSpan(operationName);
     }
 
+    /**
+     * 生成方法签名
+     *
+     * @param method 方法名
+     * @return 方法签名
+     */
     private String generateOperationName(Method method) {
         StringBuilder operationName = new StringBuilder(method.getDeclaringClass().getName() + "." + method.getName() + "(");
         Class<?>[] parameterTypes = method.getParameterTypes();
@@ -61,6 +71,7 @@ public class TraceAnnotationMethodInterceptor implements InstanceMethodsAroundIn
     @Override
     public Object afterMethod(EnhancedInstance objInst, Method method, Object[] allArguments, Class<?>[] argumentsTypes,
         Object ret) throws Throwable {
+        // 完成 LocalSpan 对象
         ContextManager.stopSpan();
         return ret;
     }

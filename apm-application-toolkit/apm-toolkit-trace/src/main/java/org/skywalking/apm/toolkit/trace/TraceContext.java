@@ -28,6 +28,7 @@ package org.skywalking.apm.toolkit.trace;
  */
 public class TraceContext {
 
+
     /**
      * Try to get the traceId of current trace context.
      *
@@ -36,4 +37,5 @@ public class TraceContext {
     public static String traceId() {
         return "";
     }
+
 }

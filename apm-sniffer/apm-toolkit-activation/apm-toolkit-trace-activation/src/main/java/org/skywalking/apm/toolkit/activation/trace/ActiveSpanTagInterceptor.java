@@ -18,16 +18,19 @@
 
 package org.skywalking.apm.toolkit.activation.trace;
 
-import java.lang.reflect.Method;
 import org.skywalking.apm.agent.core.context.ContextManager;
 import org.skywalking.apm.agent.core.context.trace.AbstractSpan;
 import org.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
 import org.skywalking.apm.agent.core.plugin.interceptor.enhance.StaticMethodsAroundInterceptor;
 
+import java.lang.reflect.Method;
+
 public class ActiveSpanTagInterceptor implements StaticMethodsAroundInterceptor {
+
     @Override public void beforeMethod(Class clazz, Method method, Object[] allArguments, Class<?>[] parameterTypes,
         MethodInterceptResult result) {
-        AbstractSpan activeSpan = null;
+        // 添加标签键值对
+        AbstractSpan activeSpan;
         try {
             activeSpan = ContextManager.activeSpan();
             activeSpan.tag(String.valueOf(allArguments[0]), String.valueOf(allArguments[1]));
