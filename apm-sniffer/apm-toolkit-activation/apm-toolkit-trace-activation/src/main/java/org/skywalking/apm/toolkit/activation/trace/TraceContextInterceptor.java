@@ -38,7 +38,7 @@ public class TraceContextInterceptor implements StaticMethodsAroundInterceptor {
     @Override
     public Object afterMethod(Class clazz, Method method, Object[] allArguments, Class<?>[] parameterTypes,
         Object ret) {
-        // 使用全局链路追踪比那好，而不是原有结果
+        // 使用全局链路追踪编号，而不是原有结果
         return ContextManager.getGlobalTraceId();
     }
 

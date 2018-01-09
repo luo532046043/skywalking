@@ -18,16 +18,20 @@
 
 package org.skywalking.apm.plugin.tomcat78x;
 
-import java.lang.reflect.Method;
 import org.skywalking.apm.agent.core.context.ContextManager;
 import org.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedInstance;
 import org.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceMethodsAroundInterceptor;
 import org.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
 
+import java.lang.reflect.Method;
+
 public class TomcatExceptionInterceptor implements InstanceMethodsAroundInterceptor {
+
     @Override
     public void beforeMethod(EnhancedInstance objInst, Method method, Object[] allArguments, Class<?>[] argumentsTypes,
         MethodInterceptResult result) throws Throwable {
+        // 设置 EntrySpan 发生异常
+        // 设置 EntrySpan 的日志
         ContextManager.activeSpan().errorOccurred().log((Throwable)allArguments[2]);
     }
 
