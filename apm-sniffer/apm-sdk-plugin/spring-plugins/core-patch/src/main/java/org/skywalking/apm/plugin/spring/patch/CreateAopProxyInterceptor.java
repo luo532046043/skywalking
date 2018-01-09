@@ -18,11 +18,12 @@
 
 package org.skywalking.apm.plugin.spring.patch;
 
-import java.lang.reflect.Method;
 import org.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedInstance;
 import org.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceMethodsAroundInterceptor;
 import org.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
 import org.springframework.aop.framework.AdvisedSupport;
+
+import java.lang.reflect.Method;
 
 /**
  * {@link CreateAopProxyInterceptor} check that the bean has been implement {@link EnhancedInstance}. <p/>
@@ -42,7 +43,7 @@ public class CreateAopProxyInterceptor implements InstanceMethodsAroundIntercept
     public Object afterMethod(EnhancedInstance objInst, Method method, Object[] allArguments, Class<?>[] argumentsTypes,
         Object ret) throws Throwable {
         AdvisedSupport advisedSupport = (AdvisedSupport)allArguments[0];
-
+        // 若实现接口，返回 true ，参见 `DefaultAopProxyFactory#hasNoUserSuppliedProxyInterfaces(AdvisedSupport)` 方法
         if (EnhancedInstance.class.isAssignableFrom(advisedSupport.getTargetClass())) {
             return true;
         }
@@ -51,6 +52,6 @@ public class CreateAopProxyInterceptor implements InstanceMethodsAroundIntercept
 
     @Override public void handleMethodException(EnhancedInstance objInst, Method method, Object[] allArguments,
         Class<?>[] argumentsTypes, Throwable t) {
-
     }
+
 }

@@ -33,6 +33,8 @@ import static org.skywalking.apm.agent.core.plugin.match.NameMatch.byName;
  * org.springframework.aop.framework.DefaultAopProxyFactory#hasNoUserSuppliedProxyInterfaces} method by using {@link
  * org.skywalking.apm.plugin.spring.patch.CreateAopProxyInterceptor} class.
  *
+ * 参见 ：https://github.com/apache/incubator-skywalking/issues/581
+ *
  * @author zhangxin
  */
 public class AopProxyFactoryInstrumentation extends ClassInstanceMethodsEnhancePluginDefine {
