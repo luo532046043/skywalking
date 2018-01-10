@@ -27,8 +27,15 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author zhangxin
  */
 public class PathMappingCache {
+
+    /**
+     * 类的请求路径
+     */
     private String classPath = "";
 
+    /**
+     * 方法对象与请求路径的映射
+     */
     private ConcurrentHashMap<Method, String> methodPathMapping = new ConcurrentHashMap<Method, String>();
 
     public PathMappingCache(String classPath) {
@@ -40,6 +47,8 @@ public class PathMappingCache {
     }
 
     public void addPathMapping(Method method, String methodPath) {
+        // 添加时，会将类的请求路径拼接到前面
         methodPathMapping.put(method, classPath + methodPath);
     }
+
 }

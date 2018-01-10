@@ -21,6 +21,8 @@ package org.skywalking.apm.plugin.spring.mvc.commons;
 /**
  * Interceptor class name constant variables
  *
+ * 拦截器类的枚举值
+ *
  * @author zhangxin
  */
 public class Constants {
