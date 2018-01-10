@@ -26,27 +26,7 @@ import com.mongodb.bulk.UpdateRequest;
 import com.mongodb.bulk.WriteRequest;
 import com.mongodb.connection.Cluster;
 import com.mongodb.connection.ServerDescription;
-import com.mongodb.operation.CountOperation;
-import com.mongodb.operation.CreateCollectionOperation;
-import com.mongodb.operation.CreateIndexesOperation;
-import com.mongodb.operation.CreateViewOperation;
-import com.mongodb.operation.DeleteOperation;
-import com.mongodb.operation.DistinctOperation;
-import com.mongodb.operation.FindAndDeleteOperation;
-import com.mongodb.operation.FindAndReplaceOperation;
-import com.mongodb.operation.FindAndUpdateOperation;
-import com.mongodb.operation.FindOperation;
-import com.mongodb.operation.GroupOperation;
-import com.mongodb.operation.InsertOperation;
-import com.mongodb.operation.ListCollectionsOperation;
-import com.mongodb.operation.MapReduceToCollectionOperation;
-import com.mongodb.operation.MapReduceWithInlineResultsOperation;
-import com.mongodb.operation.MixedBulkWriteOperation;
-import com.mongodb.operation.ReadOperation;
-import com.mongodb.operation.UpdateOperation;
-import com.mongodb.operation.WriteOperation;
-import java.lang.reflect.Method;
-import java.util.List;
+import com.mongodb.operation.*;
 import org.bson.BsonDocument;
 import org.skywalking.apm.agent.core.conf.Config;
 import org.skywalking.apm.agent.core.context.ContextCarrier;
@@ -60,6 +40,9 @@ import org.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceMethodsA
 import org.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
 import org.skywalking.apm.network.trace.component.ComponentsDefine;
 
+import java.lang.reflect.Method;
+import java.util.List;
+
 /**
  * {@link MongoDBMethodInterceptor} intercept method of {@link com.mongodb.Mongo#execute(ReadOperation, ReadPreference)}
  * or {@link com.mongodb.Mongo#execute(WriteOperation)}. record the mongoDB host, operation name and the key of the
@@ -71,10 +54,21 @@ public class MongoDBMethodInterceptor implements InstanceMethodsAroundIntercepto
 
     private static final String DB_TYPE = "MongoDB";
 
+    /**
+     * MongoDB 操作前缀
+     */
     private static final String MONGO_DB_OP_PREFIX = "MongoDB/";
 
+    /**
+     * 操作语句长度限制
+     */
     private static final int FILTER_LENGTH_LIMIT = 256;
 
+    /**
+     * 未知操作的参数
+     *
+     * {@link #getTraceParam(Object)}
+     */
     private static final String EMPTY = "";
 
     /**
@@ -172,19 +166,28 @@ public class MongoDBMethodInterceptor implements InstanceMethodsAroundIntercepto
 
         String executeMethod = arguments[0].getClass().getSimpleName();
         String remotePeer = (String)objInst.getSkyWalkingDynamicField();
+
+        // 创建 ExitSpan 对象
         AbstractSpan span = ContextManager.createExitSpan(MONGO_DB_OP_PREFIX + method.getName(), new ContextCarrier(), remotePeer);
+
+        // 设置组件
         span.setComponent(ComponentsDefine.MONGODB);
+
+        // 设置标签键值对
         Tags.DB_TYPE.set(span, DB_TYPE);
+
+        // 设置组件分层
         SpanLayer.asDB(span);
 
+        // 记录操作语句到标签键值对
         if (Config.Plugin.MongoDB.TRACE_PARAM) {
             Tags.DB_STATEMENT.set(span, executeMethod + " " + this.getTraceParam(arguments[0]));
         }
-
     }
 
     @Override public Object afterMethod(EnhancedInstance objInst, Method method, Object[] allArguments,
         Class<?>[] argumentsTypes, Object ret) throws Throwable {
+        // 完成 ExitSpan 对象
         ContextManager.stopSpan();
         return ret;
     }
@@ -192,19 +195,24 @@ public class MongoDBMethodInterceptor implements InstanceMethodsAroundIntercepto
     @Override public void handleMethodException(EnhancedInstance objInst, Method method, Object[] allArguments,
         Class<?>[] argumentsTypes, Throwable t) {
         AbstractSpan activeSpan = ContextManager.activeSpan();
+        // 标记 ExitSpan 发生异常
         activeSpan.errorOccurred();
+
+        // 设置 EntrySpan 的日志
         activeSpan.log(t);
     }
 
     @Override
     public void onConstruct(EnhancedInstance objInst, Object[] allArguments) {
-        Cluster cluster = (Cluster)allArguments[0];
+        // 拼接集群地址
+        Cluster cluster = (Cluster) allArguments[0];
         StringBuilder peers = new StringBuilder();
         for (ServerDescription description : cluster.getDescription().getServerDescriptions()) {
             ServerAddress address = description.getAddress();
             peers.append(address.getHost() + ":" + address.getPort() + ";");
         }
 
+        // 设置集群地址到私有变量
         objInst.setSkyWalkingDynamicField(peers.subSequence(0, peers.length() - 1).toString());
     }
 }
