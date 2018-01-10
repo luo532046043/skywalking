@@ -20,11 +20,18 @@ package org.skywalking.apm.plugin.spring.mvc.v4.define;
 
 import org.skywalking.apm.agent.core.plugin.interceptor.enhance.ClassInstanceMethodsEnhancePluginDefine;
 
+/**
+ * ...
+ *
+ * 用于版本处于 SpringMVC 4.X +
+ */
 public abstract class AbstractSpring4Instrumentation extends ClassInstanceMethodsEnhancePluginDefine {
+
     public static final String WITHNESS_CLASSES = "org.springframework.web.servlet.tags.ArgumentTag";
 
     @Override
     protected final String[] witnessClasses() {
         return new String[] {WITHNESS_CLASSES};
     }
+
 }
