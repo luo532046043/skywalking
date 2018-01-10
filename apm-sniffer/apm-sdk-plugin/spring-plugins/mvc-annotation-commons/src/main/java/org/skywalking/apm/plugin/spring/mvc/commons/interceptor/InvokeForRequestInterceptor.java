@@ -32,9 +32,13 @@ import java.lang.reflect.Method;
  * @author zhangxin
  */
 public class InvokeForRequestInterceptor implements InstanceMethodsAroundInterceptor {
+
     @Override
     public void beforeMethod(EnhancedInstance objInst, Method method, Object[] allArguments, Class<?>[] argumentsTypes,
         MethodInterceptResult result) throws Throwable {
+        // objInst 类型为 ServletInvocableHandlerMethod ，每次请求会创建
+        // allArguments[0] 类型为 NativeWebRequest
+        // 设置 NativeWebRequest 到 ServletInvocableHandlerMethod 的动态变量里。
         objInst.setSkyWalkingDynamicField(allArguments[0]);
     }
 
@@ -49,4 +53,5 @@ public class InvokeForRequestInterceptor implements InstanceMethodsAroundInterce
         Class<?>[] argumentsTypes, Throwable t) {
 
     }
+
 }

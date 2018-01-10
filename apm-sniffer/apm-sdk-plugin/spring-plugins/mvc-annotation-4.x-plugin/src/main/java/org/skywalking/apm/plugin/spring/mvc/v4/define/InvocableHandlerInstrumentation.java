@@ -70,4 +70,5 @@ public class InvocableHandlerInstrumentation extends AbstractSpring4Instrumentat
     protected ClassMatch enhanceClass() {
         return byName(ENHANCE_CLASS);
     }
+
 }
