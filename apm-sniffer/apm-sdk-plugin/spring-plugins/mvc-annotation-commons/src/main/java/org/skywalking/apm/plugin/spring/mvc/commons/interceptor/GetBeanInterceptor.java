@@ -18,12 +18,13 @@
 
 package org.skywalking.apm.plugin.spring.mvc.commons.interceptor;
 
-import java.lang.reflect.Method;
 import org.skywalking.apm.agent.core.plugin.interceptor.enhance.EnhancedInstance;
 import org.skywalking.apm.agent.core.plugin.interceptor.enhance.InstanceMethodsAroundInterceptor;
 import org.skywalking.apm.agent.core.plugin.interceptor.enhance.MethodInterceptResult;
 import org.skywalking.apm.plugin.spring.mvc.commons.EnhanceRequireObjectCache;
 import org.springframework.web.context.request.NativeWebRequest;
+
+import java.lang.reflect.Method;
 
 /**
  * {@link GetBeanInterceptor} pass the {@link NativeWebRequest} object into the {@link
@@ -41,6 +42,8 @@ public class GetBeanInterceptor implements InstanceMethodsAroundInterceptor {
     public Object afterMethod(EnhancedInstance objInst, Method method, Object[] allArguments, Class<?>[] argumentsTypes,
         Object ret) throws Throwable {
         if (ret instanceof EnhancedInstance) {
+            // 将 NativeRequest 设置到 EnhanceRequireObjectCache 的 `nativeWebRequest` 属性
+            // 其中，NativeRequest 来自 InvokeForRequestInterceptor 拦截设置
             ((EnhanceRequireObjectCache)((EnhancedInstance)ret).getSkyWalkingDynamicField()).setNativeWebRequest((NativeWebRequest)objInst.getSkyWalkingDynamicField());
         }
         return ret;
@@ -49,6 +52,6 @@ public class GetBeanInterceptor implements InstanceMethodsAroundInterceptor {
     @Override
     public void handleMethodException(EnhancedInstance objInst, Method method, Object[] allArguments,
         Class<?>[] argumentsTypes, Throwable t) {
-
     }
+
 }

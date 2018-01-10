@@ -70,4 +70,5 @@ public class HandlerMethodInstrumentation extends AbstractSpring4Instrumentation
     protected ClassMatch enhanceClass() {
         return byName(ENHANCE_CLASS);
     }
+
 }
