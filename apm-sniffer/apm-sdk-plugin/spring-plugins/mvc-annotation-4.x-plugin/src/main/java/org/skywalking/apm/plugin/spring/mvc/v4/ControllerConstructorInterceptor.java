@@ -41,6 +41,7 @@ public class ControllerConstructorInterceptor implements InstanceConstructorInte
 
     @Override
     public void onConstruct(EnhancedInstance objInst, Object[] allArguments) {
+        // 解析类的请求路径
         String basePath = "";
         RequestMapping basePathRequestMapping = objInst.getClass().getAnnotation(RequestMapping.class);
         if (basePathRequestMapping != null) {
@@ -50,8 +51,12 @@ public class ControllerConstructorInterceptor implements InstanceConstructorInte
                 basePath = basePathRequestMapping.path()[0];
             }
         }
+        // 创建 EnhanceRequireObjectCache 缓存对象
         EnhanceRequireObjectCache enhanceRequireObjectCache = new EnhanceRequireObjectCache();
         enhanceRequireObjectCache.setPathMappingCache(new PathMappingCache(basePath));
+
+        // 设置到 Controller 的私有变量( SkyWalking 自动生成 )
         objInst.setSkyWalkingDynamicField(enhanceRequireObjectCache);
     }
+
 }
