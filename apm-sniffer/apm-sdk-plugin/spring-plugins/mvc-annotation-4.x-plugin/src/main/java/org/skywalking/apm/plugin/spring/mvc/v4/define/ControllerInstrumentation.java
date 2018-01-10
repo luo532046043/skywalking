@@ -25,4 +25,5 @@ public class ControllerInstrumentation extends AbstractControllerInstrumentation
     @Override protected String[] getEnhanceAnnotations() {
         return new String[] {ENHANCE_ANNOTATION};
     }
+
 }

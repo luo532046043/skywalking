@@ -18,9 +18,6 @@
 
 package org.skywalking.apm.plugin.spring.mvc.commons.interceptor;
 
-import java.lang.reflect.Method;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.skywalking.apm.agent.core.context.CarrierItem;
 import org.skywalking.apm.agent.core.context.ContextCarrier;
 import org.skywalking.apm.agent.core.context.ContextManager;
@@ -35,6 +32,10 @@ import org.skywalking.apm.plugin.spring.mvc.commons.EnhanceRequireObjectCache;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
+
 /**
  * the abstract method inteceptor
  */
@@ -44,16 +45,17 @@ public abstract class AbstractMethodInteceptor implements InstanceMethodsAroundI
     @Override
     public void beforeMethod(EnhancedInstance objInst, Method method, Object[] allArguments, Class<?>[] argumentsTypes,
         MethodInterceptResult result) throws Throwable {
+        // 获得请求地址。首先，从 EnhanceRequireObjectCache 缓存中获取；其次，从类+方法的注解获取，并缓存
         EnhanceRequireObjectCache pathMappingCache = (EnhanceRequireObjectCache)objInst.getSkyWalkingDynamicField();
         String requestURL = pathMappingCache.findPathMapping(method);
         if (requestURL == null) {
             requestURL = getRequestURL(method);
-            pathMappingCache.addPathMapping(method, requestURL);
+            pathMappingCache.addPathMapping(method, requestURL); // 添加缓存
             requestURL = pathMappingCache.findPathMapping(method);
         }
 
+        // 解析 ContextCarrier 对象，用于跨进程的链路追踪
         HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-
         ContextCarrier contextCarrier = new ContextCarrier();
         CarrierItem next = contextCarrier.items();
         while (next.hasNext()) {
@@ -61,10 +63,17 @@ public abstract class AbstractMethodInteceptor implements InstanceMethodsAroundI
             next.setHeadValue(request.getHeader(next.getHeadKey()));
         }
 
+        // 创建 EntrySpan 对象
         AbstractSpan span = ContextManager.createEntrySpan(requestURL, contextCarrier);
+
+        // 设置标签键值对
         Tags.URL.set(span, request.getRequestURL().toString());
         Tags.HTTP.METHOD.set(span, request.getMethod());
+
+        // 设置组件
         span.setComponent(ComponentsDefine.SPRING_MVC_ANNOTATION);
+
+        // 设置组件分层
         SpanLayer.asHttp(span);
     }
 
@@ -73,11 +82,16 @@ public abstract class AbstractMethodInteceptor implements InstanceMethodsAroundI
         Object ret) throws Throwable {
         HttpServletResponse response = ((EnhanceRequireObjectCache)objInst.getSkyWalkingDynamicField()).getHttpServletResponse();
 
+        // 若返回状态码大于等于 400 时：
         AbstractSpan span = ContextManager.activeSpan();
         if (response.getStatus() >= 400) {
+            // 设置 EntrySpan 发生异常
             span.errorOccurred();
+            // 并设置状态码的标签键值对
             Tags.STATUS_CODE.set(span, Integer.toString(response.getStatus()));
         }
+
+        // 完成 EntrySpan 对象
         ContextManager.stopSpan();
         return ret;
     }
@@ -85,6 +99,8 @@ public abstract class AbstractMethodInteceptor implements InstanceMethodsAroundI
     @Override
     public void handleMethodException(EnhancedInstance objInst, Method method, Object[] allArguments,
         Class<?>[] argumentsTypes, Throwable t) {
+        // 设置 EntrySpan 的日志
+        // 设置 EntrySpan 发生异常
         ContextManager.activeSpan().errorOccurred().log(t);
     }
 }

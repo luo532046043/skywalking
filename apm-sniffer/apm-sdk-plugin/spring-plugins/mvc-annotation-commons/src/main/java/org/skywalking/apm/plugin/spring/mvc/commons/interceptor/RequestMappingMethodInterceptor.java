@@ -18,8 +18,9 @@
 
 package org.skywalking.apm.plugin.spring.mvc.commons.interceptor;
 
-import java.lang.reflect.Method;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.lang.reflect.Method;
 
 /**
  * The <code>RequestMappingMethodInterceptor</code> only use the first mapping value.
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @author clevertension
  */
 public class RequestMappingMethodInterceptor extends AbstractMethodInteceptor {
+
     @Override
     public String getRequestURL(Method method) {
         String requestURL = "";
@@ -39,4 +41,5 @@ public class RequestMappingMethodInterceptor extends AbstractMethodInteceptor {
         }
         return requestURL;
     }
+
 }
