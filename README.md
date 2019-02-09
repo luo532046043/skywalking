@@ -3,6 +3,8 @@ Sky Walking | [中文](README_ZH.md)
 
 # 个人博客
 
+[http://www.iocoder.cn](http://www.iocoder.cn/?github)
+
 -------
 
 ![](http://www.iocoder.cn/images/common/wechat_mp.jpeg)
@@ -15,9 +17,6 @@ Sky Walking | [中文](README_ZH.md)
 
 -------
 
-# 联系方式
-
-* QQ : 7685413
 * 知识星球：![知识星球](http://www.iocoder.cn/images/Architecture/2017_12_29/01.png)
 
 * 链路追踪 **SkyWalking**
