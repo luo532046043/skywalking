@@ -5,7 +5,7 @@ Sky Walking | [中文](README_ZH.md)
 
 -------
 
-![](http://www.yunai.me/images/common/wechat_mp.jpeg)
+![](http://www.iocoder.cn/images/common/wechat_mp.jpeg)
 
 > 🙂🙂🙂关注**微信公众号：【芋艿的后端小屋】**有福利：  
 > 1. RocketMQ / MyCAT / Sharding-JDBC **所有**源码分析文章列表  
