@@ -18,8 +18,6 @@ Sky Walking | [中文](README_ZH.md)
 # 联系方式
 
 * QQ : 7685413
-* 微信 : wangwenbin-server
-* 掘金-Java交流群 : 217878901
 * 知识星球：![知识星球](http://www.iocoder.cn/images/Architecture/2017_12_29/01.png)
 
 * 链路追踪 **SkyWalking**
